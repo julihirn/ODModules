@@ -1,0 +1,74 @@
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\bin\Debug\net6.0-windows\ODModules.deps.json
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\bin\Debug\net6.0-windows\ODModules.dll
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\bin\Debug\net6.0-windows\ODModules.pdb
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\bin\Debug\net6.0-windows\ODHandlers.dll
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\bin\Debug\net6.0-windows\ODHandlers.pdb
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.AssemblyReference.cache
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.Button.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.ConsoleInterface.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.HeaderControl.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.LabelButton.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.LabelPanel.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.LED.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.LineEditingInterface.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.ListControl.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.ListViewDoubleBuffered.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.Navigator.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.NumericTextbox.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.PainterEventEditor.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.PrefixScale.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.SplashControl.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\Physika.TabHeaderControl.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.TextCompare.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.TimePainter.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.ValueLabel.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.ValuePainter.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.GenerateResource.cache
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.AssemblyInfoInputs.cache
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.AssemblyInfo.cs
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.CoreCompileInputs.cache
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.CopyComplete
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.dll
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\refint\ODModules.dll
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.pdb
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ref\ODModules.dll
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.ButtonGrid.resources
+C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODModules.Keypad.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.AssemblyReference.cache
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.Button.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.ButtonGrid.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.CharacterMap.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.ConsoleInterface.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.HeaderControl.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.Keypad.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.LabelButton.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.LabelPanel.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.LED.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.LineEditingInterface.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.ListControl.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.ListViewDoubleBuffered.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.Navigator.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.NumericTextbox.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.PainterEventEditor.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.PrefixScale.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.SplashControl.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\Physika.TabHeaderControl.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.TextCompare.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.TimePainter.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.ValueLabel.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.ValuePainter.resources
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.GenerateResource.cache
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.AssemblyInfoInputs.cache
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.AssemblyInfo.cs
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.CoreCompileInputs.cache
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.dll
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\refint\ODModules.dll
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.pdb
+C:\Users\Chann\source\repos\ODModules\ODModules\bin\Debug\net6.0-windows\ODModules.deps.json
+C:\Users\Chann\source\repos\ODModules\ODModules\bin\Debug\net6.0-windows\ODModules.dll
+C:\Users\Chann\source\repos\ODModules\ODModules\bin\Debug\net6.0-windows\ODModules.pdb
+C:\Users\Chann\source\repos\ODModules\ODModules\bin\Debug\net6.0-windows\ODHandlers.dll
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.CopyComplete
+C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ref\ODModules.dll
