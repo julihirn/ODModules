@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Update="AboutBanner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="AnalogDialMeter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Button.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ButtonGrid.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="CharacterMap.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ConsoleInterface.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="DigitalHistoryGraph.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="FlatCombo.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="HeaderControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="HiddenTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Keypad.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="LabelButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="LabelPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="LED.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="LineEditingInterface.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ListControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ListViewDoubleBuffered.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="MenuPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="MenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Navigator.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="NumericTextbox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="PainterEventEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="PrefixScale.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SplashControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="StatusMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="TabHeader.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="TabHeaderControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="TextCompare.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="TimePainter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ToolStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="TreeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ValueLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ValuePainter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

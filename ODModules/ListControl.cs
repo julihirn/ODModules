@@ -1,19 +1,19 @@
-﻿using Handlers;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Diagnostics;
 using System.Windows.Forms;
-using static Handlers.ConversionHandler;
+using Handlers;
 using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.ComponentModel;
+using System.Reflection.Metadata.Ecma335;
+using static Handlers.ConversionHandler;
+using System.Collections;
 
 namespace ODModules {
     public class ListControl : UserControl {
@@ -1828,8 +1828,7 @@ namespace ODModules {
         bool ScrollStart = false;
         ScrollArea ScrollHit = ScrollArea.None;
         float ThumbDelta = 0;
-
-        private enum ScrollArea {
+        enum ScrollArea {
             None = 0x00,
             Vertical = 0x01,
             Horizontal = 0x02

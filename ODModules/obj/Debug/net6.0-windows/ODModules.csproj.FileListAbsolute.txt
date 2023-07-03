@@ -72,3 +72,4 @@ C:\Users\Chann\source\repos\ODModules\ODModules\bin\Debug\net6.0-windows\ODModul
 C:\Users\Chann\source\repos\ODModules\ODModules\bin\Debug\net6.0-windows\ODHandlers.dll
 C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.CopyComplete
 C:\Users\Chann\source\repos\ODModules\ODModules\obj\Debug\net6.0-windows\ref\ODModules.dll
+C:\Users\Chann\Source\Repos\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.TabHeader.resources

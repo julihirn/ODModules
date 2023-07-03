@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace ODModules {
-    internal class MenuStripColorTable : ToolStripRenderer {
+    class MenuStripColorTable : ToolStripRenderer {
         private Color ItemCheckedBackColor = Color.FromArgb(128, 128, 128, 128);
         [System.ComponentModel.Category("Appearance")]
         public Color ItemCheckedBackColorNorth {
@@ -377,7 +378,7 @@ namespace ODModules {
             DrawArrow(e.Graphics, new Rectangle(e.Item.Size.Width - (2 * DpiSize), 0, DpiSize, e.Item.Size.Height), ArrowDirection.Down, DpiSize);
             base.OnRenderSplitButtonBackground(e);
         }
-        private void DrawArrow(Graphics g, Rectangle ArrowBounds, ArrowDirection Direction, int Size) {
+        private void DrawArrow(Graphics g, Rectangle ArrowBounds, ArrowDirection Direction, int Size, bool DrawLineAbove = false) {
             Rectangle ArrowRectangle = ScaleAndCenter(ArrowBounds, Size);
             using (SolidBrush ActionBrush = new SolidBrush(menuSymbolColor)) {
                 if (Direction == ArrowDirection.Up) {
@@ -393,6 +394,11 @@ namespace ODModules {
                         new Point(ArrowRectangle.Left,ArrowRectangle.Top + Push),
                         new Point(ArrowRectangle.Right, ArrowRectangle.Top+ Push),
                         new Point(ArrowRectangle.X + (ArrowRectangle.Width / 2), ArrowRectangle.Bottom- Push)});
+                    if (DrawLineAbove == true) {
+                        using (Pen ActionPen = new Pen(ActionBrush)) {
+                            g.DrawLine(ActionPen, ArrowRectangle.X, ArrowRectangle.Y - 6, ArrowRectangle.X, ArrowRectangle.Y - 6);
+                        }
+                    }
                 }
             }
         }
@@ -490,12 +496,27 @@ namespace ODModules {
         protected override void OnRenderOverflowButtonBackground(ToolStripItemRenderEventArgs e) {
             // base.OnRenderOverflowButtonBackground(e);
             //Debug.Print(e.Item.GetType().ToString());
+            e.Graphics.InterpolationMode = InterpolationMode.Bicubic;
             Rectangle ContextWindow = new Rectangle(0, 0, e.Item.Width, e.Item.Height);
             if ((ContextWindow.Width != 0) && (ContextWindow.Height != 0)) {
                 using (LinearGradientBrush BackgroundBrush = new LinearGradientBrush(ContextWindow, BackColor, BackColor2, 90.0f)) {
                     e.Graphics.FillRectangle(BackgroundBrush, ContextWindow);
                 }
             }
+            //new Rectangle(e.Item.arr.Location, e.ArrowRectangle.Size);
+            //using (SolidBrush ActionBrush = new SolidBrush(menuSymbolColor)) {
+            //    using (Pen ActionPen = new Pen(ActionBrush, 2)) {
+            //        e.Graphics.DrawLines(ActionPen, new Point[]{
+            //        new Point(r.Right, r.Top),
+            //        new Point(r.Left, r.Top + r.Height /2),
+            //        new Point(r.Right, r.Top+ r.Height)});
+            //    }
+            //}
+            int DpiSize = (int)(5.0f * (e.Graphics.DpiX / 96.0f));
+            Size ArrowRectangle = new Size(ContextWindow.Width - 2, ContextWindow.Width - 2);
+            Rectangle r = new Rectangle(new Point(ContextWindow.X + ((ContextWindow.Width - ArrowRectangle.Width) / 2), ContextWindow.Y + ContextWindow.Height - ArrowRectangle.Height - 2), ArrowRectangle);
+            DrawArrow(e.Graphics, r, ArrowDirection.Down, DpiSize, true);
+
         }
     }
 }

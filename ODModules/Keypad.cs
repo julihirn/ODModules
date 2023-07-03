@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Linq;
+using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace ODModules {
     public class Keypad : UserControl {
@@ -25,7 +25,7 @@ namespace ODModules {
 
 
 
-
+       
         int borderRadius = 5;
         [System.ComponentModel.Category("Appearance")]
         public int BorderRadius {
@@ -810,7 +810,7 @@ namespace ODModules {
             if (IsPointReset(e.Location) == false) {
                 ClickedKeypadButtonResult Result = GetButtonPosition(e.Location);
                 if (Result.Button != null) {
-                    // ResetAllothers(Result.Button);
+                   // ResetAllothers(Result.Button);
                     CurrentPosition = e.Location;
                     IsMouseDown = true;
                     Invalidate();

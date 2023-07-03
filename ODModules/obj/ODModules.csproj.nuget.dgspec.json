@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Chann\\source\\repos\\ODModules\\ODModules\\ODModules.csproj": {}
+    "C:\\Users\\Chann\\Source\\Repos\\ODModules\\ODModules\\ODModules.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Chann\\source\\repos\\ODModules\\ODModules\\ODModules.csproj": {
+    "C:\\Users\\Chann\\Source\\Repos\\ODModules\\ODModules\\ODModules.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Chann\\source\\repos\\ODModules\\ODModules\\ODModules.csproj",
+        "projectUniqueName": "C:\\Users\\Chann\\Source\\Repos\\ODModules\\ODModules\\ODModules.csproj",
         "projectName": "ODModules",
-        "projectPath": "C:\\Users\\Chann\\source\\repos\\ODModules\\ODModules\\ODModules.csproj",
+        "projectPath": "C:\\Users\\Chann\\Source\\Repos\\ODModules\\ODModules\\ODModules.csproj",
         "packagesPath": "C:\\Users\\Chann\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Chann\\source\\repos\\ODModules\\ODModules\\obj\\",
+        "outputPath": "C:\\Users\\Chann\\Source\\Repos\\ODModules\\ODModules\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -65,7 +65,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
         }
       }
     }
