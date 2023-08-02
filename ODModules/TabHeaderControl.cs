@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Drawing;
+using System.Drawing.Drawing2D;
 namespace Physika {
     public class TabHeaderControl : UserControl {
         private TabControl? bindedTabControl = null;
@@ -218,7 +217,7 @@ namespace Physika {
         }
 
         protected override void OnMouseDown(MouseEventArgs e) {
-
+        
             MouseDown = true;
             Invalidate();
             base.OnMouseDown(e);

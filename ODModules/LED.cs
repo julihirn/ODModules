@@ -1,13 +1,13 @@
-﻿using Handlers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using Handlers;
+using System.ComponentModel;
 
 namespace ODModules {
     public class LED : UserControl {
@@ -137,7 +137,7 @@ namespace ODModules {
                 DrawLED(e, new Point(10, LEDCentre), LEDHeight, LEDColor, LEDBrightness);
                 using (SolidBrush TextBrush = new SolidBrush(ForeColor)) {
                     if (Text != null) {
-                        if (Text.Length > 0) {
+                        if (Text.Length > 0){
                             e.Graphics.DrawString(Text, Font, TextBrush, new Point(15 + LEDHeight, Centre));
                         }
                     }

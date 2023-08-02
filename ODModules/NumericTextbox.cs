@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
-using System.Globalization;
 using System.Text;
+using System.Drawing.Text;
 using System.Windows.Forms;
-
+using System.Drawing.Drawing2D;
+using System.Globalization;
+using System.Diagnostics;
+using System.Security.Policy;
+using Handlers;
 namespace ODModules {
     public partial class NumericTextbox : UserControl {
         public delegate void ValueChangedHandler(object sender, ValueChangedEventArgs e);
@@ -140,10 +141,33 @@ namespace ODModules {
                 // this.value = value;
                 if (value == null) { }
                 else {
-                    ValueString = value.ToString() ?? "0";
+                    if (rangeLimited == true) {
+                        string HoldString = value.ToString() ?? "0";
+                        CorrectValueToRange(HoldString, out ValueString);
+                    }
+                    else {
+                        ValueString = value.ToString() ?? "0";
+                    }
                 }
                 UserEntered = false;
                 DecimalTrim();
+                Invalidate();
+            }
+        }
+        private NumberBase numberbase = NumberBase.Base10;
+        [Category("Number")]
+        public NumberBase Base {
+            get { return numberbase; }
+            set {
+                numberbase = value;
+                if (value != NumberBase.Base10) {
+                    allowFractions = false;
+                    allowNegatives = false;
+                    numericalFormat = NumberFormat.Decimal;
+                    hasUnit = false;
+
+                }
+                ValueString = "0";
                 Invalidate();
             }
         }
@@ -152,8 +176,13 @@ namespace ODModules {
         public bool AllowFractionals {
             get { return allowFractions; }
             set {
-                allowFractions = value;
-                if (value == false) {
+                if (numberbase == NumberBase.Base10) {
+                    allowFractions = value;
+                }
+                else {
+                    allowFractions = false;
+                }
+                if (allowFractions == false) {
                     RemoveFractionals();
                 }
                 Invalidate();
@@ -164,23 +193,31 @@ namespace ODModules {
         public bool AllowNegatives {
             get { return allowNegatives; }
             set {
-                allowNegatives = value;
-                if (value == false) {
+                if (numberbase == NumberBase.Base10) {
+                    allowNegatives = value;
+                }
+                else {
+                    allowNegatives = false;
+                }
+                if (allowNegatives == false) {
                     RemoveNegatives();
                 }
                 Invalidate();
             }
         }
         bool UserEntered = false;
-        public double CurrentValue { get => currentValue; }
+        //public double CurrentValue { get => currentValue; }
         [Description("Changes whether the number is a united quantity"), Category("Number")]
         public bool HasUnit {
             get {
                 return hasUnit;
             }
             set {
-                hasUnit = value;
-                if (value == false) { Prefix = MetricPrefix.None; }
+                if (numberbase == NumberBase.Base10) {
+                    hasUnit = value;
+                }
+                else { hasUnit = false; }
+                if (hasUnit == false) { Prefix = MetricPrefix.None; }
                 Invalidate();
             }
         }
@@ -255,6 +292,43 @@ namespace ODModules {
                 Invalidate();
             }
         }
+        NumericalString minimum = new NumericalString();
+        [Category("Number Range")]
+        public NumericalString Minimum {
+            get { return minimum; }
+            set {
+                if (maximum < value) {
+                    minimum.Value = maximum.Value;
+                }
+                else {
+                    minimum = value;
+                }
+                Invalidate();
+            }
+        }
+        NumericalString maximum = new NumericalString(100);
+        [Category("Number Range")]
+        public NumericalString Maximum {
+            get { return maximum; }
+            set {
+                if (minimum > value) {
+                    maximum.Value = minimum.Value;
+                }
+                else {
+                    maximum = value;
+                }
+                Invalidate();
+            }
+        }
+        bool rangeLimited = false;
+        [Category("Number Range")]
+        public bool RangeLimited {
+            get { return rangeLimited; }
+            set {
+                rangeLimited = value;
+                Invalidate();
+            }
+        }
 
         bool formatOutput = true;
         [Category("Number")]
@@ -271,7 +345,12 @@ namespace ODModules {
         public NumberFormat NumericalFormat {
             get { return numericalFormat; }
             set {
-                numericalFormat = value;
+                if (numberbase == NumberBase.Base10) {
+                    numericalFormat = value;
+                }
+                else {
+                    numericalFormat = NumberFormat.Decimal;
+                }
                 Invalidate();
             }
         }
@@ -291,6 +370,7 @@ namespace ODModules {
         }
         int numericalRightRadixDigitsMaximum = 4;
         [Category("Number")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public int NumericalRightRadixDigitsMaximum {
             get { return numericalRightRadixDigitsMaximum; }
             set {
@@ -305,6 +385,7 @@ namespace ODModules {
         }
         uint maxmiumDecimalPlaces = 18;
         [Category("Number")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public uint MaxmiumDecimalPlaces {
             get { return maxmiumDecimalPlaces; }
             set {
@@ -423,7 +504,11 @@ namespace ODModules {
             int UnitSize = MeasureDisplayStringWidth(e.Graphics, unit, this.Font);
             int PaddingUnit = MeasureDisplayStringWidth(e.Graphics, "w", this.Font);
             if (unit.Trim(' ').Length == 0) { UnitSize = 0; }
-            if (hasUnit == false) { UnitSize = 0; }
+            if (hasUnit == false) {
+                UnitSize = 0;
+                EndPoint = this.Width - (PaddingUnit / 2);
+                return;
+            }
             if (isMetric == false) {
                 PrefixSize = 0;
                 if (UnitSize == 0) { PaddingUnit = PaddingUnit / 2; }
@@ -539,21 +624,47 @@ namespace ODModules {
             }
         }
         //private void DrawButton(PaintEventArgs e, )
+        private string GetSuperScriptText(int Exponent) {
+            string ExponentString = Exponent.ToString();
+            string Temp = "";
+            for (int i = 0; i < ExponentString.Length; i++) {
+                char CurrentChar = ExponentString[i];
+                switch (CurrentChar) {
+                    case '-':
+                        Temp += '\u207B'; break;
+                    case '1':
+                        Temp += '\u00B9'; break;
+                    case '2':
+                        Temp += '\u00B2'; break;
+                    case '3':
+                        Temp += '\u00B3'; break;
+                    default:
+                        if (Char.IsDigit(CurrentChar)) {
+                            int Index = (CurrentChar - 0x30) + 0x2070;
+                            Temp += (char)Index;
+                        }
+                        break;
+                }
+            }
+            return Temp;
+        }
         private void RenderValueText(PaintEventArgs e, Color Backcoloring) {
             e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
             if (UserEntered == false) {
                 string ValueFormat = DecimalTrim(ValueStringFormatting(ValueString));
                 if (Exponent != 0) {
-                    ValueFormat += " · 10";
-                    using (Font ExponentFont = new Font(this.Font.FontFamily, this.Font.Size / 2)) {
-                        int YPosition = (Height / 2) - (int)e.Graphics.MeasureString("100", ExponentFont).Height;
-                        int XPosition = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 1.05f);
-                        int XPad = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 0.8f);
-                        using (SolidBrush ExponentBrush = new SolidBrush(ForeColor)) {
-                            e.Graphics.DrawString(Exponent.ToString(), ExponentFont, ExponentBrush, new Point(EndPoint - XPosition, YPosition));
-                        }
-                        TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint - XPad, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
-                    }
+                    ValueFormat += " · 10" + GetSuperScriptText(Exponent);
+                    //using (Font ExponentFont = new Font(this.Font.FontFamily, this.Font.Size / 2)) {
+                    //   
+                    //    int YPosition = (Height / 2) - (int)e.Graphics.MeasureString("100", ExponentFont).Height;
+                    //    int XPosition = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 1.05f);
+                    //    int XPad = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 0.8f);
+                    //    using (SolidBrush ExponentBrush = new SolidBrush(ForeColor)) {
+                    //        e.Graphics.DrawString(Exponent.ToString(), ExponentFont, ExponentBrush, new Point(EndPoint - XPosition, YPosition));
+                    //    }
+                    //    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint - XPad, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
+                    //}
+                    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
                 }
                 else {
                     TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
@@ -562,16 +673,17 @@ namespace ODModules {
             else {
                 string ValueFormat = ValueStringFormatting(ValueString);
                 if (Exponent != 0) {
-                    ValueFormat += " · 10";
-                    using (Font ExponentFont = new Font(this.Font.FontFamily, this.Font.Size / 2)) {
-                        int YPosition = (Height / 2) - (int)e.Graphics.MeasureString("100", ExponentFont).Height;
-                        int XPosition = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 1.05f);
-                        int XPad = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 0.8f);
-                        using (SolidBrush ExponentBrush = new SolidBrush(ForeColor)) {
-                            e.Graphics.DrawString(Exponent.ToString(), ExponentFont, ExponentBrush, new Point(EndPoint - XPosition, YPosition));
-                        }
-                        TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint - XPad, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
-                    }
+                    ValueFormat += " · 10" + GetSuperScriptText(Exponent);
+                    //using (Font ExponentFont = new Font(this.Font.FontFamily, this.Font.Size / 2)) {
+                    //    int YPosition = (Height / 2) - (int)e.Graphics.MeasureString("100", ExponentFont).Height;
+                    //    int XPosition = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 1.05f);
+                    //    int XPad = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 0.8f);
+                    //    using (SolidBrush ExponentBrush = new SolidBrush(ForeColor)) {
+                    //        e.Graphics.DrawString(Exponent.ToString(), ExponentFont, ExponentBrush, new Point(EndPoint - XPosition, YPosition));
+                    //    }
+                    //    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint - XPad, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
+                    //}
+                    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
                 }
                 else {
                     TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
@@ -809,23 +921,25 @@ namespace ODModules {
         }
         protected override void OnMouseClick(MouseEventArgs e) {
             base.OnMouseClick(e);
-            if (GetBoundState(UnitRectangle) == ButtonState.MouseDown) {
-                Point HitLocation = new Point(UnitRectangle.X, UnitRectangle.Y);
-                UnitClicked?.Invoke(this, new UnitClickedEventArgs(HitLocation, Cursor.Position, ValueString, Prefix, Unit));
-            }
-            else if (GetBoundState(PrefixRectangle) == ButtonState.MouseDown) {
-                Point HitLocation = new Point(PrefixRectangle.X, PrefixRectangle.Y);
-                PrefixClicked?.Invoke(this, new PrefixClickedEventArgs(HitLocation, Cursor.Position, ValueString, Prefix, Unit));
-            }
-            else {
-                if (secondaryUnitDisplay != SecondaryUnitDisplayType.NoSecondaryUnit) {
-                    if (GetBoundState(UnitRectangle2) == ButtonState.MouseDown) {
-                        Point HitLocation = new Point(UnitRectangle2.X, UnitRectangle2.Y);
-                        UnitClicked?.Invoke(this, new UnitClickedEventArgs(HitLocation, Cursor.Position, ValueString, Prefix, Unit, true));
-                    }
-                    else if ((GetBoundState(PrefixRectangle2) == ButtonState.MouseDown) && (isSecondaryMetric == true)) {
-                        Point HitLocation = new Point(PrefixRectangle2.X, PrefixRectangle2.Y);
-                        PrefixClicked?.Invoke(this, new PrefixClickedEventArgs(HitLocation, Cursor.Position, ValueString, Prefix, Unit, true));
+            if (hasUnit == true) {
+                if (GetBoundState(UnitRectangle) == ButtonState.MouseDown) {
+                    Point HitLocation = new Point(UnitRectangle.X, UnitRectangle.Y);
+                    UnitClicked?.Invoke(this, new UnitClickedEventArgs(HitLocation, Cursor.Position, ValueString, Prefix, Unit));
+                }
+                else if (GetBoundState(PrefixRectangle) == ButtonState.MouseDown) {
+                    Point HitLocation = new Point(PrefixRectangle.X, PrefixRectangle.Y);
+                    PrefixClicked?.Invoke(this, new PrefixClickedEventArgs(HitLocation, Cursor.Position, ValueString, Prefix, Unit));
+                }
+                else {
+                    if (secondaryUnitDisplay != SecondaryUnitDisplayType.NoSecondaryUnit) {
+                        if (GetBoundState(UnitRectangle2) == ButtonState.MouseDown) {
+                            Point HitLocation = new Point(UnitRectangle2.X, UnitRectangle2.Y);
+                            UnitClicked?.Invoke(this, new UnitClickedEventArgs(HitLocation, Cursor.Position, ValueString, Prefix, Unit, true));
+                        }
+                        else if ((GetBoundState(PrefixRectangle2) == ButtonState.MouseDown) && (isSecondaryMetric == true)) {
+                            Point HitLocation = new Point(PrefixRectangle2.X, PrefixRectangle2.Y);
+                            PrefixClicked?.Invoke(this, new PrefixClickedEventArgs(HitLocation, Cursor.Position, ValueString, Prefix, Unit, true));
+                        }
                     }
                 }
             }
@@ -934,6 +1048,7 @@ namespace ODModules {
             else {
                 if (allowTyping == false) { return false; }
                 if (isMetric == false) { return false; }
+                if (numberbase != NumberBase.Base10) { return false; }
                 bool SecondaryShift = (Control.ModifierKeys & Keys.Alt) == Keys.Alt ? true : false;
                 bool CaseShift = Control.IsKeyLocked(Keys.CapsLock);
                 if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift) {
@@ -1021,18 +1136,28 @@ namespace ODModules {
                     else { ValueString = "0"; UserEntered = true; }
                 }
                 else if ((e.KeyCode == Keys.NumPad1) || (e.KeyCode == Keys.D1)) { ValueString += "1"; UserEntered = true; }
-                else if ((e.KeyCode == Keys.NumPad2) || (e.KeyCode == Keys.D2)) { ValueString += "2"; UserEntered = true; }
-                else if ((e.KeyCode == Keys.NumPad3) || (e.KeyCode == Keys.D3)) { ValueString += "3"; UserEntered = true; }
-                else if ((e.KeyCode == Keys.NumPad4) || (e.KeyCode == Keys.D4)) { ValueString += "4"; UserEntered = true; }
-                else if ((e.KeyCode == Keys.NumPad5) || (e.KeyCode == Keys.D5)) { ValueString += "5"; UserEntered = true; }
-                else if ((e.KeyCode == Keys.NumPad6) || (e.KeyCode == Keys.D6)) { ValueString += "6"; UserEntered = true; }
-                else if ((e.KeyCode == Keys.NumPad7) || (e.KeyCode == Keys.D7)) { ValueString += "7"; UserEntered = true; }
-                else if ((e.KeyCode == Keys.NumPad8) || (e.KeyCode == Keys.D8)) { ValueString += "8"; UserEntered = true; }
-                else if ((e.KeyCode == Keys.NumPad9) || (e.KeyCode == Keys.D9)) { ValueString += "9"; UserEntered = true; }
+                else if ((e.KeyCode == Keys.NumPad2) || (e.KeyCode == Keys.D2)) { if (numberbase > NumberBase.Base2) { ValueString += "2"; } UserEntered = true; }
+                else if ((e.KeyCode == Keys.NumPad3) || (e.KeyCode == Keys.D3)) { if (numberbase > NumberBase.Base2) { ValueString += "3"; } UserEntered = true; }
+                else if ((e.KeyCode == Keys.NumPad4) || (e.KeyCode == Keys.D4)) { if (numberbase > NumberBase.Base2) { ValueString += "4"; } UserEntered = true; }
+                else if ((e.KeyCode == Keys.NumPad5) || (e.KeyCode == Keys.D5)) { if (numberbase > NumberBase.Base2) { ValueString += "5"; } UserEntered = true; }
+                else if ((e.KeyCode == Keys.NumPad6) || (e.KeyCode == Keys.D6)) { if (numberbase > NumberBase.Base2) { ValueString += "6"; } UserEntered = true; }
+                else if ((e.KeyCode == Keys.NumPad7) || (e.KeyCode == Keys.D7)) { if (numberbase > NumberBase.Base2) { ValueString += "7"; } UserEntered = true; }
+                else if ((e.KeyCode == Keys.NumPad8) || (e.KeyCode == Keys.D8)) { if (numberbase > NumberBase.Base8) { ValueString += "8"; } UserEntered = true; }
+                else if ((e.KeyCode == Keys.NumPad9) || (e.KeyCode == Keys.D9)) { if (numberbase > NumberBase.Base8) { ValueString += "9"; } UserEntered = true; }
                 else if ((e.KeyCode == Keys.OemPeriod) || (e.KeyCode == Keys.Decimal)) {
                     if (allowFractions) {
                         ValueString = ValueString.Replace(DecSep.ToString(), "");
                         ValueString += DecSep.ToString();
+                    }
+                }
+                else {
+                    if (numberbase == NumberBase.Base16) {
+                        if (e.KeyCode == Keys.A) { ValueString += "A"; }
+                        else if (e.KeyCode == Keys.B) { ValueString += "B"; }
+                        else if (e.KeyCode == Keys.C) { ValueString += "C"; }
+                        else if (e.KeyCode == Keys.D) { ValueString += "D"; }
+                        else if (e.KeyCode == Keys.E) { ValueString += "E"; }
+                        else if (e.KeyCode == Keys.F) { ValueString += "F"; }
                     }
                 }
             }
@@ -1072,6 +1197,7 @@ namespace ODModules {
                 ValueString = "-0" + ValueString.Remove(0, 1);
             }
             if (ValueString.Length == 0) { ValueString = "0"; }
+            CorrectValueToRange(ValueString, out ValueString);
             DecimalTrim();
             ValueChanged?.Invoke(this, new ValueChangedEventArgs(ValueString, Prefix));
         }
@@ -1173,105 +1299,188 @@ namespace ODModules {
         }
         #endregion
         #region Numerical Control
-        private void TickBackward() {
-            if (allowNumberEntry == false) { return; }
-            if (ValueString.EndsWith(Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator).ToString())) {
-                ValueString += "9";
-            }
-            else {
-                string BufferValueString = ValueString;
-                bool IsNeg = IsNegative(BufferValueString);
-                BufferValueString = BufferValueString.Replace("-", "");
-                StringBuilder sb = new StringBuilder(BufferValueString);
-                string Attachment = "";
-                bool HasOverflow = false;
-                if (IsZero(BufferValueString)) {
-                    IsNeg = true;
-                }
-                for (int i = BufferValueString.Length - 1; i > -1; i--) {
-
-                    if ((BufferValueString[i] != '.') && (BufferValueString[i] != ',')) {
-                        HasOverflow = false;
-                        if (IsNeg == true) {
-                            char Current = BufferValueString[i];
-                            if (Current == '9') {
-                                HasOverflow = true;
-                                sb[i] = '0';
-                                if (i == 0) { Attachment = "1"; }
-                            }
-                            else {
-                                char SelectedChar = BufferValueString[i];
-                                int bar = SelectedChar - '0';
-                                bar += 1;
-                                sb[i] = (bar.ToString().ToCharArray())[0];
-                            }
-                        }
-                        else {
-                            char Current = BufferValueString[i];
-                            if (Current == '0') {
-                                HasOverflow = true;
-                                sb[i] = '9';
-                            }
-                            else {
-                                char SelectedChar = BufferValueString[i];
-                                int bar = SelectedChar - '0';
-                                bar -= 1;
-                                sb[i] = (bar.ToString().ToCharArray())[0];
-                            }
-                        }
-                        if (HasOverflow == false) { break; }
+        private void Base16TickChange(bool IsForward) {
+            string BufferValueString = ValueString;
+            bool IsNeg = IsNegative(BufferValueString);
+            BufferValueString = BufferValueString.Replace("-", "");
+            StringBuilder sb = new StringBuilder(BufferValueString);
+            string Attachment = "";
+            bool HasOverflow = false;
+            bool IsNegTemp = IsNeg;
+            if (IsForward == false) {
+                IsNegTemp = !IsNegTemp;
+                if (allowNegatives == false) {
+                    if ((BufferValueString.Length == 1) && (BufferValueString == "0")) {
+                        return;
                     }
                 }
-                PerformCleanup(Attachment + sb.ToString(), IsNeg);
-                //ValueChanged?.Invoke(this, new ValueChangedEventArgs(ValueString, Prefix));
+
+            }
+            for (int i = BufferValueString.Length - 1; i > -1; i--) {
+                HasOverflow = false;
+                if ((BufferValueString[i] != '.') && (BufferValueString[i] != ',')) {
+                    if (IsNegTemp == true) {
+                        char Current = BufferValueString[i];
+                        if (Current == '0') {
+                            HasOverflow = true;
+                            sb[i] = 'F';
+                        }
+                        else {
+                            int bar = int.Parse(BufferValueString[i].ToString(), System.Globalization.NumberStyles.HexNumber);
+                            bar -= 1;
+                            sb[i] = (bar.ToString("X").ToCharArray())[0];
+                        }
+                    }
+                    else {
+                        char Current = BufferValueString[i];
+                        if (Current == 'F') {
+                            HasOverflow = true;
+                            sb[i] = '0';
+                            if (i == 0) { Attachment = "1"; }
+                        }
+                        else {
+                            int bar = int.Parse(BufferValueString[i].ToString(), System.Globalization.NumberStyles.HexNumber);
+                            bar += 1;
+                            sb[i] = (bar.ToString("X").ToCharArray())[0];
+                        }
+                    }
+                    if (HasOverflow == false) { break; }
+                }
+            }
+            PerformCleanup(Attachment + sb.ToString(), IsNeg);
+        }
+        private void Base10TickChange(bool IsForward, char TickOverChar = '9') {
+            if (IsForward == true) {
+                if (ValueString.EndsWith(Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator).ToString())) {
+                    ValueString += "1";
+                }
+                else {
+                    string BufferValueString = ValueString;
+                    bool IsNeg = IsNegative(BufferValueString);
+                    BufferValueString = BufferValueString.Replace("-", "");
+                    StringBuilder sb = new StringBuilder(BufferValueString);
+                    string Attachment = "";
+                    bool HasOverflow = false;
+                    for (int i = BufferValueString.Length - 1; i > -1; i--) {
+                        HasOverflow = false;
+                        if ((BufferValueString[i] != '.') && (BufferValueString[i] != ',')) {
+                            if (IsNeg == true) {
+                                char Current = BufferValueString[i];
+                                if (Current == '0') {
+                                    HasOverflow = true;
+                                    sb[i] = TickOverChar;
+                                }
+                                else {
+                                    char SelectedChar = BufferValueString[i];
+                                    int bar = SelectedChar - '0';
+                                    bar -= 1;
+                                    sb[i] = (bar.ToString().ToCharArray())[0];
+                                }
+                            }
+                            else {
+                                char Current = BufferValueString[i];
+                                if (Current == TickOverChar) {
+                                    HasOverflow = true;
+                                    sb[i] = '0';
+                                    if (i == 0) { Attachment = "1"; }
+                                }
+                                else {
+                                    char SelectedChar = BufferValueString[i];
+                                    int bar = SelectedChar - '0';
+                                    bar += 1;
+                                    sb[i] = (bar.ToString().ToCharArray())[0];
+                                }
+                            }
+                            if (HasOverflow == false) { break; }
+                        }
+                    }
+                    PerformCleanup(Attachment + sb.ToString(), IsNeg);
+                }
+            }
+            else {
+                if (ValueString.EndsWith(Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator).ToString())) {
+                    ValueString += TickOverChar;
+                }
+                else {
+                    string BufferValueString = ValueString;
+                    bool IsNeg = IsNegative(BufferValueString);
+                    BufferValueString = BufferValueString.Replace("-", "");
+                    StringBuilder sb = new StringBuilder(BufferValueString);
+                    string Attachment = "";
+                    bool HasOverflow = false;
+                    bool IgnoreFormat = false;
+                    if (IsZero(BufferValueString)) {
+                        IsNeg = true;
+                        IgnoreFormat = !allowNegatives;
+                    }
+                    if (IgnoreFormat == false) {
+                        for (int i = BufferValueString.Length - 1; i > -1; i--) {
+                            if ((BufferValueString[i] != '.') && (BufferValueString[i] != ',')) {
+                                HasOverflow = false;
+                                if (IsNeg == true) {
+                                    char Current = BufferValueString[i];
+                                    if (Current == TickOverChar) {
+                                        HasOverflow = true;
+                                        sb[i] = '0';
+                                        if (i == 0) { Attachment = "1"; }
+                                    }
+                                    else {
+                                        char SelectedChar = BufferValueString[i];
+                                        int bar = SelectedChar - '0';
+                                        bar += 1;
+                                        sb[i] = (bar.ToString().ToCharArray())[0];
+                                    }
+                                }
+                                else {
+                                    char Current = BufferValueString[i];
+                                    if (Current == '0') {
+                                        HasOverflow = true;
+                                        sb[i] = TickOverChar;
+                                    }
+                                    else {
+                                        char SelectedChar = BufferValueString[i];
+                                        int bar = SelectedChar - '0';
+                                        bar -= 1;
+                                        sb[i] = (bar.ToString().ToCharArray())[0];
+                                    }
+                                }
+                                if (HasOverflow == false) { break; }
+                            }
+                        }
+                        PerformCleanup(Attachment + sb.ToString(), IsNeg);
+                    }
+                    //ValueChanged?.Invoke(this, new ValueChangedEventArgs(ValueString, Prefix));
+                }
             }
         }
         private void TickForward() {
             if (allowNumberEntry == false) { return; }
-            if (ValueString.EndsWith(Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator).ToString())) {
-                ValueString += "1";
+            if (numberbase == NumberBase.Base10) {
+                Base10TickChange(true);
             }
-            else {
-                string BufferValueString = ValueString;
-                bool IsNeg = IsNegative(BufferValueString);
-                BufferValueString = BufferValueString.Replace("-", "");
-                StringBuilder sb = new StringBuilder(BufferValueString);
-                string Attachment = "";
-                bool HasOverflow = false;
-                for (int i = BufferValueString.Length - 1; i > -1; i--) {
-                    HasOverflow = false;
-                    if ((BufferValueString[i] != '.') && (BufferValueString[i] != ',')) {
-                        if (IsNeg == true) {
-                            char Current = BufferValueString[i];
-                            if (Current == '0') {
-                                HasOverflow = true;
-                                sb[i] = '9';
-                            }
-                            else {
-                                char SelectedChar = BufferValueString[i];
-                                int bar = SelectedChar - '0';
-                                bar -= 1;
-                                sb[i] = (bar.ToString().ToCharArray())[0];
-                            }
-                        }
-                        else {
-                            char Current = BufferValueString[i];
-                            if (Current == '9') {
-                                HasOverflow = true;
-                                sb[i] = '0';
-                                if (i == 0) { Attachment = "1"; }
-                            }
-                            else {
-                                char SelectedChar = BufferValueString[i];
-                                int bar = SelectedChar - '0';
-                                bar += 1;
-                                sb[i] = (bar.ToString().ToCharArray())[0];
-                            }
-                        }
-                        if (HasOverflow == false) { break; }
-                    }
-                }
-                PerformCleanup(Attachment + sb.ToString(), IsNeg);
+            else if (numberbase == NumberBase.Base2) {
+                Base10TickChange(true, '1');
+            }
+            else if (numberbase == NumberBase.Base8) {
+                Base10TickChange(true, '7');
+            }
+            else if (numberbase == NumberBase.Base16) {
+                Base16TickChange(true);
+            }
+        }
+        private void TickBackward() {
+            if (allowNumberEntry == false) { return; }
+            if (numberbase == NumberBase.Base10) {
+                Base10TickChange(false);
+            }
+            else if (numberbase == NumberBase.Base2) {
+                Base10TickChange(false, '1');
+            }
+            else if (numberbase == NumberBase.Base8) {
+                Base10TickChange(false, '7');
+            }
+            else if (numberbase == NumberBase.Base16) {
+                Base16TickChange(false);
             }
         }
         private void ChangeOrder(bool IncreasePointPosition) {
@@ -1330,10 +1539,11 @@ namespace ODModules {
             Input = Input.TrimStart('0');
             if (Input.Length == 0) { Input = "0"; }
             if ((Input.StartsWith(".")) || (Input.StartsWith(","))) { Input = "0" + Input; }
-            if (IsNegative == true) {
+            if ((IsNegative == true) && (allowNegatives == true)) {
                 Input = "-" + Input;
                 if (IsZero(Input)) { Input = Input.Replace("-", ""); }
             }
+            CorrectValueToRange(Input, out Input);
             ValueString = Input;
             DecimalTrim();
             ValueChanged?.Invoke(this, new ValueChangedEventArgs(ValueString, Prefix));
@@ -1421,9 +1631,13 @@ namespace ODModules {
                 bool IgnoreNumerical = false;
                 bool IgnoreSusMinuses = false;
                 string PrefixPart = "";
+                int HighestNumber = 9;
+                if (numberbase <= NumberBase.Base8) {
+                    HighestNumber = (int)numberbase - 1;
+                }
                 for (int i = 0; i < Input.Length; i++) {
                     if (IgnoreNumerical == false) {
-                        if (((int)Input[i] - 0x30 >= 0) && ((int)Input[i] - 0x30 <= 9)) {
+                        if (((int)Input[i] - 0x30 >= 0) && ((int)Input[i] - 0x30 <= HighestNumber)) {
                             NumericalPart += Input[i];
                             IgnoreSusMinuses = true;
                         }
@@ -1450,7 +1664,24 @@ namespace ODModules {
                         else if (Input[i] == a) {
                             NumericalPart += Input[i];
                         }
-                        else { IgnoreNumerical = true; i = i - 1; }
+                        else {
+                            if (numberbase == NumberBase.Base16) {
+                                if (((int)Input[i] - 0x41 >= 0) && ((int)Input[i] - 0x41 <= 5)) {
+                                    NumericalPart += Input[i];
+                                    IgnoreSusMinuses = true;
+                                }
+                                else if (((int)Input[i] - 0x61 >= 0) && ((int)Input[i] - 0x61 <= 5)) {
+                                    NumericalPart += Input[i].ToString().ToUpper();
+                                    IgnoreSusMinuses = true;
+                                }
+                                else {
+                                    IgnoreNumerical = true; i = i - 1;
+                                }
+                            }
+                            else {
+                                IgnoreNumerical = true; i = i - 1;
+                            }
+                        }
                     }
                     else {
                         if ((Input[i] == ' ') || (Input[i] == (char)0x09)) { }
@@ -1540,6 +1771,59 @@ namespace ODModules {
             ValueString = "0"; UserEntered = true;
             DecimalTrim();
             ValueChanged?.Invoke(this, new ValueChangedEventArgs(ValueString, Prefix));
+        }
+        public void PushCharacter(char Input) {
+            bool entryState = allowNumberEntry;
+
+            KeyEventArgs? e = null;
+            switch (Input) {
+                case '0':
+                    e = new KeyEventArgs(Keys.NumPad0); break;
+                case '1':
+                    e = new KeyEventArgs(Keys.NumPad1); break;
+                case '2':
+                    e = new KeyEventArgs(Keys.NumPad2); break;
+                case '3':
+                    e = new KeyEventArgs(Keys.NumPad3); break;
+                case '4':
+                    e = new KeyEventArgs(Keys.NumPad4); break;
+                case '5':
+                    e = new KeyEventArgs(Keys.NumPad5); break;
+                case '6':
+                    e = new KeyEventArgs(Keys.NumPad6); break;
+                case '7':
+                    e = new KeyEventArgs(Keys.NumPad7); break;
+                case '8':
+                    e = new KeyEventArgs(Keys.NumPad8); break;
+                case '9':
+                    e = new KeyEventArgs(Keys.NumPad9); break;
+                case 'A':
+                    e = new KeyEventArgs(Keys.A); break;
+                case 'B':
+                    e = new KeyEventArgs(Keys.B); break;
+                case 'C':
+                    e = new KeyEventArgs(Keys.C); break;
+                case 'D':
+                    e = new KeyEventArgs(Keys.D); break;
+                case 'E':
+                    e = new KeyEventArgs(Keys.E); break;
+                case 'R':
+                    e = new KeyEventArgs(Keys.F); break;
+                case '.':
+                    e = new KeyEventArgs(Keys.OemPeriod); break;
+                case '-':
+                    e = new KeyEventArgs(Keys.OemMinus); break;
+                default:
+                    break;
+            }
+            if (e != null) {
+                allowNumberEntry = true;
+                UserEntered = true;
+                ProcessNumerical(e);
+                allowNumberEntry = entryState;
+                ValueChanged?.Invoke(this, new ValueChangedEventArgs(ValueString, Prefix));
+                Invalidate();
+            }
         }
         #endregion
         #region Text Testing
@@ -1787,6 +2071,63 @@ namespace ODModules {
                 default: return false; ;
             }
         }
+        private ValueRangeType ValueInRange(string Input) {
+            if (rangeLimited == true) {
+                string TempInput = Input;
+                if (numberbase == NumberBase.Base2) {
+                    TempInput = MathHandler.BinaryToDecimal(Input, BinaryFormatFlags.Length256Bit | BinaryFormatFlags.Signed).ToString();
+                }
+                else if (numberbase == NumberBase.Base8) {
+                    TempInput = MathHandler.OctalToDecimal(Input, BinaryFormatFlags.Length256Bit | BinaryFormatFlags.Signed).ToString();
+                }
+                else if (numberbase == NumberBase.Base16) {
+                    TempInput = MathHandler.HexadecimalToDecimal(Input, BinaryFormatFlags.Length256Bit | BinaryFormatFlags.Signed).ToString();
+                }
+                NumericalString TestValue = new NumericalString(TempInput);
+                if (TestValue < minimum) {
+                    return ValueRangeType.OutOfLower;
+                }
+                if (TestValue > maximum) {
+                    return ValueRangeType.OutOfUpper;
+                }
+                return ValueRangeType.InRange;
+            }
+            return ValueRangeType.InRange;
+        }
+        private void CorrectValueToRange(string Input, out string Output) {
+            ValueRangeType State = ValueInRange(Input);
+            BinaryFormatFlags FormatFlags = BinaryFormatFlags.Length256Bit | BinaryFormatFlags.Signed;
+            switch (State) {
+                case ValueRangeType.OutOfLower:
+                    if (numberbase == NumberBase.Base2) {
+                        Output = MathHandler.DecimalToBinary(minimum.ToString(), FormatFlags);
+                    }
+                    else if (numberbase == NumberBase.Base8) {
+                        Output = MathHandler.DecimalToOctal(minimum.ToString(), FormatFlags);
+                    }
+                    else if (numberbase == NumberBase.Base16) {
+                        Output = MathHandler.DecimalToHexadecimal(minimum.ToString(), FormatFlags);
+                    }
+                    else { Output = minimum.ToString(); }
+                    break;
+                case ValueRangeType.InRange:
+                    Output = Input; break;
+                case ValueRangeType.OutOfUpper:
+                    if (numberbase == NumberBase.Base2) {
+                        Output = MathHandler.DecimalToBinary(maximum.ToString(), FormatFlags);
+                    }
+                    else if (numberbase == NumberBase.Base8) {
+                        Output = MathHandler.DecimalToOctal(maximum.ToString(), FormatFlags);
+                    }
+                    else if (numberbase == NumberBase.Base16) {
+                        Output = MathHandler.DecimalToHexadecimal(maximum.ToString(), FormatFlags);
+                    }
+                    else { Output = maximum.ToString(); }
+                    break;
+                default:
+                    Output = Input; break;
+            }
+        }
         public enum MetricPrefix {
             Quecto = -12,   //
             Ronto = -11,    //
@@ -1824,6 +2165,17 @@ namespace ODModules {
             NoSecondaryUnit = 0x00,
             Multiply = 0x01,
             Divide = 0x02
+        }
+        public enum NumberBase {
+            Base2 = 0x02,
+            Base8 = 0x08,
+            Base10 = 0x0A,
+            Base16 = 0x10
+        }
+        private enum ValueRangeType {
+            OutOfLower = 0x01,
+            InRange = 0x02,
+            OutOfUpper = 0x03
         }
         #endregion
         #region Reporting
@@ -1907,6 +2259,11 @@ namespace ODModules {
                     PasteNumber(Data);
                 }
             }
+        }
+
+        protected override void OnSizeChanged(EventArgs e) {
+            Invalidate();
+            base.OnSizeChanged(e);
         }
 
         #region AutoSize

@@ -8,18 +8,15 @@
     ".NETCoreApp,Version=v6.0": {
       "ODModules/1.0.0": {
         "dependencies": {
-          "ODHandlers": "1.0.0.0"
+          "Handlers": "1.0.0"
         },
         "runtime": {
           "ODModules.dll": {}
         }
       },
-      "ODHandlers/1.0.0.0": {
+      "Handlers/1.0.0": {
         "runtime": {
-          "ODHandlers.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
+          "ODHandlers.dll": {}
         }
       }
     }
@@ -30,8 +27,8 @@
       "serviceable": false,
       "sha512": ""
     },
-    "ODHandlers/1.0.0.0": {
-      "type": "reference",
+    "Handlers/1.0.0": {
+      "type": "project",
       "serviceable": false,
       "sha512": ""
     }

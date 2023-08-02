@@ -1,13 +1,13 @@
-﻿using Handlers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using Handlers;
+using System.ComponentModel;
 
 namespace ODModules {
     public class SplashControl : UserControl {
@@ -125,11 +125,11 @@ namespace ODModules {
                 Invalidate();
             }
         }
-        SplashScreenText? applicationTitle;
+        SplashScreenText ?applicationTitle;
         [System.ComponentModel.Category("Display")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [RefreshProperties(System.ComponentModel.RefreshProperties.All)]
-        public SplashScreenText? Title {
+        public SplashScreenText ?Title {
             get {
                 return applicationTitle;
             }
@@ -144,11 +144,11 @@ namespace ODModules {
                 Invalidate();
             }
         }
-        SplashScreenText? applicationSubTitle;
+        SplashScreenText ?applicationSubTitle;
         [System.ComponentModel.Category("Display")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [RefreshProperties(System.ComponentModel.RefreshProperties.All)]
-        public SplashScreenText? Subtitle {
+        public SplashScreenText ?Subtitle {
             get {
                 return applicationSubTitle;
             }
@@ -164,11 +164,11 @@ namespace ODModules {
 
             }
         }
-        SplashScreenText? applicationDescription;
+        SplashScreenText ?applicationDescription;
         [System.ComponentModel.Category("Display")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [RefreshProperties(System.ComponentModel.RefreshProperties.All)]
-        public SplashScreenText? Description {
+        public SplashScreenText ?Description {
             get {
                 return applicationDescription;
             }
@@ -183,11 +183,11 @@ namespace ODModules {
                 Invalidate();
             }
         }
-        SplashScreenText? applicationStatus;
+        SplashScreenText ?applicationStatus;
         [System.ComponentModel.Category("Display")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [RefreshProperties(System.ComponentModel.RefreshProperties.All)]
-        public SplashScreenText? Status {
+        public SplashScreenText ?Status {
             get {
                 return applicationStatus;
             }
@@ -203,11 +203,11 @@ namespace ODModules {
             }
         }
 
-        SplashScreenLogo? logo;
+        SplashScreenLogo ?logo;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [RefreshProperties(System.ComponentModel.RefreshProperties.All)]
         [System.ComponentModel.Category("Display")]
-        public SplashScreenLogo? ApplicationLogo {
+        public SplashScreenLogo ?ApplicationLogo {
             get {
                 return logo;
             }
@@ -244,7 +244,7 @@ namespace ODModules {
             RunningVerticalPosition += DrawTitle(e, applicationDescription, new Point(0, RunningVerticalPosition));
             RunningVerticalPosition += DrawTitle(e, applicationStatus, new Point(0, RunningVerticalPosition), true);
         }
-        private int DrawTitle(PaintEventArgs e, SplashScreenText? TitleSection, Point TextPosition, bool UseDefaultOnZero = false) {
+        private int DrawTitle(PaintEventArgs e, SplashScreenText ?TitleSection, Point TextPosition, bool UseDefaultOnZero = false) {
             if (TitleSection == null) { return 0; }
             if (TitleSection.Text == null) { return 0; }
             //if (TitleSection.Text.Length == 0) { return 0; }
@@ -312,7 +312,7 @@ namespace ODModules {
             e.Graphics.DrawImage(LogoSection.Image, LogoRectangle);
             return LogoSize.Height;
         }
-        private Size GetLogoSize(PaintEventArgs e, SplashScreenLogo? LogoSection) {
+        private Size GetLogoSize(PaintEventArgs e, SplashScreenLogo ?LogoSection) {
             if (LogoSection != null) {
                 if (LogoSection.Visible == false) {
                     return new Size(0, 0);
@@ -327,7 +327,7 @@ namespace ODModules {
             }
             return new Size(0, 0);
         }
-        private Size GetTitleSize(PaintEventArgs e, SplashScreenText? TitleSection, bool UseDefaultOnZero = false) {
+        private Size GetTitleSize(PaintEventArgs e, SplashScreenText ?TitleSection, bool UseDefaultOnZero = false) {
             if (TitleSection != null) {
                 if (TitleSection.Visible == false) {
                     return new Size(0, 0);
@@ -348,7 +348,7 @@ namespace ODModules {
             }
             return new Size(0, 0);
         }
-        private uint GetTitleOffset(SplashScreenText? TitleSection) {
+        private uint GetTitleOffset(SplashScreenText ?TitleSection) {
             if (TitleSection != null) {
                 if (TitleSection.Visible == false) {
                     return 0;
@@ -419,7 +419,7 @@ namespace ODModules {
                     Size ScaledSize = new Size((int)(BackgroundImage.Height * Ratio * backgroundImageScaling), (int)(BackgroundImage.Height * backgroundImageScaling));
                     Rectangle BackgroundRectanagle = new Rectangle(new Point(0, 0), ScaledSize);
                     if (backgroundImagePosition == SplashScreenImagePostion.TopRight) {
-                        BackgroundRectanagle = new Rectangle(new Point(Width - ScaledSize.Width, 0), ScaledSize);
+                        BackgroundRectanagle = new Rectangle(new Point(Width- ScaledSize.Width, 0), ScaledSize);
                     }
                     else if (backgroundImagePosition == SplashScreenImagePostion.BottomRight) {
                         BackgroundRectanagle = new Rectangle(new Point(Width - ScaledSize.Width, Height - ScaledSize.Height), ScaledSize);
@@ -429,7 +429,7 @@ namespace ODModules {
                     }
                     e.Graphics.DrawImage(BackgroundImage, BackgroundRectanagle);
                 }
-
+                
             }
         }
 
@@ -444,18 +444,18 @@ namespace ODModules {
 
         }
 
-        private void SplashControl_Load(object? sender, EventArgs e) {
+        private void SplashControl_Load(object ?sender, EventArgs e) {
 
         }
     }
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public class SplashScreenLogo {
         public delegate void UpdateHandler(object sender);
-        public event UpdateHandler? PropertyChanged;
-        Image? embeddedimage = null;
+        public event UpdateHandler ?PropertyChanged;
+        Image ?embeddedimage = null;
         [System.ComponentModel.Category("Appearance")]
         [NotifyParentProperty(true)]
-        public Image? Image {
+        public Image ?Image {
             get {
                 return embeddedimage;
             }
@@ -505,7 +505,7 @@ namespace ODModules {
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public class SplashScreenText : ExpandableObjectConverter {
         public delegate void UpdateHandler(object sender);
-        public event UpdateHandler? PropertyChanged;
+        public event UpdateHandler ?PropertyChanged;
 
         int horizontalOffset = 0;
         [System.ComponentModel.Category("Appearance")]
@@ -528,10 +528,10 @@ namespace ODModules {
                 PropertyChanged?.Invoke(this);
             }
         }
-        Font? textFont = null;
+        Font ?textFont = null;
         [System.ComponentModel.Category("Appearance")]
         [NotifyParentProperty(true)]
-        public Font? Font {
+        public Font ?Font {
             get { return textFont; }
             set {
                 textFont = value;
@@ -610,7 +610,7 @@ namespace ODModules {
             Font = font;
         }
 
-        public override bool Equals(object? obj) {
+        public override bool Equals(object ?obj) {
             return base.Equals(obj);
         }
 

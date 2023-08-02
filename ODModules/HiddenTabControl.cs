@@ -3,18 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-using System.Windows.Forms.VisualStyles;
 
 namespace ODModules {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.CompilerServices;
+    using System.Security;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Microsoft.VisualBasic;
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+    using System.Windows.Forms.VisualStyles;
+
     public class HiddenTabControl : TabControl {
         private bool FlagControl = false;
         private Color _DefaultColor1;
@@ -158,10 +164,10 @@ namespace ODModules {
         }
 
         protected override void OnPaintBackground(PaintEventArgs pevent) {
-            using (SolidBrush Br = new SolidBrush(DefaultColor1)) {
+            using(SolidBrush Br = new SolidBrush(DefaultColor1)) {
                 pevent.Graphics.FillRectangle(Br, this.Bounds);
             }
-            // base.OnPaintBackground(pevent);
+           // base.OnPaintBackground(pevent);
         }
     }
 

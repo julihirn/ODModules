@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
-using System.Globalization;
 using System.Text;
+using System.Drawing.Text;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
+using System.Globalization;
+using System.Diagnostics;
 
 namespace ODModules {
     public class PrefixScale : UserControl {
@@ -489,7 +489,7 @@ namespace ODModules {
                         PrefixTick(e.Delta);
                     }
                     else if (linkedNumericControl.IsSecondaryMetric == true) {
-                        PrefixTick(e.Delta, false);
+                        PrefixTick(e.Delta,false);
                     }
                 }
             }

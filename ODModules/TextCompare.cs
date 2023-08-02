@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace ODModules {
+
+
     public class TextCompare : System.Windows.Forms.UserControl {
         public event EventHandler? TextSizeChanged;
         private string compareFrom = "";
@@ -84,12 +86,12 @@ namespace ODModules {
         int Longeststring = 0;
         private void DetermineLongestString() {
             int OldLongest = Longeststring;
-            if (compareFrom.Length >= compareTo.Length) {
-                Longeststring = compareFrom.Length;
-            }
-            else if (compareFrom.Length < compareTo.Length) {
-                Longeststring = compareTo.Length;
-            }
+                if (compareFrom.Length >= compareTo.Length) {
+                    Longeststring = compareFrom.Length;
+                }
+                else if (compareFrom.Length < compareTo.Length) {
+                    Longeststring = compareTo.Length;
+                }
 
             if (OldLongest != Longeststring) {
                 //Invoke that the scroll has to be changed

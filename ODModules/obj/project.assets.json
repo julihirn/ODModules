@@ -1,11 +1,29 @@
 {
   "version": 3,
   "targets": {
-    "net6.0-windows7.0": {}
+    "net6.0-windows7.0": {
+      "Handlers/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/Handlers.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Handlers.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "Handlers/1.0.0": {
+      "type": "project",
+      "path": "../../Handlers/Handlers.csproj",
+      "msbuildProject": "../../Handlers/Handlers.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net6.0-windows7.0": []
+    "net6.0-windows7.0": [
+      "Handlers >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Chann\\.nuget\\packages\\": {},
@@ -15,11 +33,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Chann\\Source\\Repos\\ODModules\\ODModules\\ODModules.csproj",
+      "projectUniqueName": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\ODModules.csproj",
       "projectName": "ODModules",
-      "projectPath": "C:\\Users\\Chann\\Source\\Repos\\ODModules\\ODModules\\ODModules.csproj",
+      "projectPath": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\ODModules.csproj",
       "packagesPath": "C:\\Users\\Chann\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Chann\\Source\\Repos\\ODModules\\ODModules\\obj\\",
+      "outputPath": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -42,7 +60,11 @@
       "frameworks": {
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Chann\\OneDrive\\Apps\\Handlers\\Handlers.csproj": {
+              "projectPath": "C:\\Users\\Chann\\OneDrive\\Apps\\Handlers\\Handlers.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

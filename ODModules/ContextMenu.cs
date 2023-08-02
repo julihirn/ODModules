@@ -235,7 +235,7 @@ namespace ODModules {
             var r = new Rectangle(e.ArrowRectangle.Location, e.ArrowRectangle.Size);
             r.Inflate(-2, -6);
             using (SolidBrush ActionBrush = new SolidBrush(actionSymbolForeColor)) {
-                using (Pen ActionPen = new Pen(ActionBrush, 2)) {
+                using (Pen ActionPen = new Pen(ActionBrush,2)) {
                     e.Graphics.DrawLines(ActionPen, new Point[]{
         new Point(r.Left, r.Top),
         new Point(r.Right, r.Top + r.Height /2),

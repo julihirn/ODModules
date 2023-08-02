@@ -1,20 +1,20 @@
 ﻿
-using Handlers;
-using ODModules;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
+using System.Diagnostics;
+using ODModules;
+using System.Collections;
+using Handlers;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using System.Reflection;
 
 namespace ODModules {
     public class Navigator : UserControl {
@@ -76,7 +76,28 @@ namespace ODModules {
                    o.GetType().IsGenericType &&
                    o.GetType().GetGenericTypeDefinition().IsAssignableFrom(typeof(List<>));
         }
-
+        private Color arrowColor = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color ArrowColor {
+            get {
+                return arrowColor;
+            }
+            set {
+                arrowColor = value;
+                Invalidate();
+            }
+        }
+        private Color arrowMouseOverColor = Color.DodgerBlue;
+        [System.ComponentModel.Category("Appearance")]
+        public Color ArrowMouseOverColor {
+            get {
+                return arrowMouseOverColor;
+            }
+            set {
+                arrowMouseOverColor = value;
+                Invalidate();
+            }
+        }
         Color midColor = Color.Gray;
         [System.ComponentModel.Category("Appearance")]
         public Color MidColor {
@@ -192,11 +213,14 @@ namespace ODModules {
             else { ItemCount = GetItemCount(linkedList); }
 
             EndItem = StartItem + MaxWindItems;
+            DetermineOverflow();
             DrawSideShadow(e);
-            float SelectedItemPos = (float)ItemsStart + (selectedItemChnge * (float)ItemHeight);
+            float SelectedItemPos = (float)ItemsStart + ((selectedItemChnge - (float)StartItem) * (float)ItemHeight);//(float)ItemsStart + (selectedItemChnge * (float)ItemHeight);
+            Debug.Print(selectedItemChnge.ToString() + "  " + StartItem.ToString() + " " + EndItem.ToString());
             DrawSelectedBottom(e, SelectedItemPos);
             DrawItems(e);
             DrawSelectedTop(e, SelectedItemPos);
+            DrawOverflowArrows(e);
             //DrawSelectedBottom(e, 10);
             //DrawSelectedTop(e, 10);
         }
@@ -231,7 +255,7 @@ namespace ODModules {
                     float ItemVertPos = ItemsStart + (i * ItemHeight);
                     int CurrentItem = StartItem + i;
                     if ((CurrentItem >= 0) && (CurrentItem < ItemCount)) {//linkedList.Count
-                        string DisplayText = GetItemValue(i);// linkedList[CurrentItem];
+                        string DisplayText = GetItemValue(CurrentItem);// linkedList[CurrentItem];
                         using (SolidBrush TextBr = new SolidBrush(ForeColor)) {
                             if (displayStyle == Style.Left) {
                                 RectangleF TextPos = new RectangleF(PadItem, ItemVertPos, Width - PadItem, ItemHeight);
@@ -245,6 +269,63 @@ namespace ODModules {
                     }
                 }
             }
+        }
+        bool OverflowTop = false;
+        bool OverflowBottom = false;
+        Rectangle OverflowTopRectangle = Rectangle.Empty;
+        Rectangle OverflowBottomRectangle = Rectangle.Empty;
+        private void DrawOverflowArrows(PaintEventArgs e) {
+            OverflowTopRectangle = new Rectangle(0, 0, Width, ItemHeight);
+            OverflowBottomRectangle = new Rectangle(0, Height - ItemHeight, Width, ItemHeight);
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            if (ItemCount <= 0) { return; }
+            if (OverflowTop == true) {
+                DrawArrow(e, OverflowTopRectangle, true);
+            }
+            if (OverflowBottom== true) {
+                DrawArrow(e, OverflowBottomRectangle, false);
+            }
+        }
+        private void DrawArrow(PaintEventArgs e, Rectangle ArrowBounds, bool TopArrow) {
+            Size ButtonSize = new Size((int)UnitSize, (int)UnitSize);
+            Color collapseArrowColor = Color.White;
+            int CentreX = ArrowBounds.X + ((ArrowBounds.Width - ButtonSize.Width) / 2);
+            int CentreY= ArrowBounds.Y + ((ArrowBounds.Height - ButtonSize.Height) / 2);
+            Rectangle CentreArrow = new Rectangle(CentreX, CentreY, ButtonSize.Width, ButtonSize.Height);
+            using (SolidBrush ActionBrush = new SolidBrush(collapseArrowColor)) {
+                using (Pen ActionPen = new Pen(ActionBrush, 1)) {
+                    Point[] Points;
+                    ArrowPoints(CentreArrow, out Points, TopArrow);
+                    e.Graphics.DrawLines(ActionPen, Points);
+                }
+            }
+        }
+        private void ArrowPoints(Rectangle CollapseMarker, out Point[] Points, bool TopArrow) {
+            int HalfHeight = CollapseMarker.Height / 2;
+            if (TopArrow == false) {
+                Points = new Point[]{
+                         new Point(CollapseMarker.Left, CollapseMarker.Top),
+                         new Point(CollapseMarker.Left + CollapseMarker.Width/2, CollapseMarker.Top + HalfHeight),
+                         new Point(CollapseMarker.Right, CollapseMarker.Top)};
+            }
+            else {
+                Points = new Point[]{
+                         new Point(CollapseMarker.Left, CollapseMarker.Top+ HalfHeight),
+                         new Point(CollapseMarker.Left + CollapseMarker.Width/2, CollapseMarker.Top),
+                         new Point(CollapseMarker.Right, CollapseMarker.Top+ HalfHeight)};
+            }
+        }
+        private void DetermineOverflow() {
+            if (ItemCount <= 0) {
+                OverflowTop = false;
+                OverflowBottom = false;
+                return; 
+            }
+            if (StartItem > 0) { OverflowTop = true;}
+            else { OverflowTop = false;}
+            if (ItemCount > EndItem) { OverflowBottom = true;}
+            else { OverflowBottom=false;}
+
         }
         //private int GetItemCount(List<object> list) {
         //    if (list is ICollection) {
@@ -280,7 +361,7 @@ namespace ODModules {
                                     return SubVal.ToString() ?? "";
                                 }
                             }
-
+                          
                         }
                     }
                 }
@@ -331,7 +412,7 @@ namespace ODModules {
             }
         }
         private int GetCurrentSelectedItem() {
-            return StartItem + (int)Math.Round(selectedItemChnge, 2);
+            return StartItem + (int)Math.Floor(selectedItemChnge);
         }
 
         protected override void OnResize(EventArgs e) {
@@ -340,16 +421,26 @@ namespace ODModules {
         }
         private int GetSelectedItem(Point Pos) {
             //y = ItemsStart + (i * ItemHeight);
-            return (int)Math.Floor(((double)Pos.Y - (double)ItemsStart) / (double)ItemHeight);
+            return (int)Math.Floor(((double)Pos.Y - (double)ItemsStart) / (double)ItemHeight) + StartItem;
         }
 
         protected override void OnMouseClick(MouseEventArgs e) {
 
             if (e.Location.Y < ItemsStart) {
-
+                if (OverflowTop == true) {
+                    if (StartItem > 0) {
+                        StartItem--;
+                        Invalidate();
+                    }
+                }
             }
             else if (e.Location.Y >= ItemsEnd) {
-
+                if (OverflowBottom == true) {
+                    if(EndItem < ItemCount) {
+                        StartItem++;
+                        Invalidate();
+                    }
+                }
             }
             else {
                 SelectedItem = GetSelectedItem(e.Location);

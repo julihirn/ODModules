@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
-using System.Globalization;
 using System.Text;
+using System.Drawing.Text;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
+using System.Globalization;
+using System.Diagnostics;
 
 namespace ODModules {
     public partial class LabelButton : UserControl {
@@ -104,7 +104,7 @@ namespace ODModules {
 
         protected override void OnMouseClick(MouseEventArgs e) {
             if ((GetBoundState(TextBlock) == ButtonState.MouseDown) || (GetBoundState(ArrowBlock) == ButtonState.MouseDown)) {
-                ButtonClicked?.Invoke(this, new Point(Location.X, Location.Y + TextBlock.Y + TextBlock.Height));
+                ButtonClicked?.Invoke(this, new Point(Location.X,Location.Y + TextBlock.Y + TextBlock.Height));
             }
             base.OnMouseClick(e);
         }

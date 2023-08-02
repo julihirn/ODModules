@@ -45,7 +45,7 @@ namespace ODModules {
                 if (value > 0) {
                     datapoints = value;
                     DigitalData.Clear();
-                    for (int i = 0; i < datapoints - 1; i++) {
+                    for(int i=0;i< datapoints - 1; i++) {
                         DigitalData.Add(false);
                     }
                 }
@@ -57,8 +57,8 @@ namespace ODModules {
         }
         public void PushData(bool Data) {
             if (DigitalData.Count > 1) {
-                for (int i = 0; i < DigitalData.Count - 1; i++) {
-                    DigitalData[i] = DigitalData[i + 1];
+                for(int i = 0; i < DigitalData.Count - 1; i++) {
+                    DigitalData[i] = DigitalData[i+1];
                 }
                 DigitalData[DigitalData.Count - 1] = Data;
                 Invalidate();
@@ -72,10 +72,10 @@ namespace ODModules {
                 using (LinearGradientBrush BarBrush = new LinearGradientBrush(DrawingBounds, graphColorSouth, graphColorNorth, 90)) {
                     for (int i = 0; i < DigitalData.Count; i++) {
                         int BarHeight = 0;
-                        if (DigitalData[i] == true) {
-                            BarHeight = Height;
+                        if (DigitalData[i] == true) { 
+                            BarHeight = Height; 
                         }
-                        e.Graphics.FillRectangle(BarBrush, new Rectangle(i * BarWidth, Height - BarHeight, BarWidth, BarHeight));
+                        e.Graphics.FillRectangle(BarBrush, new Rectangle(i * BarWidth, Height- BarHeight, BarWidth, BarHeight));
                     }
                 }
 

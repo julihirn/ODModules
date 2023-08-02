@@ -1,13 +1,13 @@
-﻿using Handlers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Linq;
+using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
+using Handlers;
 
 namespace ODModules {
     public class ButtonGrid : UserControl {
@@ -1022,7 +1022,7 @@ namespace ODModules {
             Invalidate();
         }
         private void ButtonGrid_MouseClick(object? sender, MouseEventArgs e) {
-
+           
             if (IsPointReset(e.Location) == false) {
                 ClickedButtonResult Result = GetButtonPosition(e.Location);
                 if (Result.Button != null) {
@@ -1163,8 +1163,7 @@ namespace ODModules {
         bool ScrollStart = false;
         float ThumbDelta = 0;
         ScrollArea ScrollHit = ScrollArea.None;
-
-        private enum ScrollArea {
+        enum ScrollArea {
             None = 0x00,
             Vertical = 0x01,
             Horizontal = 0x02
@@ -1172,7 +1171,7 @@ namespace ODModules {
         Point DownLocation = new Point(0, 0);
         private void ButtonGrid_MouseDown(object? sender, MouseEventArgs e) {
             DownLatched = false;
-
+           
             if ((ShowVertScroll == true) && (e.X >= Width - ScrollSize)) {
                 ScrollHit = ScrollArea.Vertical;
                 if (ScrollStart == false) {
@@ -1234,9 +1233,9 @@ namespace ODModules {
         }
     }
     public class ClickedButtonResult {
-        GridButton? button = null;
-        public GridButton? Button {
-            get { return button; }
+        GridButton ?button = null;
+        public GridButton ?Button {
+            get { return button; } 
         }
         int index = -1;
         public int Index {
@@ -1246,7 +1245,7 @@ namespace ODModules {
         public Point Position {
             get { return position; }
         }
-        public ClickedButtonResult(GridButton? Button, Point Position, int Index) {
+        public ClickedButtonResult(GridButton ?Button, Point Position, int Index) {
             this.button = Button;
             this.index = Index;
             this.position = Position;

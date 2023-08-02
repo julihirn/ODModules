@@ -1,18 +1,18 @@
 ﻿
-using Handlers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Globalization;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Forms;
+using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.DirectoryServices.ActiveDirectory;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
 using System.Xml;
+using Handlers;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ODModules {
@@ -191,7 +191,7 @@ namespace ODModules {
             LineDifference = LinesToPrint.Count + Diff;
             if (OldLineCount == TotalWindowLines + _VerScroll) {
                 if (Lines.Count - VerScroll < TotalWindowLines) { }
-                else {
+                else { 
                     VerScroll += LineDifference;
                 }
             }
@@ -230,7 +230,7 @@ namespace ODModules {
             int Start = 0;
             int End = longLine;
             int i = 0;
-            while (End < Input.Length) {
+            while(End < Input.Length) {
                 int Length = longLine;
                 if (Length + Start > Input.Length) {
                     Length = Input.Length - Start;
@@ -1528,8 +1528,7 @@ namespace ODModules {
         bool ScrollStart = false;
         ScrollArea ScrollHit = ScrollArea.None;
         float ThumbDelta = 0;
-
-        private enum ScrollArea {
+        enum ScrollArea {
             None = 0x00,
             Vertical = 0x01,
             Horizontal = 0x02

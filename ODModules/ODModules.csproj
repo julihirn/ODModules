@@ -5,18 +5,40 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Title>One Desktop Modules</Title>
-    <PackageId>ODModules</PackageId>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <Company>Julian Hirniak</Company>
-    <Authors>Julian Hirniak</Authors>
-    <Copyright>Copyright © Julian Hirniak 2015 - 2023</Copyright>
+    <Copyright>Copyright © 2014 - 2022 Julian Hirniak</Copyright>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="ODHandlers">
-      <HintPath>ODHandlers.dll</HintPath>
-    </Reference>
+    <Compile Remove="CharacterMap.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="CharacterMap.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Handlers\Handlers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="ButtonGrid.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Navigator.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

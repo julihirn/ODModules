@@ -10,13 +10,12 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 namespace ODModules {
     public class AnalogDialMeter : Control {
         #region Control Methods
         public AnalogDialMeter() {
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-            // SetStyle(ControlStyles.Opaque, true);
+           // SetStyle(ControlStyles.Opaque, true);
             DoubleBuffered = true;
             AnimationTimer = new System.Windows.Forms.Timer();
             AnimationTimer.Interval = 1;
@@ -560,11 +559,11 @@ namespace ODModules {
             else if (Input >= 100) {
                 Output = Input.ToString("0.0");
             }
-            else {
+            else{
                 Output = Input.ToString("0.00");
             }
             if (ValueDisplay == true) {
-                if ((valueUnit.Length > 0) && (RequiresPadding == true)) { Output += " "; }
+                if ((valueUnit.Length > 0)&&(RequiresPadding == true)) { Output += " "; }
             }
             return Output;
         }
@@ -706,7 +705,7 @@ namespace ODModules {
             if (maximumValue > minimumValue) {
                 Distance = (double)Math.Abs(maximumValue - minimumValue);
             }
-            else if (minimumValue > maximumValue) {
+            else if ( minimumValue > maximumValue) {
                 Distance = (double)Math.Abs(minimumValue - maximumValue);
             }
             double NeedleValueOut = 0;
@@ -718,7 +717,7 @@ namespace ODModules {
                 NeedleValueOut = AngleStart + (AngleSpan * ((double)NeedleValue - (double)minimumValue) / Distance);
             }
             if (NeedleValueOut < AngleStart) { return AngleStart; }
-            else if (NeedleValueOut > AngleStart + AngleSpan) { return AngleStart + AngleSpan; }
+            else if(NeedleValueOut > AngleStart + AngleSpan) { return AngleStart + AngleSpan; }
             else { return NeedleValueOut; }
 
         }
@@ -775,7 +774,7 @@ namespace ODModules {
         public override object? CreateInstance(System.ComponentModel.ITypeDescriptorContext? context, System.Collections.IDictionary? propertyValues) {
             if (propertyValues == null)
                 throw new ArgumentNullException("propertyValues");
-            if (context == null) { return null; }
+            if(context == null) { return null; }
             object? boxed = Activator.CreateInstance(context.PropertyDescriptor.PropertyType);
             foreach (System.Collections.DictionaryEntry entry in propertyValues) {
                 if (entry.Key != null) {

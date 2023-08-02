@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace ODModules {
+    
     public class FlatComboBox : ComboBox {
         private Color borderColor = Color.Gray;
         [DefaultValue(typeof(Color), "Gray")]

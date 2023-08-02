@@ -3,24 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Handlers;
-using Microsoft.VisualBasic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Windows;
-using System.Windows.Forms;
 
 namespace ODModules {
+    using System;
+    using System.Windows;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.CompilerServices;
+    using System.Security;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Microsoft.VisualBasic;
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+    using System.ComponentModel;
+    using System.Drawing.Imaging;
+    using System.Threading;
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+    using Handlers;
+
     // <DefaultEvent("CommandEntered")> _
     public class LineEditingInterface : System.Windows.Forms.UserControl {
         private const int WM_KEYDOWN = 0x100;
@@ -1822,14 +1828,14 @@ namespace ODModules {
         }
         bool ShowVertScroll = true;
         bool ShowHorzScroll = true;
-
+        
         Rectangle HorizontalScrollBar = new Rectangle(0, 0, 0, 0);
         Rectangle HorizontalScrollBounds = new Rectangle(0, 0, 0, 0);
         RectangleF HorizontalScrollThumb = new Rectangle(0, 0, 0, 0);
         Rectangle VerticalScrollBar = new Rectangle(0, 0, 0, 0);
         Rectangle VerticalScrollBounds = new Rectangle(0, 0, 0, 0);
         RectangleF VerticalScrollThumb = new Rectangle(0, 0, 0, 0);
-
+     
         int ScrollBarButtonSize = 0;
         private void RenderScrollBar(PaintEventArgs e) {
             Color BorderLineColor = RenderHandler.DeterministicDarkenColor(BackColor, BackColor, 100);
@@ -1949,8 +1955,7 @@ namespace ODModules {
         bool ScrollStart = false;
         ScrollArea ScrollHit = ScrollArea.None;
         float ThumbDelta = 0;
-
-        private enum ScrollArea {
+        enum ScrollArea {
             None = 0x00,
             Vertical = 0x01,
             Horizontal = 0x02
@@ -2833,8 +2838,7 @@ namespace ODModules {
             this.StringAfter = stringAfter;
         }
     }
-
-    internal struct HL_LNE {
+    struct HL_LNE {
         public SolidBrush BR = new SolidBrush(Color.Black);
         public bool EN = false;
         public HL_LNE() {

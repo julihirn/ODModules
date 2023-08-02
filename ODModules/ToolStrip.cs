@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Diagnostics;
 namespace ODModules {
     public class ToolStrip : System.Windows.Forms.ToolStrip {
         public ToolStrip() {
@@ -201,7 +200,7 @@ namespace ODModules {
         }
 
         protected override void OnItemAdded(ToolStripItemEventArgs e) {
-            // Debug.Print(e.Item.ToString());
+           // Debug.Print(e.Item.ToString());
             foreach (object Tsmi in this.Items) {
                 if (Tsmi.GetType() == typeof(ToolStripMenuItem)) {
                     ((ToolStripMenuItem)Tsmi).DropDown.DropShadowEnabled = false;

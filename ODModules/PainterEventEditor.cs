@@ -1,15 +1,15 @@
-﻿using Handlers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using Handlers;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace ODModules {
     public class PainterEventEditor : UserControl {
@@ -694,7 +694,7 @@ namespace ODModules {
                                             int BarWidth = columns[i].Width;
                                             int Ticks = (int)(10.0f * Math.Ceiling((float)BarWidth / 150.0f));
                                             int BarStart = Xpos;
-
+                                          
                                             int LargeTick = (int)((float)GenericLine_Height / 1.6f);
                                             int SmallTick = (int)((float)GenericLine_Height / 1.1f);
                                             for (int j = 1; j < Ticks; j++) {
@@ -705,7 +705,7 @@ namespace ODModules {
                                                 else {
                                                     e.Graphics.DrawLine(TickPen, TickXPos, SmallTick, TickXPos, HeaderHeight);
                                                 }
-
+                                                
                                             }
                                         }
                                     }
@@ -1000,7 +1000,7 @@ namespace ODModules {
                 else { return ""; }
             }
         }
-        private string GetPropValue(object? src, string propName) {
+        private string GetPropValue(object ?src, string propName) {
             try {
                 if (src == null) { return ""; }
                 if (src.GetType() == null) { return ""; }
@@ -1466,8 +1466,7 @@ namespace ODModules {
         bool ScrollStart = false;
         ScrollArea ScrollHit = ScrollArea.None;
         float ThumbDelta = 0;
-
-        private enum ScrollArea {
+        enum ScrollArea {
             None = 0x00,
             Vertical = 0x01,
             Horizontal = 0x02
@@ -1830,7 +1829,7 @@ namespace ODModules {
         }
 
         protected override void OnPaintBackground(PaintEventArgs e) {
-            using (SolidBrush BackBrush = new SolidBrush(BackColor)) {
+            using(SolidBrush BackBrush = new SolidBrush(BackColor)) {
                 e.Graphics.FillRectangle(BackBrush, new Rectangle(0, 0, Width, Height));
             }
         }

@@ -292,7 +292,7 @@ namespace ODModules {
         }
         private void ArrowPoints(Rectangle CollapseMarker, out Point[] Points) {
             int HalfHeight = CollapseMarker.Height / 2;
-            if (Dock == DockStyle.Bottom) {
+           if  (Dock == DockStyle.Bottom){
                 if (collapsed == false) {
                     Points = new Point[]{
                          new Point(CollapseMarker.Left, CollapseMarker.Top),
@@ -485,7 +485,7 @@ namespace ODModules {
                 int NewX = OldLocation.X + (CurrentLocation.X - DownLocation.X);
                 int NewWidth = OldSize.Width + (DownLocation.X - CurrentLocation.X);
                 if (TextHeight > NewWidth) {
-                    this.Location = new Point(OldLocation.X + OldSize.Width - TextHeight, OldLocation.Y);
+                    this.Location = new Point(OldLocation.X+ OldSize.Width - TextHeight, OldLocation.Y);
                     this.Size = new Size(TextHeight, OldSize.Height);
                 }
                 else {

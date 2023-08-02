@@ -1066,8 +1066,22 @@ namespace ODModules {
                 textVerticalAlignment = value;
             }
         }
-
-
+        object ?tag = "";
+        [System.ComponentModel.Category("Data")]
+        public object ?Tag {
+            get { return tag; }
+            set {
+                tag = value;
+            }
+        }
+        string command = "";
+        [System.ComponentModel.Category("Data")]
+        public string Command {
+            get { return command; }
+            set {
+                command = value;
+            }
+        }
 
 
         #endregion

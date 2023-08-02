@@ -3,24 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Handlers;
-using Microsoft.VisualBasic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Windows;
-using System.Windows.Forms;
 
 namespace ODModules {
+    using System;
+    using System.Windows;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.CompilerServices;
+    using System.Security;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Microsoft.VisualBasic;
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+    using System.ComponentModel;
+    using System.Drawing.Imaging;
+    using System.Threading;
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+    using Handlers;
+
     // <DefaultEvent("CommandEntered")> _
     public class CharacterMap : System.Windows.Forms.UserControl {
         private const int WM_KEYDOWN = 0x100;
@@ -688,7 +694,7 @@ namespace ODModules {
         private void RenderSetup(PaintEventArgs e) {
             if (RunOnStartUpOnly == true) {
                 try {
-                    using (System.Drawing.Font GenericSize = new(DefaultFont.FontFamily, 9)) {
+                    using (System.Drawing.Font GenericSize = new (DefaultFont.FontFamily, 9)) {
                         ScrollSize = (int)e.Graphics.MeasureString("W", GenericSize).Width;
                     }
                 }
@@ -1031,8 +1037,7 @@ namespace ODModules {
         bool ScrollStart = false;
         ScrollArea ScrollHit = ScrollArea.None;
         float ThumbDelta = 0;
-
-        private enum ScrollArea {
+        enum ScrollArea {
             None = 0x00,
             Vertical = 0x01,
             Horizontal = 0x02

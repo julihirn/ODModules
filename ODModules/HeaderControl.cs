@@ -1,11 +1,6 @@
-﻿using Handlers;
-using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,7 +9,11 @@ using System.Runtime.CompilerServices;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
-
+using Microsoft.VisualBasic;
+using System.Drawing.Drawing2D;
+using System.ComponentModel;
+using System.Drawing.Imaging;
+using Handlers;
 namespace ODModules {
     public class HeaderControl : UserControl {
         private System.Windows.Forms.Timer animation = new System.Windows.Forms.Timer();
@@ -38,7 +37,7 @@ namespace ODModules {
             }
         }
         private int Selected_Old = -1;
-        public event ValueChangedEventHandler? ValueChanged;
+        public event ValueChangedEventHandler ?ValueChanged;
 
         public delegate void ValueChangedEventHandler();
 
@@ -558,7 +557,7 @@ namespace ODModules {
             Right = 2
         }
 
-        private void HeaderControl_Load(object? sender, EventArgs e) {
+        private void HeaderControl_Load(object ?sender, EventArgs e) {
 
         }
     }

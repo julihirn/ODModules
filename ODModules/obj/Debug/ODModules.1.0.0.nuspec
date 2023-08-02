@@ -3,12 +3,13 @@
   <metadata>
     <id>ODModules</id>
     <version>1.0.0</version>
-    <title>One Desktop Modules</title>
-    <authors>Julian Hirniak</authors>
+    <authors>ODModules</authors>
     <description>Package Description</description>
-    <copyright>Copyright © Julian Hirniak 2015 - 2023</copyright>
+    <copyright>Copyright © 2014 - 2022 Julian Hirniak</copyright>
     <dependencies>
-      <group targetFramework="net6.0-windows7.0" />
+      <group targetFramework="net6.0-windows7.0">
+        <dependency id="Handlers" version="1.0.0" exclude="Build,Analyzers" />
+      </group>
     </dependencies>
     <frameworkReferences>
       <group targetFramework="net6.0-windows7.0">
@@ -17,6 +18,6 @@
     </frameworkReferences>
   </metadata>
   <files>
-    <file src="C:\Users\Chann\Source\Repos\ODModules\ODModules\bin\Debug\net6.0-windows\ODModules.dll" target="lib\net6.0-windows7.0\ODModules.dll" />
+    <file src="C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Debug\net6.0-windows\ODModules.dll" target="lib\net6.0-windows7.0\ODModules.dll" />
   </files>
 </package>

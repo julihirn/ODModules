@@ -1,16 +1,16 @@
-﻿using Handlers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Diagnostics;
 using System.Windows.Forms;
+using Handlers;
 using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.ComponentModel;
 
 namespace ODModules {
     public class TreeControl : UserControl {
@@ -174,13 +174,13 @@ namespace ODModules {
             }
             int CurrentStartingLine = 0;
             for (int Line = CurrentStartingLine; Line < MaximumVerticalItems + 1; Line++) {
-                if (CurrentStartingLine < nodes.Count) {
-                    if (CurrentLine < nodes.Count) {
-                        Rectangle LineBounds = new Rectangle(0, ListLinePoint(Line), Width, GenericLine_Height);
-                        RenderLine(e, nodes[CurrentLine], LineBounds);
-                        CurrentLine++;
-                    }
-                }
+               if (CurrentStartingLine < nodes.Count) {
+                   if (CurrentLine < nodes.Count) {
+                       Rectangle LineBounds = new Rectangle(0, ListLinePoint(Line), Width, GenericLine_Height);
+                       RenderLine(e, nodes[CurrentLine], LineBounds);
+                       CurrentLine++;
+                   }
+               }
             }
 
             //for (int Line = CurrentStartingLine; Line < MaximumVerticalItems + 1; Line++) {
@@ -202,7 +202,7 @@ namespace ODModules {
         //    }
         //}
         private void RenderLine(PaintEventArgs e, TreeItem Node, Rectangle BoundingRectangle) {
-            // int LinePositionY = (int)(((float)BoundingRectangle.Height - (float)e.Graphics.MeasureString("0", Font).Height) / 2.0f) + BoundingRectangle.Y;
+           // int LinePositionY = (int)(((float)BoundingRectangle.Height - (float)e.Graphics.MeasureString("0", Font).Height) / 2.0f) + BoundingRectangle.Y;
             //RenderLineColouring(e, CurrentLine, BoundingRectangle);
             RenderNodeText(e, Node, BoundingRectangle);
 

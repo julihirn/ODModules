@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace ODModules {
     public class ListViewDoubleBuffered : System.Windows.Forms.ListView {
@@ -48,7 +48,7 @@ namespace ODModules {
                         e.Graphics.DrawString(e.Header.Text, Font, Br, e.Bounds, Sf);
                     }
                 }
-
+                
             }
             //e.DrawText();
         }
