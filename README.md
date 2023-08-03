@@ -26,6 +26,7 @@ The LED control is a simple indicator with a built-in label. It is adjustable in
 
 ### List Control
 The List Control is a complete reimagined version of the stock ListView control bundled with WinForms. This version only supports the Column format. 
+
 ![image](https://github.com/julihirn/ODModules/assets/94691568/df22c47f-659c-4919-be85-6d7268af029f)
 
 ### Text Compare
