@@ -18,3 +18,17 @@ The Numeric Text Box is a complete reimagined version of the stock NumericUpDown
 If the base is in decimal mode and units are enabled, the NumericTextbox allows the user to change the prefix (if in metric) using the keyboard. 
 
 ![image](https://github.com/julihirn/ODModules/assets/94691568/21ae6b1b-b77c-45ec-b786-7957bee54627)
+
+### LED
+The LED control is a simple indicator with a built-in label. It is adjustable in terms of brightness and color. 
+
+![image](https://github.com/julihirn/ODModules/assets/94691568/d71359bf-3a92-4378-9a4e-160d517be194)
+
+### List Control
+The List Control is a complete reimagined version of the stock ListView control bundled with WinForms. This version only supports the Column format. 
+![image](https://github.com/julihirn/ODModules/assets/94691568/df22c47f-659c-4919-be85-6d7268af029f)
+
+### Text Compare
+The text Compare control is a simple character by character string comparator. It only accepts two strings. 
+
+![image](https://github.com/julihirn/ODModules/assets/94691568/97bdd80b-7764-42c7-9c0c-c4ccf1de9bb5)
