@@ -7,9 +7,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <Company>Julian Hirniak</Company>
-    <Copyright>Copyright © 2014 - 2022 Julian Hirniak</Copyright>
+    <Copyright>Copyright © 2014 - 2023 Julian Hirniak</Copyright>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>ODModules</Title>
+    <Version>2.0.1</Version>
+    <Authors>Julian Hirniak</Authors>
+    <PackageTags>WinForms; Controls</PackageTags>
+    <RepositoryUrl>https://github.com/julihirn/ODModules.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/julihirn/ODModules</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -21,11 +27,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="bin\**" />
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="bin\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="CharacterMap.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="CharacterMap.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NuGet.CommandLine" Version="6.6.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +61,10 @@
     <Compile Update="Navigator.cs">
       <SubType>UserControl</SubType>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
 
 </Project>

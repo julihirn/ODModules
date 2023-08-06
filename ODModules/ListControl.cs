@@ -77,6 +77,13 @@ namespace ODModules {
             //}
         }
         #region Functions
+        public void ScaleColumnWidths() {
+           float Scaler =  this.DeviceDpi / 96.0f;
+           
+            foreach (Column column in Columns) {
+                column.Width = (int)((float)column.Width * Scaler);
+            }
+        }
         public void FocusToLast() {
             if (IsFirstTime == true) { Invalidate(); }
             if (items.Count - 1 > MaximumVerticalItems) {

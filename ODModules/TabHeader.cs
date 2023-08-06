@@ -367,7 +367,7 @@ namespace ODModules {
         }
         int TabStart = 0;
         SizeF UnitSize;
-        Size StandardButtonSize = new Size(0, 10);
+        Size StandardButtonSize = new Size(10, 10);
         int GenericTextHeight = 10;
         int TextPadding = 10;
         int MaximumTabs = 10;

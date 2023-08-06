@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "V7ag05dSoyeJa+e/qkqtkVqTV9xDdUpoGkOk8EO3TunJy87BHJlMEHqD84eSQrDf+Z23STuml2/qD5hCGlqALg==",
+  "dgSpecHash": "YQgW0mzSAiYrAgo9kQeDFMIl2g/vuQfavkxR8fUpOt42gM77KRaH9qljbp/IcA0bFzM1237hCbRSQczaiIEKmA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\ODModules.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Chann\\.nuget\\packages\\nuget.commandline\\6.6.1\\nuget.commandline.6.6.1.nupkg.sha512"
+  ],
   "logs": []
 }

@@ -29,11 +29,12 @@ namespace ODModules {
             //for (int i = 0; i < 10; i++) {
             //    list.Add("Item" + i.ToString());
             //}
-
+            KeyDown += Navigator_KeyDown;
+            KeyPress += Navigator_KeyPress;
 
         }
 
-
+        
 
         //List<string> list = new List<string>();
         System.Windows.Forms.Timer Animator = new System.Windows.Forms.Timer();
@@ -174,7 +175,7 @@ namespace ODModules {
                             AnimateDirection = AnimationState.None;
                         }
                     }
-                    selectedItemChnge = 0.0f;
+                    //selectedItemChnge = 0.0f;
                 }
                 else {
                     selectedItemChnge = (float)TempVal;
@@ -194,7 +195,7 @@ namespace ODModules {
         float ItemsStart = 0;
         float ItemsEnd = 0;
         int StartItem = 0;
-        int EndItem = 0;
+        int EndItem = 10;
 
         int MaxItems = 10;
 
@@ -216,7 +217,7 @@ namespace ODModules {
             DetermineOverflow();
             DrawSideShadow(e);
             float SelectedItemPos = (float)ItemsStart + ((selectedItemChnge - (float)StartItem) * (float)ItemHeight);//(float)ItemsStart + (selectedItemChnge * (float)ItemHeight);
-            Debug.Print(selectedItemChnge.ToString() + "  " + StartItem.ToString() + " " + EndItem.ToString());
+            
             DrawSelectedBottom(e, SelectedItemPos);
             DrawItems(e);
             DrawSelectedTop(e, SelectedItemPos);
@@ -282,7 +283,7 @@ namespace ODModules {
             if (OverflowTop == true) {
                 DrawArrow(e, OverflowTopRectangle, true);
             }
-            if (OverflowBottom== true) {
+            if (OverflowBottom == true) {
                 DrawArrow(e, OverflowBottomRectangle, false);
             }
         }
@@ -290,7 +291,7 @@ namespace ODModules {
             Size ButtonSize = new Size((int)UnitSize, (int)UnitSize);
             Color collapseArrowColor = Color.White;
             int CentreX = ArrowBounds.X + ((ArrowBounds.Width - ButtonSize.Width) / 2);
-            int CentreY= ArrowBounds.Y + ((ArrowBounds.Height - ButtonSize.Height) / 2);
+            int CentreY = ArrowBounds.Y + ((ArrowBounds.Height - ButtonSize.Height) / 2);
             Rectangle CentreArrow = new Rectangle(CentreX, CentreY, ButtonSize.Width, ButtonSize.Height);
             using (SolidBrush ActionBrush = new SolidBrush(collapseArrowColor)) {
                 using (Pen ActionPen = new Pen(ActionBrush, 1)) {
@@ -319,12 +320,12 @@ namespace ODModules {
             if (ItemCount <= 0) {
                 OverflowTop = false;
                 OverflowBottom = false;
-                return; 
+                return;
             }
-            if (StartItem > 0) { OverflowTop = true;}
-            else { OverflowTop = false;}
-            if (ItemCount > EndItem) { OverflowBottom = true;}
-            else { OverflowBottom=false;}
+            if (StartItem > 0) { OverflowTop = true; }
+            else { OverflowTop = false; }
+            if (ItemCount > EndItem) { OverflowBottom = true; }
+            else { OverflowBottom = false; }
 
         }
         //private int GetItemCount(List<object> list) {
@@ -361,7 +362,7 @@ namespace ODModules {
                                     return SubVal.ToString() ?? "";
                                 }
                             }
-                          
+
                         }
                     }
                 }
@@ -412,10 +413,17 @@ namespace ODModules {
             }
         }
         private int GetCurrentSelectedItem() {
-            return StartItem + (int)Math.Floor(selectedItemChnge);
+            return (int)Math.Floor(selectedItemChnge);
         }
 
         protected override void OnResize(EventArgs e) {
+            if ((EndItem) > ItemCount) {
+                if (ItemCount > 0) {
+                    if (StartItem > 0) {
+                        StartItem--;
+                    }
+                }
+            }
             Invalidate();
             base.OnResize(e);
         }
@@ -436,7 +444,7 @@ namespace ODModules {
             }
             else if (e.Location.Y >= ItemsEnd) {
                 if (OverflowBottom == true) {
-                    if(EndItem < ItemCount) {
+                    if (EndItem < ItemCount) {
                         StartItem++;
                         Invalidate();
                     }
@@ -485,11 +493,42 @@ namespace ODModules {
         }
 
         protected override void OnMouseWheel(MouseEventArgs e) {
-            if (e.Delta < 0) {
+            Reselect(e.Delta);
+        }
+        private void Navigator_KeyDown(object? sender, KeyEventArgs e) {
+        }
+        private void Navigator_KeyPress(object? sender, KeyPressEventArgs e) {
+           
+        }
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+            if (keyData == Keys.Down) {
+                Reselect(-1);
+                return true;
+            }
+            if (keyData == Keys.Up) {
+                Reselect(1);
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+        private void Reselect(int Delta) {
+            if (Delta < 0) {
                 SelectedItem++;
+                if (EndItem <= ItemCount) {
+                    if (SelectedItem >= EndItem) {
+                        StartItem++;
+                        Invalidate();
+                    }
+                }
             }
             else {
                 SelectedItem--;
+                if (StartItem > 0) {
+                    if (SelectedItem <= StartItem) {
+                        StartItem--;
+                        Invalidate();
+                    }
+                }
             }
         }
 
