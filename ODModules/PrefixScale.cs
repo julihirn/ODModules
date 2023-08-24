@@ -169,24 +169,49 @@ namespace ODModules {
             }
         }
 
-        private int PointToPrefixIndex(int X, bool IsPrimary = true) {
+        private int PointToPrefixIndex(int X, bool IsPrimary = true, bool UseFloor = false) {
             if (IsPrimary == true) {
-                int Index = CurrentPrefix + (int)Math.Floor((float)(X - ((Width - UnitWide) / 2)) / (float)UnitWide);
-                return Index;
+                if (UseFloor == true) {
+                    int Index = CurrentPrefix + (int)Math.Floor((float)(X - ((Width - UnitWide) / 2.0f)) / (float)UnitWide);
+                    return Index;
+                }
+                else {
+                    int Index = CurrentPrefix + (int)Math.Round((float)(X - ((Width - UnitWide) / 2.0f)) / (float)UnitWide);
+                    return Index;
+                }
             }
             else {
-                int Index = CurrentPrefix2 + (int)Math.Floor((float)(X - ((Width - UnitWide2) / 2)) / (float)UnitWide2);
-                return Index;
+                if (UseFloor == true) {
+                    int Index = CurrentPrefix2 + (int)Math.Floor((float)(X - ((Width - UnitWide2) / 2.0f)) / (float)UnitWide2);
+                    return Index;
+                }
+                else {
+                    int Index = CurrentPrefix2 + (int)Math.Round((float)(X - ((Width - UnitWide2) / 2.0f)) / (float)UnitWide2);
+                    return Index;
+                }
             }
         }
-        private int OffsetToIndex(int X, bool IsPrimary = true) {
+        private int OffsetToIndex(int X, bool IsPrimary = true, bool UseFloor = false) {
             if (IsPrimary == true) {
-                int Index = (int)Math.Floor((float)(X - ((Width - UnitWide) / 2)) / (float)UnitWide);
-                return Index;
+                //int Index = (int)Math.Floor((float)(X - ((Width - UnitWide) / 2.0f)) / (float)UnitWide);
+                if (UseFloor == true) {
+                    int Index = (int)Math.Floor((float)(X - ((Width - UnitWide) / 2.0f)) / (float)UnitWide);
+                    return Index;
+                }
+                else {
+                    int Index = (int)Math.Round((float)(X - ((Width - UnitWide) / 2.0f)) / (float)UnitWide);
+                    return Index;
+                }
             }
             else {
-                int Index = (int)Math.Floor((float)(X - ((Width - UnitWide2) / 2)) / (float)UnitWide2);
-                return Index;
+                if (UseFloor == true) {
+                    int Index = (int)Math.Floor((float)(X - ((Width - UnitWide2) / 2.0f)) / (float)UnitWide2);
+                    return Index;
+                }
+                else {
+                    int Index = (int)Math.Round((float)(X - ((Width - UnitWide2) / 2.0f)) / (float)UnitWide2);
+                    return Index;
+                }
             }
         }
         private int IndexToOffset(int Index, bool IsPrimary = true) {
@@ -321,10 +346,10 @@ namespace ODModules {
 
             MoveHit = GetMouseHit(e.Location);
             if (MoveHit == MouseHit.Primary) {
-                MouseIndex = PointToPrefixIndex(CursorLocation.X);
+                MouseIndex = PointToPrefixIndex(CursorLocation.X, true, true);
             }
             else if (MoveHit == MouseHit.Secondary) {
-                MouseIndex2 = PointToPrefixIndex(CursorLocation.X, false);
+                MouseIndex2 = PointToPrefixIndex(CursorLocation.X, false, true);
             }
             if (IsMouseDown == true) {
                 //MouseIndex = PointToPrefixIndex(CursorLocation.X);
@@ -489,7 +514,7 @@ namespace ODModules {
                         PrefixTick(e.Delta);
                     }
                     else if (linkedNumericControl.IsSecondaryMetric == true) {
-                        PrefixTick(e.Delta,false);
+                        PrefixTick(e.Delta, false);
                     }
                 }
             }

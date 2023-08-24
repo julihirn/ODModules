@@ -96,6 +96,17 @@ namespace ODModules {
                 }
             }
         }
+        private Color separatorColor = Color.FromArgb(200, 200, 200);
+        [System.ComponentModel.Category("Appearance")]
+        public Color SeparatorColor {
+            get { return separatorColor; }
+            set {
+                separatorColor = value;
+                if (IsRendererVaild() == true) {
+                    ((ContextRender)Renderer).SeparatorColor = separatorColor;
+                }
+            }
+        }
         #endregion
         #region Drawing
         protected override void OnPaint(PaintEventArgs e) {
@@ -188,6 +199,14 @@ namespace ODModules {
                 actionSymbolForeColor = value;
             }
         }
+        private Color separatorColor = Color.FromArgb(200, 200, 200);
+        [System.ComponentModel.Category("Appearance")]
+        public Color SeparatorColor {
+            get { return separatorColor; }
+            set {
+                separatorColor = value;
+            }
+        }
         #endregion
         #region Drawing
         protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e) {
@@ -253,6 +272,21 @@ namespace ODModules {
         new Point(r.Left, r.Bottom - r.Height /2),
         new Point(r.Left + r.Width /3,  r.Bottom),
         new Point(r.Right, r.Top)});
+                }
+            }
+        }
+        protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e) {
+           // base.OnRenderSeparator(e);
+            Rectangle ContextWindow = new Rectangle(0, 0, e.Item.Size.Width, e.Item.Size.Height);
+            using (SolidBrush BorderBrush = new SolidBrush(separatorColor)) {
+                using (Pen BorderPen = new Pen(BorderBrush)) {
+                    int Offset = (int)BorderPen.Width;
+                    if (e.Vertical) {
+                        e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X, ContextWindow.Y + ContextWindow.Height);
+                    }
+                    else {
+                        e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X + ContextWindow.Width, ContextWindow.Y);
+                    }
                 }
             }
         }

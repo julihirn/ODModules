@@ -20,7 +20,12 @@ namespace ODModules {
             MouseLeave += ButtonGrid_MouseLeave;
             MouseWheel += ButtonGrid_MouseWheel;
             Resize += ButtonGrid_Resize;
+            KeyUp += ButtonGrid_KeyUp;
+            KeyDown += ButtonGrid_KeyDown;
         }
+
+
+
         [Category("Buttons")]
         public event ButtonClickedEventHandler? ButtonClicked;
 
@@ -107,6 +112,15 @@ namespace ODModules {
                 Invalidate();
             }
         }
+        ButtonTextHorizontal imageHorizontalAlignment = ButtonTextHorizontal.Center;
+        [System.ComponentModel.Category("Appearance")]
+        public ButtonTextHorizontal ImageHorizontalAlignment {
+            get { return imageHorizontalAlignment; }
+            set {
+                imageHorizontalAlignment = value;
+                Invalidate();
+            }
+        }
         ButtonTextHorizontal textHorizontalAlignment = ButtonTextHorizontal.Center;
         [System.ComponentModel.Category("Appearance")]
         public ButtonTextHorizontal TextHorizontalAlignment {
@@ -153,6 +167,36 @@ namespace ODModules {
                         return filteredButtons;
                     }
                 }
+            }
+        }
+        public GridButton? GetFirstButton() {
+            if (CurrentButtons.Count == 0) {
+                return null;
+            }
+            else {
+                return CurrentButtons[0];
+            }
+        }
+        bool iconInline = false;
+        [System.ComponentModel.Category("Appearance")]
+        public bool IconInline {
+            get {
+                return iconInline;
+            }
+            set {
+                iconInline = value;
+                Invalidate();
+            }
+        }
+        private bool allowTextWrapping = true;
+        [System.ComponentModel.Category("Appearance")]
+        public bool AllowTextWrapping {
+            get {
+                return allowTextWrapping;
+            }
+            set {
+                allowTextWrapping = value;
+                Invalidate();
             }
         }
         private Color _ScrollBarNorth = Color.DarkTurquoise;
@@ -443,7 +487,7 @@ namespace ODModules {
             using (System.Drawing.Font GenericSize = new System.Drawing.Font(Font.FontFamily, 9.0f, Font.Style)) {
                 ScrollSize = (int)e.Graphics.MeasureString("W", GenericSize).Width;
             }
-            GridRectangle = new Rectangle(Padding.Left, Padding.Top, Width - Padding.Left - ScrollSize, Height - Padding.Top - Padding.Bottom);
+            GridRectangle = new Rectangle(Padding.Left, Padding.Top, Width - Padding.Left - Padding.Right - ScrollSize, Height - Padding.Top - Padding.Bottom);
             Columns = (int)Math.Floor((float)GridRectangle.Width / (float)ButtonSize.Width);
             Rows = (int)Math.Floor((float)GridRectangle.Height / (float)ButtonSize.Height);
             if (Columns > 0) {
@@ -471,7 +515,7 @@ namespace ODModules {
                         if (k < CurrentButtons.Count) {
                             Rectangle CurrentButton = new Rectangle(XOffset, YOffset, ButtonSize.Width, ButtonSize.Height);
                             CurrentButton = ReadjustRectangle(CurrentButton);
-                            DrawButton(e, CurrentButton, CurrentButtons[k], j + VerScroll, i);
+                            DrawButton(e, CurrentButton, CurrentButtons[k], j + VerScroll, i, k);
                             k++;
                         }
                     }
@@ -489,7 +533,7 @@ namespace ODModules {
         }
         Point PressedButtonLocation = new Point(-1, -1);
         GridButton? PressedButton = null;
-        private void DrawButton(PaintEventArgs e, Rectangle ButtonBounds, GridButton Btn, int ButtonRow, int ButtonColumn) {
+        private void DrawButton(PaintEventArgs e, Rectangle ButtonBounds, GridButton Btn, int ButtonRow, int ButtonColumn, int Index) {
             Color BackNorth = Color.Black;
             Color BackSouth = Color.Black;
 
@@ -498,7 +542,7 @@ namespace ODModules {
 
             Rectangle ButtonFill = ButtonBounds;
             Rectangle ButtonRound = ButtonBounds;
-            MouseStates ButtonState = GetState(ButtonBounds);
+            MouseStates ButtonState = GetState(ButtonBounds, Index);
             //if (ButtonState == MouseStates.Down) {
             //    PressedButtonLocation = new Point(ButtonRow, ButtonColumn);
             //    PressedButton = Btn;
@@ -532,13 +576,6 @@ namespace ODModules {
                     DrawShadowBorder(e, ButtonBounds);
                     break;
             }
-
-            //
-            //
-            //
-            //
-            //
-            //
             DrawText(e, ButtonBounds, Btn);
         }
         private void DrawText(PaintEventArgs e, Rectangle ButtonBounds, GridButton Btn) {
@@ -547,78 +584,65 @@ namespace ODModules {
             Rectangle InsetRect = InsetRectangle(ButtonBounds, 5);
             SizeF PrimarySize = new Size(0, 0);
             SizeF SecondarySize = new Size(0, 0);
-            int TotalSize = 0;
-            if (HasPrimary) {
-                PrimarySize = e.Graphics.MeasureString(Btn.Text, Font, InsetRect.Width);
-                TotalSize = (int)PrimarySize.Height;
-            }
-            if (HasSecondary) {
-                if (SecondaryFont != null) {
-                    SecondarySize = e.Graphics.MeasureString(Btn.SecondaryText, SecondaryFont, InsetRect.Width);
+            float TotalSize = 0;
+            float RunningHeight = InsetRect.Y;
+            using (StringFormat PriStrFrmt = new StringFormat()) {
+                if (GetButtonTextHorizontalAlignment(Btn) == ButtonTextHorizontal.Center) {
+                    PriStrFrmt.Alignment = StringAlignment.Center;
+                }
+                else if (GetButtonTextHorizontalAlignment(Btn) == ButtonTextHorizontal.Right) {
+                    PriStrFrmt.Alignment = StringAlignment.Far;
                 }
                 else {
-                    SecondarySize = e.Graphics.MeasureString(Btn.SecondaryText, Font, InsetRect.Width);
+                    PriStrFrmt.Alignment = StringAlignment.Near;
                 }
-                TotalSize += (int)SecondarySize.Height;
-            }
-            if (Btn.Icon != null) {
-                if (Btn.IconInline == false) {
-                    TotalSize += imageSize.Height;
+                PriStrFrmt.Trimming = StringTrimming.Character;
+                if (allowTextWrapping == false) {
+                    PriStrFrmt.FormatFlags |= StringFormatFlags.NoWrap;
                 }
-            }
-            int RunningHeight = InsetRect.Y;
-            if (Btn.Icon != null) {
-                if (Btn.IconInline == true) {
-
-                    // if (Btn.TextVerticalAlignment == ButtonTextVertical.Top) {
-                    //    DrawImage(e, InsetRect, Btn, 0);
-                    //}
-                    //else if (Btn.TextVerticalAlignment == ButtonTextVertical.Middle) {
-                    //    int YCentre = (InsetRect.Height - (TotalSize + 5)) / 2;
-                    //    RunningHeight += YCentre;
-                    //    RunningHeight += DrawImage(e, InsetRect, Btn, YCentre);
-                    //}
-                    //else if (Btn.TextVerticalAlignment == ButtonTextVertical.Bottom) {
-                    //    int YCentre = (InsetRect.Height - (TotalSize + 5));
-                    //    RunningHeight += YCentre;
-                    //    RunningHeight += DrawImage(e, InsetRect, Btn, YCentre);
-                    //}
+                if (HasPrimary) {
+                    PrimarySize = e.Graphics.MeasureString(Btn.Text, Font, InsetRect.Width, PriStrFrmt);
+                    TotalSize = (int)PrimarySize.Height;
                 }
-                else {
-                    if (Btn.TextVerticalAlignment == ButtonTextVertical.Top) {
-                        DrawImage(e, InsetRect, Btn, 0);
-                    }
-                    else if (Btn.TextVerticalAlignment == ButtonTextVertical.Middle) {
-                        int YCentre = (InsetRect.Height - (TotalSize + 5)) / 2;
-                        RunningHeight += YCentre;
-                        RunningHeight += DrawImage(e, InsetRect, Btn, YCentre);
-                    }
-                    else if (Btn.TextVerticalAlignment == ButtonTextVertical.Bottom) {
-                        int YCentre = (InsetRect.Height - (TotalSize + 5));
-                        RunningHeight += YCentre;
-                        RunningHeight += DrawImage(e, InsetRect, Btn, YCentre);
-                    }
-                    RunningHeight += 5;
-                }
-            }
-            if (Btn.IconInline == false) {
-                using (StringFormat PriStrFrmt = new StringFormat()) {
-                    if (Btn.TextHorizontalAlignment == ButtonTextHorizontal.Center) {
-                        PriStrFrmt.Alignment = StringAlignment.Center;
-                    }
-                    else if (Btn.TextHorizontalAlignment == ButtonTextHorizontal.Right) {
-                        PriStrFrmt.Alignment = StringAlignment.Far;
+                if (HasSecondary) {
+                    if (SecondaryFont != null) {
+                        SecondarySize = e.Graphics.MeasureString(Btn.SecondaryText, SecondaryFont, InsetRect.Width, PriStrFrmt);
                     }
                     else {
-                        PriStrFrmt.Alignment = StringAlignment.Near;
+                        SecondarySize = e.Graphics.MeasureString(Btn.SecondaryText, Font, InsetRect.Width, PriStrFrmt);
                     }
-                    PriStrFrmt.Trimming = StringTrimming.Character;
-                    if (Btn.TextVerticalAlignment == ButtonTextVertical.Middle) {
-                        int YCentre = (InsetRect.Height - (TotalSize + 5)) / 2;
+                    TotalSize += (int)SecondarySize.Height;
+                }
+                if (Btn.Icon != null) {
+                    if (GetButtonInline(Btn) == false) {
+                        TotalSize += imageSize.Height;
+                    }
+                }
+                if (Btn.Icon != null) {
+                    if (GetButtonInline(Btn) == false) {
+                        if (GetButtonTextVerticalAlignment(Btn) == ButtonTextVertical.Top) {
+                            RunningHeight += DrawImage(e, InsetRect, Btn, 0);
+                        }
+                        else if (GetButtonTextVerticalAlignment(Btn) == ButtonTextVertical.Middle) {
+                            float YCentre = (InsetRect.Height - TotalSize) / 2.0f;
+                            RunningHeight += YCentre;
+                            RunningHeight += DrawImage(e, InsetRect, Btn, (int)YCentre);
+                        }
+                        else if (GetButtonTextVerticalAlignment(Btn) == ButtonTextVertical.Bottom) {
+                            float YCentre = (InsetRect.Height - TotalSize);
+                            RunningHeight += YCentre;
+                            RunningHeight += DrawImage(e, InsetRect, Btn, (int)YCentre);
+                        }
+                        RunningHeight += 5;
+                    }
+                }
+                if (GetButtonInline(Btn) == false) {
+                    if (GetButtonTextVerticalAlignment(Btn) == ButtonTextVertical.Middle) {
+                        float YCentre = (InsetRect.Height - TotalSize) / 2.0f;
                         RunningHeight += YCentre;
                     }
-                    else if (Btn.TextVerticalAlignment == ButtonTextVertical.Bottom) {
-                        int YCentre = (InsetRect.Height - (TotalSize + 5));
+                    else if (GetButtonTextVerticalAlignment(Btn) == ButtonTextVertical.Bottom) {
+                        float YCentre = InsetRect.Height - TotalSize;
                         RunningHeight += YCentre;
                     }
                     if (HasPrimary) {
@@ -637,20 +661,91 @@ namespace ODModules {
                         }
                         RunningHeight += (int)PrimarySize.Height;
                     }
+                    //}
                 }
+                else {
+                    int YCentre = (InsetRect.Height - imageSize.Height) / 2;
+                    int ImageSize = DrawImageInline(e, InsetRect, Btn, YCentre);
+                    if (HasPrimary) {
+                        PrimarySize = e.Graphics.MeasureString(Btn.Text, Font, InsetRect.Width - ImageSize, PriStrFrmt);
+                        TotalSize = PrimarySize.Height;
+                    }
+                    if (HasSecondary) {
+                        if (SecondaryFont != null) {
+                            SecondarySize = e.Graphics.MeasureString(Btn.SecondaryText, SecondaryFont, InsetRect.Width - ImageSize, PriStrFrmt);
+                        }
+                        else {
+                            SecondarySize = e.Graphics.MeasureString(Btn.SecondaryText, Font, InsetRect.Width - ImageSize, PriStrFrmt);
+                        }
+                        TotalSize += SecondarySize.Height;
+                    }
+                    RunningHeight += ((InsetRect.Height - TotalSize) / 2.0f);
+                    Rectangle TextRectangle = new Rectangle(InsetRect.X + ImageSize, 0, InsetRect.Width - ImageSize, 0);
+                    if (GetButtonImageHorizontalAlignment(Btn) == ButtonTextHorizontal.Right) {
+                        TextRectangle = new Rectangle(InsetRect.X, (int)RunningHeight, InsetRect.Width - ImageSize, 0);
+                    }
+                    if (HasPrimary) {
+                        using (SolidBrush TxtBr = new SolidBrush(ForeColor)) {
+                            e.Graphics.DrawString(Btn.Text, Font, TxtBr, new RectangleF(TextRectangle.X, RunningHeight, TextRectangle.Width, PrimarySize.Height), PriStrFrmt);
+                        }
+                        RunningHeight += PrimarySize.Height;
+                    }
+                    if (HasSecondary) {
+                        Font TempFont = Font;
+                        if (secondaryFont != null) {
+                            TempFont = secondaryFont;
+                        }
+                        using (SolidBrush TxtBr = new SolidBrush(ForeColor)) {
+                            e.Graphics.DrawString(Btn.SecondaryText, TempFont, TxtBr, new RectangleF(TextRectangle.X, RunningHeight, TextRectangle.Width, SecondarySize.Height), PriStrFrmt);
+                        }
+                    }
+                    //}
+                }
+            }
+        }
+        private ButtonTextVertical GetButtonTextVerticalAlignment(GridButton Btn) {
+            if (Btn.UseButtonFormatting == true) {
+                return Btn.TextVerticalAlignment;
+            }
+            else {
+                return this.textVerticalAlignment;
+            }
+        }
+        private ButtonTextHorizontal GetButtonTextHorizontalAlignment(GridButton Btn) {
+            if (Btn.UseButtonFormatting == true) {
+                return Btn.TextHorizontalAlignment;
+            }
+            else {
+                return this.textHorizontalAlignment;
+            }
+        }
+        private ButtonTextHorizontal GetButtonImageHorizontalAlignment(GridButton Btn) {
+            if (Btn.UseButtonFormatting == true) {
+                return Btn.ImageHorizontalAlignment;
+            }
+            else {
+                return this.imageHorizontalAlignment;
+            }
+        }
+        private bool GetButtonInline(GridButton Btn) {
+            if (Btn.UseButtonFormatting == true) {
+                return Btn.IconInline;
+            }
+            else {
+                return this.iconInline;
             }
         }
         private int DrawImage(PaintEventArgs e, Rectangle ButtonBounds, GridButton Btn, int Offset) {
             if (Btn.Icon == null) { return 0; }
-            if (Btn.ImageHorizontalAlignment == ButtonTextHorizontal.Left) {
+            if (GetButtonImageHorizontalAlignment(Btn) == ButtonTextHorizontal.Left) {
                 Point IconLocation = new Point(ButtonBounds.X, ButtonBounds.Y + Offset);
                 e.Graphics.DrawImage(Btn.Icon, new Rectangle(IconLocation, imageSize));
             }
-            else if (Btn.ImageHorizontalAlignment == ButtonTextHorizontal.Center) {
+            else if (GetButtonImageHorizontalAlignment(Btn) == ButtonTextHorizontal.Center) {
                 Point IconLocation = new Point(ButtonBounds.X + ((ButtonBounds.Width - imageSize.Width) / 2), ButtonBounds.Y + Offset);
                 e.Graphics.DrawImage(Btn.Icon, new Rectangle(IconLocation, imageSize));
             }
-            else if (Btn.ImageHorizontalAlignment == ButtonTextHorizontal.Right) {
+            else if (GetButtonImageHorizontalAlignment(Btn) == ButtonTextHorizontal.Right) {
                 Point IconLocation = new Point(ButtonBounds.X + (ButtonBounds.Width - imageSize.Width), ButtonBounds.Y + Offset);
                 e.Graphics.DrawImage(Btn.Icon, new Rectangle(IconLocation, imageSize));
             }
@@ -658,19 +753,15 @@ namespace ODModules {
         }
         private int DrawImageInline(PaintEventArgs e, Rectangle ButtonBounds, GridButton Btn, int Offset) {
             if (Btn.Icon == null) { return 0; }
-            if (Btn.ImageHorizontalAlignment == ButtonTextHorizontal.Left) {
-                Point IconLocation = new Point(ButtonBounds.X, ButtonBounds.Y + Offset);
+            if (Btn.ImageHorizontalAlignment == ButtonTextHorizontal.Right) {
+                Point IconLocation = new Point(ButtonBounds.X + (ButtonBounds.Width - imageSize.Width - 2), ButtonBounds.Y + Offset);
                 e.Graphics.DrawImage(Btn.Icon, new Rectangle(IconLocation, imageSize));
             }
-            else if (Btn.ImageHorizontalAlignment == ButtonTextHorizontal.Center) {
-                Point IconLocation = new Point(ButtonBounds.X + ((ButtonBounds.Width - imageSize.Width) / 2), ButtonBounds.Y + Offset);
+            else {
+                Point IconLocation = new Point(ButtonBounds.X + 2, ButtonBounds.Y + Offset);
                 e.Graphics.DrawImage(Btn.Icon, new Rectangle(IconLocation, imageSize));
             }
-            else if (Btn.ImageHorizontalAlignment == ButtonTextHorizontal.Right) {
-                Point IconLocation = new Point(ButtonBounds.X + (ButtonBounds.Width - imageSize.Width), ButtonBounds.Y + Offset);
-                e.Graphics.DrawImage(Btn.Icon, new Rectangle(IconLocation, imageSize));
-            }
-            return imageSize.Height;
+            return imageSize.Width + 2;
         }
         Rectangle VerticalScrollBar = new Rectangle(0, 0, 0, 0);
         Rectangle VerticalScrollBounds = new Rectangle(0, 0, 0, 0);
@@ -760,7 +851,13 @@ namespace ODModules {
         }
         bool DownLatched = false;
 
-        private MouseStates GetState(Rectangle ButtonBounds) {
+        private MouseStates GetState(Rectangle ButtonBounds, int ButtonIndex = -1) {
+            if (KeyDownState == true) {
+                if (ButtonIndex == DownIndex) {
+                    return MouseStates.Down;
+                }
+                return MouseStates.Exited;
+            }
             if (ButtonBounds.Contains(CurrentPosition)) {
                 if (IsMouseDown == true) {
                     if (DownLatched == false) {
@@ -787,6 +884,10 @@ namespace ODModules {
         private void GetBackColors(MouseStates MouseState, GridButton Btn, out Color NorthColor, out Color SouthColor) {
             Color TempNorthBack = backColorNorth;
             Color TempSouthBack = backColorSouth;
+            if (Btn.UseCustomColors) {
+                TempNorthBack = Btn.BackColorNorth;
+                TempSouthBack = Btn.BackColorSouth;
+            }
             NorthColor = TempNorthBack; SouthColor = TempSouthBack;
             if (Enabled == true) {
                 switch (MouseState) {
@@ -822,6 +923,10 @@ namespace ODModules {
         private void GetBorderColors(MouseStates MouseState, GridButton Btn, out Color NorthColor, out Color SouthColor) {
             Color TempNorthBorder = borderColorNorth;
             Color TempSouthBorder = borderColorSouth;
+            if (Btn.UseCustomColors) {
+                TempNorthBorder = Btn.BorderColorNorth;
+                TempSouthBorder = Btn.BorderColorSouth;
+            }
             NorthColor = TempNorthBorder; SouthColor = TempSouthBorder;
             if (Enabled == true) {
                 switch (MouseState) {
@@ -939,7 +1044,7 @@ namespace ODModules {
                 using (SolidBrush Br = new SolidBrush(North)) {
                     using (Pen Pn = new Pen(Br, PenSizing)) {
                         if (PenSizing == 1) {
-                            Rectangle Rect = new Rectangle(ObjectBounds.X, ObjectBounds.Y, ObjectBounds.Width - 1, ObjectBounds.Height - 1);
+                            Rectangle Rect = new Rectangle(ObjectBounds.X, ObjectBounds.Y, ObjectBounds.Width, ObjectBounds.Height);
                             e.Graphics.DrawRectangle(Pn, Rect);
                         }
                         else {
@@ -953,7 +1058,7 @@ namespace ODModules {
                 using (LinearGradientBrush Br = new LinearGradientBrush(ObjectBounds, North, South, LinearGradientMode.Vertical)) {
                     using (Pen Pn = new Pen(Br, PenSizing)) {
                         if (PenSizing == 1) {
-                            Rectangle Rect = new Rectangle(ObjectBounds.X, ObjectBounds.Y, ObjectBounds.Width - 1, ObjectBounds.Height - 1);
+                            Rectangle Rect = new Rectangle(ObjectBounds.X, ObjectBounds.Y, ObjectBounds.Width, ObjectBounds.Height);
                             e.Graphics.DrawRectangle(Pn, Rect);
                         }
                         else {
@@ -1022,7 +1127,7 @@ namespace ODModules {
             Invalidate();
         }
         private void ButtonGrid_MouseClick(object? sender, MouseEventArgs e) {
-           
+
             if (IsPointReset(e.Location) == false) {
                 ClickedButtonResult Result = GetButtonPosition(e.Location);
                 if (Result.Button != null) {
@@ -1171,7 +1276,7 @@ namespace ODModules {
         Point DownLocation = new Point(0, 0);
         private void ButtonGrid_MouseDown(object? sender, MouseEventArgs e) {
             DownLatched = false;
-           
+
             if ((ShowVertScroll == true) && (e.X >= Width - ScrollSize)) {
                 ScrollHit = ScrollArea.Vertical;
                 if (ScrollStart == false) {
@@ -1210,6 +1315,32 @@ namespace ODModules {
             Invalidate();
 
         }
+        bool KeyDownState = false;
+        int DownIndex = -1;
+        private void ButtonGrid_KeyDown(object? sender, KeyEventArgs e) {
+            int i = 0;
+            foreach (GridButton Btn in buttons) {
+                if (Btn.ShortCutKeys == e.KeyData) {
+                    ButtonClicked?.Invoke(this, Btn, new Point(0, 0));
+                    KeyDownState = true;
+                    DownIndex = i;
+                    break;
+                }
+                else if (Btn.SecondaryShortCutKeys == e.KeyData) {
+                    ButtonClicked?.Invoke(this, Btn, new Point(0, 0));
+                    KeyDownState = true;
+                    DownIndex = i;
+                    break;
+                }
+                i++;
+            }
+            Invalidate();
+        }
+        private void ButtonGrid_KeyUp(object? sender, KeyEventArgs e) {
+            KeyDownState = false;
+            DownIndex = -1;
+            Invalidate();
+        }
         private enum SideDocks {
             North = 0x00,
             East = 0x01,
@@ -1233,9 +1364,9 @@ namespace ODModules {
         }
     }
     public class ClickedButtonResult {
-        GridButton ?button = null;
-        public GridButton ?Button {
-            get { return button; } 
+        GridButton? button = null;
+        public GridButton? Button {
+            get { return button; }
         }
         int index = -1;
         public int Index {
@@ -1245,13 +1376,15 @@ namespace ODModules {
         public Point Position {
             get { return position; }
         }
-        public ClickedButtonResult(GridButton ?Button, Point Position, int Index) {
+        public ClickedButtonResult(GridButton? Button, Point Position, int Index) {
             this.button = Button;
             this.index = Index;
             this.position = Position;
         }
     }
-    public class GridButton {
+    public class GridButton : ArrayButton {
+    }
+    public class ArrayButton {
         #region Properties
         [Browsable(true)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
@@ -1283,6 +1416,16 @@ namespace ODModules {
             }
             set {
                 iconInline = value;
+            }
+        }
+        bool useButtonFormatting = false;
+        [System.ComponentModel.Category("Appearance")]
+        public bool UseButtonFormatting {
+            get {
+                return useButtonFormatting;
+            }
+            set {
+                useButtonFormatting = value;
             }
         }
         Image? icon = null;
@@ -1386,6 +1529,81 @@ namespace ODModules {
                 if (value == true) {
                     lastChecked = DateTime.UtcNow;
                 }
+            }
+        }
+        bool enabled = true;
+        [System.ComponentModel.Category("Control")]
+        public bool Enabled {
+            get {
+                return enabled;
+            }
+            set {
+                enabled = value;
+            }
+        }
+
+        Color backColorNorth = Color.Gray;
+        [System.ComponentModel.Category("Appearance")]
+        public Color BackColorNorth {
+            get { return backColorNorth; }
+            set {
+                backColorNorth = value;
+            }
+        }
+        Color backColorSouth = Color.Gray;
+        [System.ComponentModel.Category("Appearance")]
+        public Color BackColorSouth {
+            get { return backColorSouth; }
+            set {
+                backColorSouth = value;
+            }
+        }
+        Color borderColorNorth = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color BorderColorNorth {
+            get { return borderColorNorth; }
+            set {
+                borderColorNorth = value;
+            }
+        }
+        Color borderColorSouth = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color BorderColorSouth {
+            get { return borderColorSouth; }
+            set {
+                borderColorSouth = value;
+            }
+        }
+        bool useCustomColors = false;
+        [System.ComponentModel.Category("Appearance")]
+        public bool UseCustomColors {
+            get { return useCustomColors; }
+            set {
+                useCustomColors = value;
+            }
+        }
+        bool useKeyCode = false;
+        [System.ComponentModel.Category("Key Input")]
+        public bool UseKeyCode {
+            get { return useKeyCode; }
+            set {
+                useKeyCode = value;
+            }
+        }
+        Keys shortCutKeys = Keys.None;
+        [System.ComponentModel.Category("Key Input")]
+        public Keys ShortCutKeys {
+            get { return shortCutKeys; }
+            set {
+                shortCutKeys = value;
+            }
+        }
+        Keys secondaryShortCutKeys = Keys.None;
+        [System.ComponentModel.Category("Key Input")]
+        public Keys SecondaryShortCutKeys {
+            get { return secondaryShortCutKeys; }
+            set {
+                secondaryShortCutKeys = value;
             }
         }
         #endregion

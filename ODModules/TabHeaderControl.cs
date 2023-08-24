@@ -85,7 +85,12 @@ namespace Physika {
 
         public TabHeaderControl() {
             DoubleBuffered = true;
+            this.MouseClick += TabHeaderControl_MouseClick;
+            MouseUp += TabHeaderControl_MouseUp;
+            MouseDown += TabHeaderControl_MouseDown;
         }
+
+        
 
         [System.ComponentModel.Category("Appearance")]
         public Color TabClickedBackColor {
@@ -111,7 +116,7 @@ namespace Physika {
         private void BindedTabControl_ControlAdded(object? sender, ControlEventArgs e) {
             Invalidate();
         }
-        bool MouseDown = false;
+        bool MouseDownState = false;
         Point CurrentMousePosition = new Point(-1, -1);
         protected override void OnMouseMove(MouseEventArgs e) {
             CurrentMousePosition = e.Location;
@@ -136,7 +141,7 @@ namespace Physika {
                     else {
                         if (CurrentTabRectangle.Contains(CurrentMousePosition)) {
                             Current = Action.MouseHover;
-                            if (MouseDown == true) {
+                            if (MouseDownState == true) {
                                 Current = Action.MouseDown;
                                 DownIndex = i;
                             }
@@ -215,10 +220,22 @@ namespace Physika {
         protected override void OnMouseWheel(MouseEventArgs e) {
             base.OnMouseWheel(e);
         }
+        private void TabHeaderControl_MouseUp(object? sender, MouseEventArgs e) {
+            MouseDownState = false;
+            Invalidate();
+        }
 
-        protected override void OnMouseDown(MouseEventArgs e) {
-        
-            MouseDown = true;
+        private void TabHeaderControl_MouseClick(object? sender, MouseEventArgs e) {
+            if (DownIndex != -1) {
+                if (bindedTabControl != null) {
+                    if (DownIndex < bindedTabControl.TabPages.Count) {
+                        bindedTabControl.SelectedIndex = DownIndex;
+                    }
+                }
+            }
+        }
+        private void TabHeaderControl_MouseDown(object? sender, MouseEventArgs e) {
+            MouseDownState = true;
             Invalidate();
             base.OnMouseDown(e);
         }
@@ -248,23 +265,6 @@ namespace Physika {
 
         private void TabHeaderControl_Load(object? sender, EventArgs e) {
 
-        }
-
-        protected override void OnMouseUp(MouseEventArgs e) {
-            MouseDown = false;
-            Invalidate();
-            base.OnMouseUp(e);
-        }
-
-        protected override void OnClick(EventArgs e) {
-            if (DownIndex != -1) {
-                if (bindedTabControl != null) {
-                    if (DownIndex < bindedTabControl.TabPages.Count) {
-                        bindedTabControl.SelectedIndex = DownIndex;
-                    }
-                }
-            }
-            base.OnClick(e);
         }
     }
 }

@@ -28,7 +28,12 @@ namespace ODModules {
         [Category("Items")]
         public event DropDownClickedHandler? DropDownClicked;
 
+        [Category("Items")]
+        public event ItemClickedHandler? ItemClicked;
+        public event ItemClickedHandler? ItemRightClicked;
+        public event ItemClickedHandler? ItemMiddleClicked;
 
+        public delegate void ItemClickedHandler(object sender, ListItem Item, int Index, Rectangle ItemBounds);
 
 
         //public event CommandEnteredEventHandler? CommandEntered;
@@ -160,7 +165,49 @@ namespace ODModules {
             }
             Invalidate();
         }
+        public void LineFlipSelected() {
+            List<ListItem> temp = new List<ListItem>();
+            List<int> post = new List<int>();
+            if (useLocalList == true) {
+                for (int i = Items.Count - 1; i >= 0; i += -1) {
+                    if (Items[i].Selected == true) {
+                        temp.Add(CloneListItem(Items[i]));
+                        post.Add(i);
+                    }
+                }
+                for (int j = 0; j < post.Count; j++) {
+                    if (Items[post[j]].Selected == true) {
+                        int inv = post.Count - 1 - j;
+                        Items[post[j]] = temp[inv];
+                    }
+                }
+            }
+            Invalidate();
+        }
+        private ListItem CloneListItem(ListItem Item) {
+            ListItem NewItem = new ListItem();
+            NewItem.Text = Item.Text;
+            NewItem.BackColor = Item.BackColor;
+            NewItem.Checked = Item.Checked;
+            NewItem.ForeColor = Item.ForeColor;
+            NewItem.Tag = Item.Tag;
+            NewItem.Name = Item.Name;
+            for(int i=0;i < Item.SubItems.Count; i++) {
+                NewItem.SubItems.Add(CloneSubItem(Item.SubItems[i]));
+            }
+            return NewItem;
+        }
+        private ListSubItem CloneSubItem(ListSubItem Item) {
+            ListSubItem NewItem = new ListSubItem();
+            NewItem.Text = Item.Text;
+            NewItem.BackColor = Item.BackColor;
+            NewItem.Checked = Item.Checked;
+            NewItem.ForeColor = Item.ForeColor;
+            NewItem.Tag = Item.Tag;
+            NewItem.Name = Item.Name;
 
+            return NewItem;
+        }
         public void LineRemoveSelected() {
             //int sellines = SelectedItems();
             //while (sellines > 0) {
@@ -225,7 +272,7 @@ namespace ODModules {
                 Items.RemoveAt(Index);
             }
             else {
-                if (externalItems == null) { return; }
+                if (ExternalItems == null) { return; }
                 if (Index < 0) { return; }
                 if (Index >= ExternalItems.Count) { return; }
                 ExternalItems[Index].SubItems.Clear();
@@ -2035,7 +2082,9 @@ namespace ODModules {
                 }
             }
             if (InScrollBounds == false) {
+                ListItemClickEvent(e.Y, e.Button);
                 if (e.Button == MouseButtons.Left) {
+
                     bool HitSomething = false;
                     HitSomething = HitCheckBox(e.Location);
                     if (e.Location.Equals(CurrentMousePosition)) {
@@ -2050,6 +2099,23 @@ namespace ODModules {
                 }
             }
 
+        }
+        private void ListItemClickEvent(int VerPos, MouseButtons MouseBtn) {
+            int TempCurrentLine = ListLinePoint(VerPos, PointLineCalcuation.PositionToLine);
+            int TempY = ListLinePoint(VerPos, PointLineCalcuation.LineToPositiionScrollFactored);
+            Rectangle LineRectangle = new Rectangle(0, TempY, Width, GenericLine_Height);
+            if (TempCurrentLine < 0) { return; }
+            if (CurrentItems.Count == 0) { return; }
+            if (TempCurrentLine >= CurrentItems.Count) { return; }
+            switch (MouseBtn) {
+                case MouseButtons.Left:
+                    ItemClicked?.Invoke(this, CurrentItems[TempCurrentLine], TempCurrentLine, LineRectangle); return;
+                case MouseButtons.Middle:
+                    ItemMiddleClicked?.Invoke(this, CurrentItems[TempCurrentLine], TempCurrentLine, LineRectangle); return;
+                case MouseButtons.Right:
+                    ItemRightClicked?.Invoke(this, CurrentItems[TempCurrentLine], TempCurrentLine, LineRectangle); return;
+                default: return;
+            }
         }
         private void LineInterface_MouseEnter(object? sender, System.EventArgs e) {
         }
@@ -2381,7 +2447,26 @@ namespace ODModules {
         public List<ListSubItem> SubItems {
             get { return subItems; }
         }
-
+        private ListObject GetItem(uint Subindex) {
+            if (Subindex == 0) {
+                return this;
+            }
+            else {
+                if ((Subindex-1) < subItems.Count) {
+                    return subItems[(int)Subindex-1];
+                }
+                else {
+                    return new ListSubItem("Out of Bounds");
+                }
+            }
+        }
+        public ListObject this[int index] {
+            get {
+                uint Temp = (uint)index;
+                if (index < 0) { Temp = 0; }
+                return GetItem(Temp); 
+            }
+        }
         public ListItem() {
 
         }

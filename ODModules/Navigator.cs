@@ -108,6 +108,15 @@ namespace ODModules {
                 Invalidate();
             }
         }
+        Color sideShadowColor = Color.FromArgb(20, 0, 0, 0);
+        [System.ComponentModel.Category("Appearance")]
+        public Color SideShadowColor {
+            get { return sideShadowColor; }
+            set {
+                sideShadowColor = value;
+                Invalidate();
+            }
+        }
         Color shadowColor = Color.FromArgb(100, 0, 0, 0);
         [System.ComponentModel.Category("Appearance")]
         public Color ShadowColor {
@@ -217,7 +226,7 @@ namespace ODModules {
             DetermineOverflow();
             DrawSideShadow(e);
             float SelectedItemPos = (float)ItemsStart + ((selectedItemChnge - (float)StartItem) * (float)ItemHeight);//(float)ItemsStart + (selectedItemChnge * (float)ItemHeight);
-            
+            SelectedItemPos = (float)Math.Round((double)SelectedItemPos, 4);
             DrawSelectedBottom(e, SelectedItemPos);
             DrawItems(e);
             DrawSelectedTop(e, SelectedItemPos);
@@ -229,14 +238,14 @@ namespace ODModules {
             if (displayStyle == Style.Right) {
                 Rectangle VSHAD = new Rectangle(Width - ShadowWidth, 0, ShadowWidth, Height);
                 Rectangle VSHADD = new Rectangle(Width - ShadowWidth - 2, 0, ShadowWidth + 2, Height);
-                using (LinearGradientBrush linbr1 = new LinearGradientBrush(VSHADD, Color.FromArgb(0, 0, 0, 0), Color.FromArgb(20, 0, 0, 0), 0.0f)) {
+                using (LinearGradientBrush linbr1 = new LinearGradientBrush(VSHADD, Color.FromArgb(0, 0, 0, 0), sideShadowColor, 0.0f)) {
                     e.Graphics.FillRectangle(linbr1, VSHAD);
                 }
             }
             else {
                 Rectangle VSHAD = new Rectangle(0, 0, ShadowWidth, Height);
                 Rectangle VSHADD = new Rectangle(0, 0, ShadowWidth + 2, Height);
-                using (LinearGradientBrush linbr1 = new LinearGradientBrush(VSHADD, Color.FromArgb(0, 0, 0, 0), Color.FromArgb(20, 0, 0, 0), 180.0f)) {
+                using (LinearGradientBrush linbr1 = new LinearGradientBrush(VSHADD, Color.FromArgb(0, 0, 0, 0), sideShadowColor, 180.0f)) {
                     e.Graphics.FillRectangle(linbr1, VSHAD);
                 }
             }
@@ -289,7 +298,7 @@ namespace ODModules {
         }
         private void DrawArrow(PaintEventArgs e, Rectangle ArrowBounds, bool TopArrow) {
             Size ButtonSize = new Size((int)UnitSize, (int)UnitSize);
-            Color collapseArrowColor = Color.White;
+            Color collapseArrowColor = arrowColor;
             int CentreX = ArrowBounds.X + ((ArrowBounds.Width - ButtonSize.Width) / 2);
             int CentreY = ArrowBounds.Y + ((ArrowBounds.Height - ButtonSize.Height) / 2);
             Rectangle CentreArrow = new Rectangle(CentreX, CentreY, ButtonSize.Width, ButtonSize.Height);
@@ -413,7 +422,7 @@ namespace ODModules {
             }
         }
         private int GetCurrentSelectedItem() {
-            return (int)Math.Floor(selectedItemChnge);
+            return (int)Math.Floor((float)Math.Round(selectedItemChnge,4));
         }
 
         protected override void OnResize(EventArgs e) {
@@ -470,7 +479,8 @@ namespace ODModules {
                 }
             }
             else if (AnimateDirection == AnimationState.Up) {
-                if (selectedItem >= selectedItemChnge) {
+                decimal CurrentItemChanged = (decimal)Math.Round((float)selectedItemChnge, 2);
+                if (selectedItem >= CurrentItemChanged) {
                     EndAnimation();
                 }
                 else {
@@ -522,13 +532,15 @@ namespace ODModules {
                 }
             }
             else {
-                SelectedItem--;
+                
                 if (StartItem > 0) {
+                    //Debug.Print(SelectedItem.ToString() + " " + StartItem.ToString());
                     if (SelectedItem <= StartItem) {
                         StartItem--;
                         Invalidate();
                     }
                 }
+                SelectedItem--;
             }
         }
 
