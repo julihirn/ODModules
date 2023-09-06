@@ -12,6 +12,8 @@ using System.Diagnostics;
 namespace ODModules {
     public class Keypad : UserControl {
         [Category("Buttons")]
+        public event ButtonClickedEventHandler? ButtonRightClicked;
+        [Category("Buttons")]
         public event ButtonClickedEventHandler? ButtonClicked;
 
         public delegate void ButtonClickedEventHandler(object? Sender, KeypadButton Button, Point GridLocation);
@@ -503,6 +505,8 @@ namespace ODModules {
             float TotalSize = 0;
             float RunningHeight = InsetRect.Y;
             using (StringFormat PriStrFrmt = new StringFormat()) {
+                PriStrFrmt.FormatFlags = StringFormatFlags.FitBlackBox;
+                PriStrFrmt.Trimming = StringTrimming.EllipsisCharacter;
                 if (GetButtonTextHorizontalAlignment(Btn) == ButtonTextHorizontal.Center) {
                     PriStrFrmt.Alignment = StringAlignment.Center;
                 }
@@ -912,8 +916,11 @@ namespace ODModules {
             CurrentPosition = e.Location;
             Invalidate();
         }
+        Point DownLocation = new Point(0, 0);
         private void Keypad_MouseDown(object? sender, MouseEventArgs e) {
             IsMouseDown = true;
+            CurrentPosition = e.Location;
+            DownLocation = e.Location;
             Invalidate();
         }
         private bool IsPointReset(Point Input) {
@@ -924,12 +931,71 @@ namespace ODModules {
             if (IsPointReset(e.Location) == false) {
                 ClickedKeypadButtonResult Result = GetButtonPosition(e.Location);
                 if (Result.Button != null) {
-                    // ResetAllothers(Result.Button);
-                    CurrentPosition = e.Location;
-                    IsMouseDown = true;
-                    Invalidate();
-                    ButtonClicked?.Invoke(this, Result.Button, Result.Position);
+                    // 
+                    if (e.Button == MouseButtons.Left) {
+                        ResetAllothers(Result.Button);
+                        CurrentPosition = e.Location;
+                        IsMouseDown = true;
+                        Invalidate();
+                        ButtonClicked?.Invoke(this, Result.Button, Result.Position);
+                    }
+                    else if (e.Button == MouseButtons.Right) {
+                        CurrentPosition = e.Location;
+                        IsMouseDown = true;
+                        Invalidate();
+                        ButtonRightClicked?.Invoke(this, Result.Button, Result.Position);
+                    }
                 }
+            }
+        }
+        private void ResetAllothers(KeypadButton ThisBtn) {
+            if (ThisBtn.Type == ButtonType.RadioButton) {
+                ThisBtn.Checked = true;
+                if (ThisBtn.Checked == true) {
+                    try {
+                        foreach (KeypadButton Btn in buttons) {
+                            if (Btn != ThisBtn) {
+                                if (Btn.Type == ButtonType.RadioButton) {
+                                    if (Btn.RadioButtonGroup == ThisBtn.RadioButtonGroup) { Btn.Checked = false; }
+                                }
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+            else if (ThisBtn.Type == ButtonType.Checkbox) {
+                ThisBtn.Checked = !ThisBtn.Checked;
+            }
+            else if (ThisBtn.Type == ButtonType.CheckBoxLimited) {
+                //if (ThisBtn.Checked == true) {
+                //    try {
+                //        if (this.Parent != null) {
+                //            List<ODModules.Button> Btns = new List<ODModules.Button>();
+                //            int CheckedCount = 0;
+                //            foreach (ODModules.Button Btn in this.Parent.Controls) {
+                //                if (Btn != this) {
+                //                    if (Btn.Type == ButtonType.CheckBoxLimited) {
+                //                        if (Btn.RadioButtonGroup == this.RadioButtonGroup) {
+                //                            if (Btn.Checked == true) {
+                //                                Btns.Add(Btn);
+                //                                CheckedCount++;
+                //                            }
+                //                        }
+                //                    }
+                //                }
+                //            }
+                //            Btns.Sort((x, y) => x.LastChecked.Ticks.CompareTo(y.LastChecked.Ticks));
+                //            if (CheckedCount >= groupMaximumChecked) {
+                //                int Diff = CheckedCount + 1 - groupMaximumChecked;
+                //                for (int i = 0; i < Diff; i++) {
+                //                    Btns[i].Checked = false;
+                //                }
+                //            }
+                //        }
+                //    }
+                //    catch { }
+                //}
             }
         }
         bool KeyDownState = false;
@@ -1007,6 +1073,21 @@ namespace ODModules {
             East = 0x01,
             South = 0x02,
             West = 0x03
+        }
+
+        private void InitializeComponent() {
+            this.SuspendLayout();
+            // 
+            // Keypad
+            // 
+            this.Name = "Keypad";
+            this.Load += new System.EventHandler(this.Keypad_Load);
+            this.ResumeLayout(false);
+
+        }
+
+        private void Keypad_Load(object sender, EventArgs e) {
+
         }
     }
     public class ClickedKeypadButtonResult {

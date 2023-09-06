@@ -23,13 +23,14 @@ namespace ODModules {
             }
             set {
                 compareFrom = value;
+                Evaluate();
                 Invalidate();
             }
         }
         [System.ComponentModel.Category("Text Comparison")]
         public string CompareTo {
             get { return compareTo; }
-            set { compareTo = value; Invalidate(); }
+            set { compareTo = value; Evaluate(); Invalidate(); }
         }
         public int TextPosition {
             get { return textPosition; }
@@ -113,18 +114,78 @@ namespace ODModules {
                 Invalidate();
             }
         }
+        int matches = -1;
+        [System.ComponentModel.Category("Analysis")]
+        public int Matches {
+            get {
+                return matches;
+            }
+        }
+        int mismatches = -1;
+        [System.ComponentModel.Category("Analysis")]
+        public int Mismatches {
+            get {
+                return mismatches;
+            }
+        }
+        int indexOfFirstMatch = -1;
+        [System.ComponentModel.Category("Analysis")]
+        public int IndexOfFirstMatch {
+            get {
+                return indexOfFirstMatch;
+            }
+        }
+        int Longeststring = 0;
+        [System.ComponentModel.Category("Analysis")]
+        public int MaximumLength {
+            get {
+                return Longeststring - 1;
+            }
+        }
+        private void Evaluate() {
+            DetermineLongestString();
+            if ((compareFrom.Length == 0) || (compareTo.Length == 0)) {
+                indexOfFirstMatch = -1;
+                mismatches = 0;
+                matches = 0;
+            }
+            else {
+                mismatches = 0;
+                matches = 0;
+                bool FirstMatch = false;
+                for (int i = 0; i < Longeststring; i++) {
+                    string a = ""; bool AIsEmpty = false;
+                    string b = ""; bool BIsEmpty = false;
+                    if (compareFrom.Length > 0) {
+                        if (compareFrom.Length > i) { a = compareFrom[i].ToString(); }
+                        else { AIsEmpty = true; }
+                    }
+                    else { AIsEmpty = true; }
+                    if (compareTo.Length > 0) {
+                        if (compareTo.Length > i) { b = compareTo[i].ToString(); }
+                        else { BIsEmpty = true; }
+                    }
+                    else { BIsEmpty = true; }
+                    if ((AIsEmpty == false) && (BIsEmpty == false)) {
+                        if (a == b) {
+                            matches++;
+                            if (FirstMatch == false) { indexOfFirstMatch = i; FirstMatch = true; }
+                        }
+                        else { 
+                            mismatches++;
+                        }
+                    }
+                }
+            }
+        }
 
         private bool useEmptyTextColor = false;
 
         private Color sameColor = Color.FromArgb(192, 255, 192);
         private Color differenceColor = Color.FromArgb(255, 192, 192);
         private Color emptyTextColor = Color.FromArgb(255, 224, 192);
-        public int MaximumLength {
-            get {
-                return Longeststring - 1;
-            }
-        }
-        int Longeststring = 0;
+
+
         private void DetermineLongestString() {
             int OldLongest = Longeststring;
             if (compareFrom.Length >= compareTo.Length) {
@@ -245,7 +306,7 @@ namespace ODModules {
         }
         #region Control Drawing
         private void DrawDifferences(PaintEventArgs e, Rectangle Rect) {
-        
+
             int CharWidth = (int)e.Graphics.MeasureString("W", Font).Width;
             int CharHeight = (int)e.Graphics.MeasureString("W", Font).Height;
             int MaxCharWin = (int)Math.Ceiling((double)Rect.Width / (double)CharWidth);
@@ -328,12 +389,12 @@ namespace ODModules {
             e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
             e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
             e.Graphics.CompositingQuality = CompositingQuality.HighQuality;
-           // e.Graphics.TextContrast = 1;
-           
+            // e.Graphics.TextContrast = 1;
+
             GenericCharacterWidth = (int)e.Graphics.MeasureString("W", Font).Width;
             WindowCharacters = (Width / GenericCharacterWidth) - 1;
             if (WindowCharacters < 1) { WindowCharacters = 1; }
-            DetermineLongestString();
+            // DetermineLongestString();
 
             DrawDifferences(e, new Rectangle(Padding.Left, Padding.Top, Width - Padding.Left - Padding.Right, Height - Padding.Top - Padding.Bottom));
             // DrawText(e, TopString, 0);

@@ -26,6 +26,8 @@ namespace ODModules {
         public event CommandEnteredEventHandler? CommandEntered;
         public delegate void CommandEnteredEventHandler(object? sender, CommandEnteredEventArgs e);
         public ConsoleInterface() {
+            terminalColors.Add(new LinkedColor("Warning", Color.FromArgb(215, 191, 107),TerminalColorType.Message));
+            terminalColors.Add(new LinkedColor("Error", Color.FromArgb(207, 137, 87), TerminalColorType.Message));
             DoubleBuffered = true;
             FlashTimer.Tick += FlashTimer_Tick;
             FlashTimer.Enabled = true;
@@ -50,6 +52,23 @@ namespace ODModules {
         }
         #endregion
         #region Console Functionality
+        public void SetTerminalColor(string Label, Color DisplayColor, TerminalColorType FilterType = TerminalColorType.General, bool RefreshInterface = false) {
+            bool Reached = false;
+            foreach(LinkedColor Lc in terminalColors) {
+                if (Label == Lc.Label) {
+                    if (FilterType == Lc.DisplayType) {
+                        Lc.Color = DisplayColor;
+                        Reached = true; break;
+                    }
+                }
+            }
+            if (Reached == true) {
+                if (RefreshInterface == true) { Invalidate(); }
+                return; 
+            }
+            terminalColors.Add(new LinkedColor(Label, DisplayColor, FilterType));
+            if (RefreshInterface == true) { Invalidate(); }
+        }
         public string PushToString() {
             string output = "";
             foreach (TerminalLine line in Lines) {
@@ -164,27 +183,29 @@ namespace ODModules {
             catch { }
             return LineNumber;
         }
-        public void Print(string Text) {
-            Print("", Text);
+        public void Print(string Text, int DefinedColorIndex = -1) {
+            Print("", Text, DefinedColorIndex);
         }
         public void Print(string Text, Color DisplayColor) {
             Print("", Text, DisplayColor);
         }
-        public void Print(string Source, string Text) {
+        public void Print(string Source, string Text, int DefinedColorIndex = -1) {
             BufferManagement();
             int OldLineCount = Lines.Count;
             int LineDifference = 1;
             Text = Text.Replace("\r", "");
             List<string> LinesToPrint = SpiltString(Text, '\n');
             int Diff = 0;
+            bool UseDefinedColor = false;
+            if (DefinedColorIndex >=0) { UseDefinedColor = true; }
             for (int i = 0; i < LinesToPrint.Count; i++) {
                 string Temp = LinesToPrint[i];
                 if (Temp.Length <= longLine) {
-                    TerminalLine Line = new TerminalLine(Source, Temp);
+                    TerminalLine Line = new TerminalLine(Source, Temp, DefinedColorIndex);
                     Lines.Add(Line);
                 }
                 else {
-                    Diff += SplitLongLine(Temp, Source, false, BackColor) - 1;
+                    Diff += SplitLongLine(Temp, Source, UseDefinedColor, BackColor, DefinedColorIndex) - 1;
                 }
             }
             if (allowCommandEntry == true) { OldLineCount += 1; }
@@ -226,7 +247,7 @@ namespace ODModules {
                 Invalidate();
             }
         }
-        private int SplitLongLine(string Input, string Source, bool UseDisplayColor, Color DisplayColor) {
+        private int SplitLongLine(string Input, string Source, bool UseDisplayColor, Color DisplayColor, int DefinedColorIndex = -1) {
             int Start = 0;
             int End = longLine;
             int i = 0;
@@ -243,8 +264,14 @@ namespace ODModules {
                 //}
                 i++;
                 if (UseDisplayColor) {
-                    TerminalLine Line = new TerminalLine(Source, Temp, DisplayColor);
-                    Lines.Add(Line);
+                    if (DefinedColorIndex >= 0) {
+                        TerminalLine Line = new TerminalLine(Source, Temp, DefinedColorIndex);
+                        Lines.Add(Line);
+                    }
+                    else {
+                        TerminalLine Line = new TerminalLine(Source, Temp, DisplayColor);
+                        Lines.Add(Line);
+                    }
                 }
                 else {
                     TerminalLine Line = new TerminalLine(Source, Temp);
@@ -271,6 +298,11 @@ namespace ODModules {
         }
         #endregion
         #region Properties 
+        List<LinkedColor> terminalColors = new List<LinkedColor>();
+        [System.ComponentModel.Category("Appearance")]
+        public List<LinkedColor> TerminalColors {
+            get { return terminalColors; }
+        }
         private float cursorFlashSpeed = 0.5f;
         [System.ComponentModel.Category("Control")]
         public float CursorFlashSpeed {
@@ -885,7 +917,18 @@ namespace ODModules {
                             return Default;
                         }
                         else {
-                            return Lines[Line].ForeColor;
+                            int Temp = Lines[Line].DefinedColorIndex;
+                            if (Temp < 0) {
+                                return Lines[Line].ForeColor;
+                            }
+                            else {
+                                if (terminalColors.Count > 0) {
+                                    if (Temp < terminalColors.Count) {
+                                        return terminalColors[Temp].Color;
+                                    }
+                                }
+                                return Default;
+                            }
                         }
                     }
                 }
@@ -942,7 +985,7 @@ namespace ODModules {
             using (LinearGradientBrush HeaderForeBrush = new LinearGradientBrush(VerticalScrollBar, _ScrollBarNorth, _ScrollBarSouth, 90.0f)) {
                 ScrollBarButtonSize = ScrollSize;
                 VerticalScrollBounds = new Rectangle(VerticalScrollBar.X, VerticalScrollBar.Y + ScrollBarButtonSize, VerticalScrollBar.Width, VerticalScrollBar.Height - (2 * ScrollBarButtonSize));
-                if (Lines.Count > 0) {
+                if (Lines.Count > 1) {
                     float ViewableItems = ((float)TotalWindowLines / 2.0f) / (float)Lines.Count;
                     if (Lines.Count < TotalWindowLines) {
                         ViewableItems = 1;
@@ -951,7 +994,7 @@ namespace ODModules {
                     if (ThumbHeight < ScrollBarButtonSize * 2) {
                         ThumbHeight = ScrollBarButtonSize * 2;
                     }
-                    float ScrollBounds = (VerticalScrollBounds.Height - ThumbHeight) * ((float)VerScroll / (float)Lines.Count) + VerticalScrollBounds.Y;// + ScrollSize;
+                    float ScrollBounds = (VerticalScrollBounds.Height - ThumbHeight) * ((float)VerScroll / (float)(Lines.Count -1)) + VerticalScrollBounds.Y;// + ScrollSize;
                     VerticalScrollThumb = new RectangleF(VerticalScrollBounds.X, ScrollBounds, VerticalScrollBar.Width, ThumbHeight);
                     e.Graphics.FillRectangle(HeaderForeBrush, VerticalScrollThumb);
                 }
@@ -1502,7 +1545,7 @@ namespace ODModules {
         #endregion
         #region Position Handling
         private int GetVerticalScrollFromCursor(int MousePositionY, float ThumbPosition) {
-            int ScrollTo = (int)((float)((MousePositionY - VerticalScrollBounds.Y - ThumbPosition) * Lines.Count) / (VerticalScrollBounds.Height - VerticalScrollThumb.Height));
+            int ScrollTo = (int)((float)((MousePositionY - VerticalScrollBounds.Y - ThumbPosition) * (Lines.Count -1)) / (VerticalScrollBounds.Height - VerticalScrollThumb.Height));
             //Debug.Print(ScrollTo.ToString());
             return ScrollTo;
         }
@@ -1653,8 +1696,24 @@ namespace ODModules {
             this.source = Source;
             //backColor = BackColor;
         }
+        public TerminalLine(string Source, string Line, int DefinedColor) {
+            this.line = Line;
+            if (DefinedColor <= -1) {
+                useConsoleColor = true;
+            }
+            else {
+                useConsoleColor = false;
+                definedColorIndex = DefinedColor;
+            }
+            foreColor = ForeColor;
+            timeStamp = DateTime.Now;
+            this.source = Source;
+            //backColor = BackColor;
+        }
         private DateTime timeStamp;
         public DateTime TimeStamp { get => timeStamp; }
+        private int definedColorIndex = -1;
+        public int DefinedColorIndex { get => definedColorIndex; set => definedColorIndex = value; }
         private string source = "";
         public string Source { get => source; set => source = value; }
         private string line;
@@ -1665,5 +1724,27 @@ namespace ODModules {
         public Color ForeColor { get => foreColor; set => foreColor = value; }
         //private Color backColor;
         //public Color BackColor { get => backColor; set => backColor = value; }
+    }
+    public class LinkedColor {
+        public LinkedColor() { }
+        public LinkedColor(string Label, Color DisplayColor) {
+            this.Label = Label;
+            this.Color = DisplayColor;
+        }
+        public LinkedColor(string Label, Color DisplayColor, TerminalColorType Type) {
+            this.Label = Label;
+            this.Color = DisplayColor;
+            this.displayType = Type;
+        }
+        Color color = Color.Black;
+        public Color Color { get { return color; } set { color = value; } }
+        string label = "";
+        public string Label { get { return label; } set { label = value; } }
+        TerminalColorType displayType = TerminalColorType.General;
+        public TerminalColorType DisplayType { get { return displayType; } set { displayType = value; } }
+    }
+    public enum TerminalColorType {
+        General = 0x00,
+        Message = 0x01
     }
 }

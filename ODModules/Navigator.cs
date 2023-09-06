@@ -21,6 +21,11 @@ namespace ODModules {
         public event SelectedIndexChangedHandler? SelectedIndexChanged;
         public delegate void SelectedIndexChangedHandler(object sender, int SelectedIndex);
 
+        [Category("Tab Actions")]
+        public event TabClickedHandler? TabClicked;
+        public delegate void TabClickedHandler(object sender, TabClickedEventArgs Tab);
+        [Category("Tab Actions")]
+        public event TabClickedHandler? TabRightClicked;
         public Navigator() {
             this.DoubleBuffered = true;
             Animator.Interval = 10;
@@ -34,7 +39,7 @@ namespace ODModules {
 
         }
 
-        
+
 
         //List<string> list = new List<string>();
         System.Windows.Forms.Timer Animator = new System.Windows.Forms.Timer();
@@ -196,6 +201,16 @@ namespace ODModules {
                 }
             }
         }
+        int itemCount = 0;
+        [System.ComponentModel.Category("Items")]
+        public int ItemCount {
+            get {
+                if (linkedList == null) { itemCount = 0; }
+                else { itemCount = GetItemCount(linkedList); }
+                return itemCount;
+            }
+        }
+
         int UnitSize = 10;
 
         int ItemHeight = 10;
@@ -208,7 +223,6 @@ namespace ODModules {
 
         int MaxItems = 10;
 
-        int ItemCount = 0;
         protected override void OnPaint(PaintEventArgs e) {
             UnitSize = (int)e.Graphics.MeasureString("W", Font).Height;
             e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
@@ -219,8 +233,6 @@ namespace ODModules {
             MaxWindItems = (Height / ItemHeight) - 2;
             ItemsStart = ItemHeight;// (Height - (MaxWindItems * ItemHeight)) / 2;
             ItemsEnd = ItemsStart + (MaxWindItems * ItemHeight);
-            if (linkedList == null) { ItemCount = 0; }
-            else { ItemCount = GetItemCount(linkedList); }
 
             EndItem = StartItem + MaxWindItems;
             DetermineOverflow();
@@ -378,6 +390,22 @@ namespace ODModules {
             }
             return "";
         }
+        private object? GetItem(int Index) {
+            if (linkedList == null) { return ""; }
+            IEnumerable? list = linkedList as IEnumerable;
+            if (list != null) {
+                //if (linkedList != null) {
+                if (listType != null) {
+                    List<object> Data = list.Cast<object>().ToList();
+                    if (Data.Count > Index) {
+                        if (Data[Index] != null) {
+                            return Data[Index];
+                        }
+                    }
+                }
+            }
+            return null;
+        }
         private void DrawSelectedTop(PaintEventArgs e, float Y) {
             int CurrentSelectedItem = GetCurrentSelectedItem();
             if ((CurrentSelectedItem >= StartItem) && (CurrentSelectedItem < EndItem)) { }
@@ -422,7 +450,7 @@ namespace ODModules {
             }
         }
         private int GetCurrentSelectedItem() {
-            return (int)Math.Floor((float)Math.Round(selectedItemChnge,4));
+            return (int)Math.Floor((float)Math.Round(selectedItemChnge, 4));
         }
 
         protected override void OnResize(EventArgs e) {
@@ -440,7 +468,12 @@ namespace ODModules {
             //y = ItemsStart + (i * ItemHeight);
             return (int)Math.Floor(((double)Pos.Y - (double)ItemsStart) / (double)ItemHeight) + StartItem;
         }
-
+        private Rectangle GetButtonRectangle(Point Pnt) {
+            int Index = GetSelectedItem(Pnt) - StartItem;
+            int YPosition = (int)ItemsStart + (ItemHeight * Index);
+            if (Index < 0) { return Rectangle.Empty; }
+            return new Rectangle(0, YPosition, Width, ItemHeight);
+        }
         protected override void OnMouseClick(MouseEventArgs e) {
 
             if (e.Location.Y < ItemsStart) {
@@ -460,7 +493,24 @@ namespace ODModules {
                 }
             }
             else {
-                SelectedItem = GetSelectedItem(e.Location);
+                int TempSelected = GetSelectedItem(e.Location);
+                if (e.Button == MouseButtons.Left) {
+                    Point HitLocation = new Point(0, 0);
+                    object? CurrentObject = GetItem(TempSelected);
+                    if (CurrentObject != null) {
+                        TabClickedEventArgs TbClickArgs = new TabClickedEventArgs(CurrentObject, TempSelected, HitLocation, Cursor.Position, GetButtonRectangle(e.Location), 0);
+                        TabClicked?.Invoke(this, TbClickArgs);
+                    }
+                    SelectedItem = TempSelected;
+                }
+                else if (e.Button == MouseButtons.Right) {
+                    Point HitLocation = new Point(0, 0);
+                    object? CurrentObject = GetItem(TempSelected);
+                    if (CurrentObject != null) {
+                        TabClickedEventArgs TbClickArgs = new TabClickedEventArgs(CurrentObject, TempSelected, HitLocation, Cursor.Position, GetButtonRectangle(e.Location), 0);
+                        TabRightClicked?.Invoke(this, TbClickArgs);
+                    }
+                }
             }
             base.OnMouseClick(e);
         }
@@ -508,7 +558,7 @@ namespace ODModules {
         private void Navigator_KeyDown(object? sender, KeyEventArgs e) {
         }
         private void Navigator_KeyPress(object? sender, KeyPressEventArgs e) {
-           
+
         }
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
             if (keyData == Keys.Down) {
@@ -532,7 +582,7 @@ namespace ODModules {
                 }
             }
             else {
-                
+
                 if (StartItem > 0) {
                     //Debug.Print(SelectedItem.ToString() + " " + StartItem.ToString());
                     if (SelectedItem <= StartItem) {

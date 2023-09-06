@@ -264,14 +264,26 @@ namespace ODModules {
         }
         protected override void OnRenderItemCheck(ToolStripItemImageRenderEventArgs e) {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            var r = new Rectangle(e.ImageRectangle.Location, e.ImageRectangle.Size);
-            r.Inflate(-4, -6);
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            Rectangle r = new Rectangle(e.ImageRectangle.Location, e.ImageRectangle.Size);
+            //r.Inflate(-e.ImageRectangle.Size.Width / 3, -e.ImageRectangle.Size.Height / 3);
             using (SolidBrush ActionBrush = new SolidBrush(actionSymbolForeColor)) {
                 using (Pen ActionPen = new Pen(ActionBrush, 2)) {
-                    e.Graphics.DrawLines(ActionPen, new Point[]{
-        new Point(r.Left, r.Bottom - r.Height /2),
-        new Point(r.Left + r.Width /3,  r.Bottom),
-        new Point(r.Right, r.Top)});
+                    //            e.Graphics.DrawLines(ActionPen, new Point[]{
+                    //new Point(r.Left, r.Bottom - r.Height /2),
+                    //new Point(r.Left + r.Width /3,  r.Bottom),
+                    //new Point(r.Right, r.Top)});
+                    float BX = r.X;
+                    float BY = r.Y;
+                    float BW = r.Width;
+                    float BH = r.Height;
+                    e.Graphics.DrawLines(ActionPen, new PointF[]{
+                        new PointF(BX + 0.19f * BW, BY + 0.54f * BW),
+                        new PointF(BX + 0.37f * BW, BY + 0.72f * BH),
+                        new PointF(BX + 0.82f * BW, BY + 0.28f * BH)
+                    });
+                    //e.Graphics.DrawLine(ActionPen, BX + 0.19f * BW, BY + 0.54f * BW, BX + 0.37f * BW, BY + 0.72f * BH);
+                    //e.Graphics.DrawLine(ActionPen, BX + 0.37f * BW, BY + 0.72f * BW, BX + 0.82f * BW, BY + 0.28f * BH);
                 }
             }
         }

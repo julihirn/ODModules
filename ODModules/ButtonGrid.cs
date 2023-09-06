@@ -420,7 +420,7 @@ namespace ODModules {
                 Invalidate();
             }
         }
-        private string filter;
+        private string filter = "";
         [System.ComponentModel.Category("Filtering")]
         public string Filter {
             get {
@@ -428,7 +428,9 @@ namespace ODModules {
             }
             set {
                 filter = value;
-                ReevaluateList();
+                if (filter != null) {
+                    ReevaluateList();
+                }
             }
         }
         private void ReevaluateList() {
@@ -1296,7 +1298,6 @@ namespace ODModules {
                 CurrentPosition = e.Location;
                 DownLocation = e.Location;
             }
-
             Invalidate();
         }
         bool Latched = false;

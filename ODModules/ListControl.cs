@@ -1461,8 +1461,8 @@ namespace ODModules {
             using (LinearGradientBrush HeaderForeBrush = new LinearGradientBrush(VerticalScrollBar, _ScrollBarNorth, _ScrollBarSouth, 90.0f)) {
                 ScrollBarButtonSize = ScrollSize;
                 VerticalScrollBounds = new Rectangle(VerticalScrollBar.X, VerticalScrollBar.Y + ScrollBarButtonSize, VerticalScrollBar.Width, VerticalScrollBar.Height - (2 * ScrollBarButtonSize));
-                if (CurrentItems.Count > 0) {
-                    float ViewableItems = ((float)MaximumVerticalItems / 2.0f) / (float)CurrentItems.Count;
+                if (CurrentItems.Count > 1) {
+                    float ViewableItems = ((float)(MaximumVerticalItems) / 2.0f) / (float)CurrentItems.Count;
                     if (CurrentItems.Count < MaximumVerticalItems) {
                         ViewableItems = 1;
                     }
@@ -1470,7 +1470,7 @@ namespace ODModules {
                     if (ThumbHeight < ScrollBarButtonSize * 2) {
                         ThumbHeight = ScrollBarButtonSize * 2;
                     }
-                    float ScrollBounds = (VerticalScrollBounds.Height - ThumbHeight) * ((float)VerScroll / (float)CurrentItems.Count) + VerticalScrollBounds.Y;// + ScrollSize;
+                    float ScrollBounds = (VerticalScrollBounds.Height - ThumbHeight) * ((float)VerScroll / (float)(CurrentItems.Count-1)) + VerticalScrollBounds.Y;// + ScrollSize;
                     VerticalScrollThumb = new RectangleF(VerticalScrollBounds.X, ScrollBounds, VerticalScrollBar.Width, ThumbHeight);
                     e.Graphics.FillRectangle(HeaderForeBrush, VerticalScrollThumb);
                 }
@@ -1562,7 +1562,7 @@ namespace ODModules {
         #endregion
         #region Position Handling
         private int GetVerticalScrollFromCursor(int MousePositionY, float ThumbPosition) {
-            return (int)((float)((MousePositionY - VerticalScrollBounds.Y - ThumbPosition) * CurrentItems.Count) / (VerticalScrollBounds.Height - VerticalScrollThumb.Height));
+            return (int)((float)((MousePositionY - VerticalScrollBounds.Y - ThumbPosition) * (CurrentItems.Count-1)) / (VerticalScrollBounds.Height - VerticalScrollThumb.Height));
         }
         //HorScroll = (MouseX - hBarX - ThumbPos) * 
         private int GetHorizontalScrollFromCursor(int MousePositionX, float ThumbPosition) {
@@ -1782,8 +1782,18 @@ namespace ODModules {
                                     if (HitLocation.X < 0) {
                                         BoxLocation = PointToScreen(new Point(0, HitLocation.Y));
                                     }
+                                    Size TempSize = CurrentItem.Size;
+                                    if (CurrentItem.X+ CurrentItem.Width >= Width) {
+                                        int Diff = Width - (CurrentItem.X + TempSize.Width);
+                                        if (ShowVertScroll == true) {
+                                            TempSize = new Size(CurrentItem.Width - Diff - VerticalScrollBar.Width, CurrentItem.Height);
+                                        }
+                                        else {
+                                            TempSize = new Size(CurrentItem.Width - Diff, CurrentItem.Height);
+                                        }
+                                    }
                                     //new Point(CurrentItem.X + PointToScreen(this.Location).X, CurrentItem.Y + PointToScreen(this.Location).Y - GenericLine_Height);
-                                    DropDownClicked?.Invoke(this, new DropDownClickedEventArgs(HitLocation, BoxLocation, CurrentItem.Size, SelectedColumn, SelectedLine, CurrentItems[SelectedLine]));
+                                    DropDownClicked?.Invoke(this, new DropDownClickedEventArgs(HitLocation, BoxLocation, TempSize, SelectedColumn, SelectedLine, CurrentItems[SelectedLine]));
                                 }
                                 catch { }
                                 return true;

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -36,6 +37,9 @@ namespace ODModules {
             }
             set {
                 base.Text = value;
+                if (fixedInlineWidth == false) {
+                    PaddingSettingChanged = true;
+                }
                 Invalidate();
             }
         }
@@ -178,6 +182,48 @@ namespace ODModules {
                 overrideCollapseControl = value;
             }
         }
+        private bool inlinelabel = false;
+        [System.ComponentModel.Category("Appearance")]
+        public bool Inlinelabel {
+            get {
+                return inlinelabel;
+            }
+            set {
+                inlinelabel = value;
+                Invalidate();
+            }
+        }
+        private bool fixedInlineWidth = false;
+        [System.ComponentModel.Category("Appearance")]
+        public bool FixedInlineWidth {
+            get {
+                return fixedInlineWidth;
+            }
+            set {
+                fixedInlineWidth = value;
+                PaddingSettingChanged = true;
+                Invalidate();
+            }
+        }
+        private int inlineWidth = 100;
+        [System.ComponentModel.Category("Appearance")]
+        public int InlineWidth {
+            get {
+                return inlineWidth;
+            }
+            set {
+                if (value < 50) {
+                    inlineWidth = 50;
+                }
+                else {
+                    inlineWidth = value;
+                }
+                if (fixedInlineWidth == true) {
+                    PaddingSettingChanged = true;
+                }
+                Invalidate();
+            }
+        }
         //ResizeDirection
         private ResizeDirection resizeControl = ResizeDirection.None;
         [System.ComponentModel.Category("Control")]
@@ -230,6 +276,44 @@ namespace ODModules {
             using (Font UnitFont = new Font(this.Font.FontFamily, 6.0f)) {
                 UnitSize = e.Graphics.MeasureString("W", UnitFont);
             }
+            if (inlinelabel == false) {
+                DrawTopAnchored(e);
+            }
+            else {
+                DrawInline(e);
+            }
+        }
+        private void DrawInline(PaintEventArgs e) {
+            if (PaddingSettingChanged == true) {
+                TextPadding = e.Graphics.MeasureString("W", labelFont).Width;
+                TextHeight = (int)e.Graphics.MeasureString("W", labelFont).Height + (int)(TextPadding / 4.0f);
+                int InsetPadding = (int)TextPadding;
+                if (fixedInlineWidth) {
+                    InsetPadding += inlineWidth;
+                }
+                else {
+                    if (Text.Length > 0) {
+                        InsetPadding += (int)e.Graphics.MeasureString(Text, labelFont).Width;
+                    }
+                }
+                Padding Pad = new Padding(InsetPadding, Padding.Top, Padding.Right, Padding.Bottom);
+                Padding = Pad;
+                PaddingSettingChanged = false;
+            }
+            if (Text.Length > 0) {
+                using (SolidBrush ForeColorBrush = new SolidBrush(labelColor)) {
+                    Rectangle TextRectangle = new Rectangle((int)TextPadding / 4, 0, Padding.Left - (int)TextPadding, Height);
+                    using (StringFormat Sf = new StringFormat()) {
+                        Sf.LineAlignment = StringAlignment.Center;
+                        Sf.Trimming = StringTrimming.Character;
+                        Sf.FormatFlags |= StringFormatFlags.NoWrap;
+                        e.Graphics.DrawString(Text, labelFont, ForeColorBrush, TextRectangle, Sf);
+                    }
+                  
+                }
+            }
+        }
+        private void DrawTopAnchored(PaintEventArgs e) {
             if (PaddingSettingChanged == true) {
                 TextPadding = e.Graphics.MeasureString("W", labelFont).Width;
                 TextHeight = (int)e.Graphics.MeasureString("W", labelFont).Height + (int)(TextPadding / 4.0f);
@@ -292,7 +376,7 @@ namespace ODModules {
         }
         private void ArrowPoints(Rectangle CollapseMarker, out Point[] Points) {
             int HalfHeight = CollapseMarker.Height / 2;
-           if  (Dock == DockStyle.Bottom){
+            if (Dock == DockStyle.Bottom) {
                 if (collapsed == false) {
                     Points = new Point[]{
                          new Point(CollapseMarker.Left, CollapseMarker.Top),
@@ -372,15 +456,17 @@ namespace ODModules {
         }
 
         protected override void OnMouseClick(MouseEventArgs e) {
-            if (CollapseMarker.Contains(e.Location)) {
-                if (collapsible == true) {
-                    Collapsed = !Collapsed;
-                    CollapseButtonClicked?.Invoke(this, e.Location);
+            if (inlinelabel == false) {
+                if (CollapseMarker.Contains(e.Location)) {
+                    if (collapsible == true) {
+                        Collapsed = !Collapsed;
+                        CollapseButtonClicked?.Invoke(this, e.Location);
+                    }
                 }
-            }
-            if (showCloseButton) {
-                if (CloseMarker.Contains(e.Location)) {
-                    CloseButtonClicked?.Invoke(e, e.Location);
+                if (showCloseButton) {
+                    if (CloseMarker.Contains(e.Location)) {
+                        CloseButtonClicked?.Invoke(e, e.Location);
+                    }
                 }
             }
             base.OnMouseClick(e);
@@ -485,7 +571,7 @@ namespace ODModules {
                 int NewX = OldLocation.X + (CurrentLocation.X - DownLocation.X);
                 int NewWidth = OldSize.Width + (DownLocation.X - CurrentLocation.X);
                 if (TextHeight > NewWidth) {
-                    this.Location = new Point(OldLocation.X+ OldSize.Width - TextHeight, OldLocation.Y);
+                    this.Location = new Point(OldLocation.X + OldSize.Width - TextHeight, OldLocation.Y);
                     this.Size = new Size(TextHeight, OldSize.Height);
                 }
                 else {
