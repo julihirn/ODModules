@@ -76,3 +76,4 @@ C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModu
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\refint\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.pdb
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ref\ODModules.dll
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.BitToggle.resources

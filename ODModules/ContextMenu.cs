@@ -11,6 +11,8 @@ namespace ODModules {
             ForeColor = Color.White;
             DoubleBuffered = true;
         }
+       
+
         #region Properties
         private Color borderColor = Color.Black;
         [System.ComponentModel.Category("Appearance")]
@@ -254,7 +256,7 @@ namespace ODModules {
             var r = new Rectangle(e.ArrowRectangle.Location, e.ArrowRectangle.Size);
             r.Inflate(-2, -6);
             using (SolidBrush ActionBrush = new SolidBrush(actionSymbolForeColor)) {
-                using (Pen ActionPen = new Pen(ActionBrush,2)) {
+                using (Pen ActionPen = new Pen(ActionBrush,1)) {
                     e.Graphics.DrawLines(ActionPen, new Point[]{
         new Point(r.Left, r.Top),
         new Point(r.Right, r.Top + r.Height /2),
@@ -268,7 +270,7 @@ namespace ODModules {
             Rectangle r = new Rectangle(e.ImageRectangle.Location, e.ImageRectangle.Size);
             //r.Inflate(-e.ImageRectangle.Size.Width / 3, -e.ImageRectangle.Size.Height / 3);
             using (SolidBrush ActionBrush = new SolidBrush(actionSymbolForeColor)) {
-                using (Pen ActionPen = new Pen(ActionBrush, 2)) {
+                using (Pen ActionPen = new Pen(ActionBrush, 1)) {
                     //            e.Graphics.DrawLines(ActionPen, new Point[]{
                     //new Point(r.Left, r.Bottom - r.Height /2),
                     //new Point(r.Left + r.Width /3,  r.Bottom),

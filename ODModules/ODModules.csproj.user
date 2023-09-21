@@ -13,6 +13,9 @@
     <Compile Update="BitScale.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="BitToggle.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Button.cs">
       <SubType>UserControl</SubType>
     </Compile>

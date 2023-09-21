@@ -173,6 +173,52 @@ namespace ODModules {
 
             base.OnRenderItemBackground(e);
         }
+        private Point GetAbsolutePoint(ToolStripItemRenderEventArgs e) {
+            Point Current = new Point(0, 0);
+            if (e.Item.GetType() == typeof(ToolStripMenuItem)) {
+                ToolStripMenuItem Tmi = (ToolStripMenuItem)e.Item;
+                Current = AddPoints(Tmi.Bounds.Location, Current);
+                if (Tmi.Owner != null) {
+                    Current = AddPoints(Tmi.Owner.PointToScreen(Tmi.Owner.Bounds.Location), Current);
+                }
+            }
+            else if (e.Item.GetType() == typeof(ToolStripDropDownButton)) {
+                ToolStripDropDownButton Tmi = (ToolStripDropDownButton)e.Item;
+                Current = AddPoints(Tmi.Bounds.Location, Current);
+                if (Tmi.Owner != null) {
+                    Current = AddPoints(Tmi.Owner.PointToScreen(Tmi.Owner.Bounds.Location), Current);
+                }
+            }
+
+            return Current;
+        }
+        private Point AddPoints(Point A, Point B) {
+            return new Point(A.X + B.X, A.Y + B.Y);
+        }
+        private enum DrawSide {
+            Down = 0x00,
+            Right = 0x01
+        }
+        private DrawSide DetermineDrawSide(ToolStripItemRenderEventArgs e) {
+            DrawSide DisplayDropDown = DrawSide.Down;
+            if (e.Item.GetType() == typeof(ToolStripMenuItem)) {
+                Point MenuItemLocation = GetAbsolutePoint(e);
+                Point DropDownLocation = ((ToolStripMenuItem)e.Item).DropDown.Bounds.Location;
+                if (MenuItemLocation.Y > DropDownLocation.Y) {
+                    DisplayDropDown = DrawSide.Right;
+                }
+            }
+            else if (e.Item.GetType() == typeof(ToolStripDropDownButton)) {
+
+                Point MenuItemLocation = GetAbsolutePoint(e);
+                Point MarginSize = new Point(e.Item.Margin.Left + e.Item.Margin.Right, e.Item.Margin.Top + e.Item.Margin.Bottom);
+                Point DropDownLocation = AddPoints(((ToolStripDropDownButton)e.Item).DropDown.Bounds.Location, MarginSize);
+                if (MenuItemLocation.Y > DropDownLocation.Y) {
+                    DisplayDropDown = DrawSide.Right;
+                }
+            }
+            return DisplayDropDown;
+        }
         protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e) {  //37 x16
                                                                                               //Debug.Print(e.Item.ToString() + ", " + e.Item.GetType().ToString());
             if (e.Item.Pressed) {
@@ -181,12 +227,20 @@ namespace ODModules {
                     using (SolidBrush NorthBrush = new SolidBrush(menuBackColor)) {
                         e.Graphics.FillRectangle(NorthBrush, ContextWindow);
                     }
+                    DrawSide DisplayDropDown = DetermineDrawSide(e);
                     using (SolidBrush BorderBrush = new SolidBrush(menuBorderColor)) {
                         using (Pen BorderPen = new Pen(BorderBrush)) {
                             int Offset = (int)BorderPen.Width;
-                            e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X, ContextWindow.Y + ContextWindow.Height);
-                            e.Graphics.DrawLine(BorderPen, ContextWindow.X + ContextWindow.Width - Offset, ContextWindow.Y, ContextWindow.X + ContextWindow.Width - Offset, ContextWindow.Y + ContextWindow.Height);
-                            e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X + ContextWindow.Width, ContextWindow.Y);
+                            if (DisplayDropDown == DrawSide.Down) {
+                                e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X, ContextWindow.Y + ContextWindow.Height);
+                                e.Graphics.DrawLine(BorderPen, ContextWindow.X + ContextWindow.Width - Offset, ContextWindow.Y, ContextWindow.X + ContextWindow.Width - Offset, ContextWindow.Y + ContextWindow.Height);
+                                e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X + ContextWindow.Width, ContextWindow.Y);
+                            }
+                            else if (DisplayDropDown == DrawSide.Right) {
+                                e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X, ContextWindow.Y + ContextWindow.Height);
+                                e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X + ContextWindow.Width, ContextWindow.Y);
+                                e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y + ContextWindow.Height - Offset, ContextWindow.X + ContextWindow.Width, ContextWindow.Y + ContextWindow.Height - Offset);
+                            }
                         }
                     }
                 }
@@ -249,12 +303,22 @@ namespace ODModules {
                         }
                         e.Graphics.FillRectangle(BackgroundBrush, ContextWindow);
                     }
+                   
                     using (SolidBrush BorderBrush = new SolidBrush(menuBorderColor)) {
                         using (Pen BorderPen = new Pen(BorderBrush)) {
                             int Offset = (int)BorderPen.Width;
                             int ParentOffset = 0;
+                            Rectangle ParentRectangle = new Rectangle(0, 0, 0, 0);
+                            ;
                             if (((ToolStripDropDownMenu)e.ToolStrip).OwnerItem.OwnerItem == null) {
                                 ParentOffset = ((ToolStripDropDownMenu)e.ToolStrip).OwnerItem.Width;
+                                ParentRectangle = ((ToolStripDropDownMenu)e.ToolStrip).OwnerItem.Bounds;
+                                //ToolStripDropDownMenu Ddmi = (ToolStripDropDownMenu)e.ToolStrip;
+                                //ToolStripMenuItem Mbtn = (ToolStripMenuItem)Ddmi.OwnerItem;
+                                //Debug.Print(((ToolStripDropDownButton)Ddmi.OwnerItem).DropDownDirection.ToString());
+                                //Debug.Print(e.ToolStrip.PointToScreen(ParentRectangle.Location).ToString());
+                                //Debug.Print(((ToolStripDropDownMenu)e.ToolStrip).DisplayRectangle.ToString());
+                                //Debug.Print("");
                             }
                             e.Graphics.DrawLine(BorderPen, ContextWindow.X + ParentOffset, ContextWindow.Y, ContextWindow.X + ContextWindow.Width, ContextWindow.Y);
                             e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X, ContextWindow.Y + ContextWindow.Height);
@@ -296,12 +360,22 @@ namespace ODModules {
                 using (SolidBrush NorthBrush = new SolidBrush(menuBackColor)) {
                     e.Graphics.FillRectangle(NorthBrush, ContextWindow);
                 }
+                //  Debug.Print(e.Item..ToString());
+
+                DrawSide DisplayDropDown = DetermineDrawSide(e);
                 using (SolidBrush BorderBrush = new SolidBrush(menuBorderColor)) {
                     using (Pen BorderPen = new Pen(BorderBrush)) {
                         int Offset = (int)BorderPen.Width;
-                        e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X, ContextWindow.Y + ContextWindow.Height);
-                        e.Graphics.DrawLine(BorderPen, ContextWindow.X + ContextWindow.Width - Offset, ContextWindow.Y, ContextWindow.X + ContextWindow.Width - Offset, ContextWindow.Y + ContextWindow.Height);
-                        e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X + ContextWindow.Width, ContextWindow.Y);
+                        if (DisplayDropDown == DrawSide.Down) {
+                            e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X, ContextWindow.Y + ContextWindow.Height);
+                            e.Graphics.DrawLine(BorderPen, ContextWindow.X + ContextWindow.Width - Offset, ContextWindow.Y, ContextWindow.X + ContextWindow.Width - Offset, ContextWindow.Y + ContextWindow.Height);
+                            e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X + ContextWindow.Width, ContextWindow.Y);
+                        }
+                        else if (DisplayDropDown == DrawSide.Right) {
+                            e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X, ContextWindow.Y + ContextWindow.Height);
+                            e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X + ContextWindow.Width, ContextWindow.Y);
+                            e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y + ContextWindow.Height - Offset, ContextWindow.X + ContextWindow.Width, ContextWindow.Y + ContextWindow.Height - Offset);
+                        }
                     }
                 }
             }
@@ -328,7 +402,6 @@ namespace ODModules {
             }
 
         }
-
         protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e) {
             base.OnRenderButtonBackground(e);
             if (e.Item.GetType() == typeof(ToolStripButton)) {
@@ -359,12 +432,19 @@ namespace ODModules {
                 using (SolidBrush NorthBrush = new SolidBrush(menuBackColor)) {
                     e.Graphics.FillRectangle(NorthBrush, ContextWindow);
                 }
+                DrawSide DisplayDropDown = DetermineDrawSide(e);
                 using (SolidBrush BorderBrush = new SolidBrush(menuBorderColor)) {
                     using (Pen BorderPen = new Pen(BorderBrush)) {
                         int Offset = (int)BorderPen.Width;
-                        e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X, ContextWindow.Y + ContextWindow.Height);
-                        e.Graphics.DrawLine(BorderPen, ContextWindow.X + ContextWindow.Width - Offset, ContextWindow.Y, ContextWindow.X + ContextWindow.Width - Offset, ContextWindow.Y + ContextWindow.Height);
-                        e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X + ContextWindow.Width, ContextWindow.Y);
+                        if (DisplayDropDown == DrawSide.Down) {
+                            e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X, ContextWindow.Y + ContextWindow.Height);
+                            e.Graphics.DrawLine(BorderPen, ContextWindow.X + ContextWindow.Width - Offset, ContextWindow.Y, ContextWindow.X + ContextWindow.Width - Offset, ContextWindow.Y + ContextWindow.Height);
+                            e.Graphics.DrawLine(BorderPen, ContextWindow.X, ContextWindow.Y, ContextWindow.X + ContextWindow.Width, ContextWindow.Y);
+                        }
+                        else if (DisplayDropDown == DrawSide.Right) {
+
+                        }
+
                     }
                 }
             }
@@ -411,7 +491,7 @@ namespace ODModules {
             Rectangle r = new Rectangle(e.ArrowRectangle.Location, e.ArrowRectangle.Size);
             r.Inflate(-e.ArrowRectangle.Size.Width / 4, -e.ArrowRectangle.Size.Height / 4);
             using (SolidBrush ActionBrush = new SolidBrush(menuSymbolColor)) {
-                using (Pen ActionPen = new Pen(ActionBrush, 2)) {
+                using (Pen ActionPen = new Pen(ActionBrush, 1)) {
                     if (e.Direction == ArrowDirection.Right) {
                         e.Graphics.DrawLines(ActionPen, new Point[]{
         new Point(r.Left, r.Top),
@@ -473,7 +553,7 @@ namespace ODModules {
             Rectangle r = new Rectangle(e.ImageRectangle.Location, e.ImageRectangle.Size);
             //r.Inflate(-e.ImageRectangle.Size.Width / 3, -e.ImageRectangle.Size.Height / 3);
             using (SolidBrush ActionBrush = new SolidBrush(menuSymbolColor)) {
-                using (Pen ActionPen = new Pen(ActionBrush, 2)) {
+                using (Pen ActionPen = new Pen(ActionBrush, 1)) {
                     //            e.Graphics.DrawLines(ActionPen, new Point[]{
                     //new Point(r.Left, r.Bottom - r.Height /2),
                     //new Point(r.Left + r.Width /3,  r.Bottom),

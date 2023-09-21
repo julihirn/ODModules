@@ -29,6 +29,9 @@ namespace ODModules {
         public delegate void PrefixChangedHandler(object sender);
         [Category("Value")]
         public event PrefixChangedHandler? PrefixChanged;
+        public delegate void FocusEnteredHandler(NumericTextbox sender);
+        [Category("Focus")]
+        public event FocusEnteredHandler? FocusEntered;
         public NumericTextbox() {
             InitializeComponent();
             this.borderColor = Color.DimGray;
@@ -41,8 +44,13 @@ namespace ODModules {
             this.TabStop = true;
             this.labelFont = Font;
             this.labelForeColor = Color.Gray;
+            MouseClick += NumericTextbox_MouseClick;
+            GotFocus += NumericTextbox_GotFocus;
+            LostFocus += NumericTextbox_LostFocus;
 
         }
+
+        #region Properties
         private object? secondaryTag = null;
         [Category("Control")]
         public object? SecondaryTag { get => secondaryTag; set => secondaryTag = value; }
@@ -97,6 +105,12 @@ namespace ODModules {
                 Invalidate();
             }
         }
+        private bool marked = false;
+        [Category("Appearance")]
+        public bool Marked {
+            get { return marked; }
+            set { marked = value; Invalidate(); }
+        }
         private Color borderColor;
         [Category("Appearance")]
         public Color BorderColor {
@@ -114,6 +128,18 @@ namespace ODModules {
         public Color SelectedBackColor {
             get { return selectedBackColor; }
             set { selectedBackColor = value; Invalidate(); }
+        }
+        private Color markedborderColor = Color.Beige;
+        [Category("Appearance")]
+        public Color MarkedBorderColor {
+            get { return markedborderColor; }
+            set { markedborderColor = value; Invalidate(); }
+        }
+        private Color markedBackColor;
+        [Category("Appearance")]
+        public Color MarkedBackColor {
+            get { return markedBackColor; }
+            set { markedBackColor = value; Invalidate(); }
         }
         private Color hovercolor;
         [Category("Appearance")]
@@ -151,6 +177,15 @@ namespace ODModules {
                 }
                 UserEntered = false;
                 DecimalTrim();
+                Invalidate();
+            }
+        }
+        private TextAlign numberTextAlign = TextAlign.Right;
+        [Category("Number")]
+        public TextAlign NumberTextAlign {
+            get { return numberTextAlign; }
+            set {
+                numberTextAlign = value;
                 Invalidate();
             }
         }
@@ -396,13 +431,12 @@ namespace ODModules {
         }
         [Category("Number")]
         private MetricPrefix prefix = MetricPrefix.None;
-
-
+        #endregion
+        #region Control Drawing
         private bool hasUnit = true;
         private bool isMetric = true;
         private double currentValue = 0;
         //private double value = 0.0f;
-        #region Control Drawing
         Rectangle Bounding = new Rectangle(0, 0, 0, 0);
         int EndPoint = 0;
         protected override void OnPaint(PaintEventArgs pe) {
@@ -420,6 +454,14 @@ namespace ODModules {
                     BackCol = selectedBackColor;
                 }
             }
+            else {
+                if (marked) {
+                    using (SolidBrush br = new SolidBrush(markedBackColor)) {
+                        pe.Graphics.FillRectangle(br, this.Bounding);
+                        BackCol = markedBackColor;
+                    }
+                }
+            }
             if (autoSizeToText == true) {
                 int h = (int)(pe.Graphics.MeasureString("W", Font).Height * 1.5f) + Padding.Bottom + Padding.Top;
                 this.Height = h;
@@ -428,12 +470,24 @@ namespace ODModules {
             else {
                 this.MinimumSize = new Size(this.MinimumSize.Width, 0);
             }
-            //base.OnPaint(pe);
-            //DrawFixtures(pe);
-            //TextBoxRenderer.DrawTextBox(pe.Graphics, Bounding, "Hello", this.Font, System.Windows.Forms.VisualStyles.TextBoxState.Normal);
+            if (numberTextAlign == TextAlign.Right) {
+                DrawUnit(pe, numberTextAlign);
+                RenderValueText(pe, BackCol, numberTextAlign);
+            }
+            else {
+                int PaddingUnit = MeasureDisplayStringWidth(pe.Graphics, "w", this.Font) / 2;
+                int UnitBasisSize = MeasureUnit(pe);
+                int DataSize = GetValueSize(pe);
+                if ((DataSize + UnitBasisSize) >= (Width - PaddingUnit)) {
+                    DrawUnit(pe, TextAlign.Right);
+                    RenderValueText(pe, BackCol, TextAlign.Right);
+                }
+                else {
+                    DrawUnit(pe, numberTextAlign);
+                    RenderValueText(pe, BackCol, numberTextAlign);
+                }
+            }
 
-            DrawUnit(pe);
-            RenderValueText(pe, BackCol);
             if (showLabel == true) {
                 DrawLabel(pe);
             }
@@ -441,61 +495,20 @@ namespace ODModules {
                 DrawBorder(pe, Bounding, SelectedBorderColor);
             }
             else {
-                DrawBorder(pe, Bounding, BorderColor);
+                Color TempBorderColor = BorderColor;
+                if (marked) {
+                    TempBorderColor = markedborderColor;
+                }
+                DrawBorder(pe, Bounding, TempBorderColor);
             }
-
-            //Bounding.Inflate(-1, -1);
-            //DrawBorder(pe, Bounding, RenderHandler.DeterministicDarkenColor(BorderColor, BackColor, 100), 1);
-
-
         }
-        protected int MeasureDisplayStringWidth(Graphics graphics, string text, Font font) {
-            if (text == "")
-                return 0;
 
-            StringFormat format = new StringFormat(StringFormat.GenericDefault);
-            RectangleF rect = new RectangleF(0, 0, 1000, 1000);
-            CharacterRange[] ranges = { new CharacterRange(0, text.Length) };
-            Region[] regions = new Region[1];
-
-            format.SetMeasurableCharacterRanges(ranges);
-            format.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
-
-            regions = graphics.MeasureCharacterRanges(text, font, rect, format);
-            rect = regions[0].GetBounds(graphics);
-
-            return (int)(rect.Right) - 3;
-        }
         Rectangle PrefixRectangle = new Rectangle(-1, -1, 0, 0);
         Rectangle UnitRectangle = new Rectangle(-1, -1, 0, 0);
 
         Rectangle PrefixRectangle2 = new Rectangle(-1, -1, 0, 0);
         Rectangle UnitRectangle2 = new Rectangle(-1, -1, 0, 0);
-        //private void DrawUnit(PaintEventArgs e) {
-        //        TextFormatFlags Flags = TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding | TextFormatFlags.PreserveGraphicsClipping;
-        //        //Size BasisSize = new Size(int.MaxValue, int.MaxValue);
-        //        string PrefixStr = PrefixToSymbol(Prefix);
-        //        int PrefixSize = MeasureDisplayStringWidth(e.Graphics, PrefixStr, this.Font); //MinimumSizing(
-        //        int UnitSize = MeasureDisplayStringWidth(e.Graphics, unit, this.Font);
-        //        int PaddingUnit = MeasureDisplayStringWidth(e.Graphics, "w", this.Font);
-        //        if (unit.Trim(' ').Length == 0) { UnitSize = 0; }
-        //        if (hasUnit == false) { UnitSize = 0; }
-        //        if (isMetric == false) {
-        //            PrefixSize = 0;
-        //            if (UnitSize == 0) { PaddingUnit = PaddingUnit/2; }
-        //        }
-        //        int ButtonBasisPosition = this.Width - UnitSize - PrefixSize - PaddingUnit;
-        //        EndPoint = ButtonBasisPosition;
-        //        if (isMetric == true) {
-        //            PrefixRectangle = new Rectangle(ButtonBasisPosition, 0, PrefixSize, Height);
-        //            TextRenderer.DrawText(e.Graphics, PrefixStr, this.Font, PrefixRectangle, GetColorMouseAction(PrefixRectangle), Flags);
-        //        }
-        //        if (UnitSize != 0) {
-        //            UnitRectangle = new Rectangle(ButtonBasisPosition + PrefixSize, 0, UnitSize, Height);
-        //            TextRenderer.DrawText(e.Graphics, unit, this.Font, UnitRectangle, GetColorMouseAction(UnitRectangle), Flags);
-        //        }
-        //}
-        private void DrawUnit(PaintEventArgs e) {
+        private void DrawUnit(PaintEventArgs e, TextAlign TxtAlignment) {
             TextFormatFlags Flags = TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding | TextFormatFlags.PreserveGraphicsClipping;
             //Size BasisSize = new Size(int.MaxValue, int.MaxValue);
             string PrefixStr = PrefixToSymbol(Prefix);
@@ -514,7 +527,9 @@ namespace ODModules {
                 if (UnitSize == 0) { PaddingUnit = PaddingUnit / 2; }
             }
             int ButtonBasisPosition = this.Width - UnitSize - PrefixSize - PaddingUnit;
-
+            if (TxtAlignment == TextAlign.Left) {
+                ButtonBasisPosition = GetValueSize(e) + UnitSize + PrefixSize - 2;
+            }
             bool SecondUnitShow = false;
             bool SecondPrefixShow = false;
 
@@ -566,41 +581,6 @@ namespace ODModules {
                 TextRenderer.DrawText(e.Graphics, secondaryUnit, this.Font, UnitRectangle2, GetColorMouseAction(UnitRectangle2), Flags);
             }
         }
-        private void DrawButtons(PaintEventArgs e) {
-            if (hasUnit == true) {
-                TextFormatFlags Flags = TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding | TextFormatFlags.PreserveGraphicsClipping;
-                System.Drawing.Size BasisSize = new Size(int.MaxValue, int.MaxValue);
-                //System.Drawing.Size UnitSize = MinimumSizing(TextRenderer.MeasureText(e.Graphics, unit, this.Font, BasisSize, Flags).Width);
-                string Symbol = unit;
-                if (isMetric == true) {
-                    Symbol = PrefixToSymbol(Prefix) + unit;
-                }
-                int UnitSize = MinimumSizing(MeasureDisplayStringWidth(e.Graphics, Symbol, this.Font), e);
-                int ButtonBasisPosition = this.Width - UnitSize;
-                EndPoint = ButtonBasisPosition;
-                //if (isMetric == true) {
-                //    string PrefixSymbol = ConversionHandler.PrefixToSymbol(Prefix);
-                //    int PrefixSize = MeasureDisplayStringWidth(e.Graphics, "aa", this.Font);
-                //    //System.Drawing.Size PrefixSize = MinimumSizing(TextRenderer.MeasureText(e.Graphics, PrefixSymbol, this.Font, BasisSize, Flags).Width);
-                //    Rectangle PrefixRect = new Rectangle(new Point(ButtonBasisPosition - PrefixSize, 0), new Size(PrefixSize, Height));
-                //    EndPoint -= PrefixSize;
-                //    DrawButton(e, PrefixRect, PrefixSymbol, TextFormatFlags.Right | Flags);
-                //}
-                DrawButton(e, new Rectangle(ButtonBasisPosition, 0, UnitSize, this.Height), Symbol, TextFormatFlags.Left | Flags);
-            }
-        }
-        private int MinimumSizing(int Width, PaintEventArgs e) {
-            int WideWidth = MeasureDisplayStringWidth(e.Graphics, ".WW.", Font);//TextRenderer.MeasureText("-", this.Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding).Width;
-            if (Width < WideWidth) {
-                return WideWidth;
-            }
-            else {
-                return Width;
-            }
-        }
-        private void DrawFixtures(PaintEventArgs e) {
-            DrawBorder(e, Bounding, borderColor, 1);
-        }
         private void DrawLabel(PaintEventArgs e) {
             int h = (int)(e.Graphics.MeasureString("W", labelFont).Width / 2.0f) + Padding.Top;
             using (SolidBrush br = new SolidBrush(labelForeColor)) {
@@ -623,7 +603,111 @@ namespace ODModules {
                 }
             }
         }
-        //private void DrawButton(PaintEventArgs e, )
+        private void RenderValueText(PaintEventArgs e, Color Backcoloring, TextAlign TxtAlignment) {
+            e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+            TextFormatFlags Alignment = TextFormatFlags.Right;
+            Rectangle TextRectangle = new Rectangle(0, 0, EndPoint, Height);
+            if (TxtAlignment == TextAlign.Left) {
+                Alignment = TextFormatFlags.Left;
+                int PaddingUnit = MeasureDisplayStringWidth(e.Graphics, "w", this.Font) / 2;
+                TextRectangle = new Rectangle(PaddingUnit, 0, GetValueSize(e), Height);
+            }
+            if (UserEntered == false) {
+                string ValueFormat = DecimalTrim(ValueStringFormatting(ValueString));
+                if (Exponent != 0) {
+                    ValueFormat += " · 10" + GetSuperScriptText(Exponent);
+                    //using (Font ExponentFont = new Font(this.Font.FontFamily, this.Font.Size / 2)) {
+                    //   
+                    //    int YPosition = (Height / 2) - (int)e.Graphics.MeasureString("100", ExponentFont).Height;
+                    //    int XPosition = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 1.05f);
+                    //    int XPad = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 0.8f);
+                    //    using (SolidBrush ExponentBrush = new SolidBrush(ForeColor)) {
+                    //        e.Graphics.DrawString(Exponent.ToString(), ExponentFont, ExponentBrush, new Point(EndPoint - XPosition, YPosition));
+                    //    }
+                    //    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint - XPad, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
+                    //}
+                    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, TextRectangle, ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | Alignment);
+                }
+                else {
+                    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, TextRectangle, ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | Alignment);
+                }
+            }
+            else {
+                string ValueFormat = ValueStringFormatting(ValueString);
+                if (Exponent != 0) {
+                    ValueFormat += " · 10" + GetSuperScriptText(Exponent);
+                    //using (Font ExponentFont = new Font(this.Font.FontFamily, this.Font.Size / 2)) {
+                    //    int YPosition = (Height / 2) - (int)e.Graphics.MeasureString("100", ExponentFont).Height;
+                    //    int XPosition = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 1.05f);
+                    //    int XPad = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 0.8f);
+                    //    using (SolidBrush ExponentBrush = new SolidBrush(ForeColor)) {
+                    //        e.Graphics.DrawString(Exponent.ToString(), ExponentFont, ExponentBrush, new Point(EndPoint - XPosition, YPosition));
+                    //    }
+                    //    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint - XPad, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
+                    //}
+                    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, TextRectangle, ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | Alignment);
+                }
+                else {
+                    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, TextRectangle, ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | Alignment);
+                }
+            }
+        }
+        #endregion
+        #region Render Support Functions
+        protected int MeasureDisplayStringWidth(Graphics graphics, string text, Font font) {
+            if (text == "")
+                return 0;
+
+            StringFormat format = new StringFormat(StringFormat.GenericDefault);
+            RectangleF rect = new RectangleF(0, 0, 1000, 1000);
+            CharacterRange[] ranges = { new CharacterRange(0, text.Length) };
+            Region[] regions = new Region[1];
+
+            format.SetMeasurableCharacterRanges(ranges);
+            format.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
+
+            regions = graphics.MeasureCharacterRanges(text, font, rect, format);
+            rect = regions[0].GetBounds(graphics);
+
+            return (int)(rect.Right) - 3;
+        }
+        private int MeasureUnit(PaintEventArgs e) {
+            string PrefixStr = PrefixToSymbol(Prefix);
+            string PrefixStr2 = PrefixToSymbol(secondaryPrefix);
+            int PrefixSize = MeasureDisplayStringWidth(e.Graphics, PrefixStr, this.Font); //MinimumSizing(
+            int UnitSize = MeasureDisplayStringWidth(e.Graphics, unit, this.Font);
+            int PaddingUnit = MeasureDisplayStringWidth(e.Graphics, "w", this.Font);
+            if (unit.Trim(' ').Length == 0) { UnitSize = 0; }
+            if (hasUnit == false) {
+                return 0;
+            }
+            if (isMetric == false) {
+                PrefixSize = 0;
+                if (UnitSize == 0) { PaddingUnit = PaddingUnit / 2; }
+            }
+            int UnitSizeBasis = UnitSize + PrefixSize + PaddingUnit;
+
+            int UnitSize2 = 0;
+            int PrefixSize2 = 0;
+            int SymbolSize = 0;
+            //if (isMetric == true) {
+            if (secondaryUnitDisplay != SecondaryUnitDisplayType.NoSecondaryUnit) {
+                UnitSize2 = MeasureDisplayStringWidth(e.Graphics, secondaryUnit, this.Font);
+                if (secondaryUnit.Trim(' ').Length == 0) { UnitSize2 = 0; }
+                else {
+                    UnitSizeBasis += UnitSize2;
+                    if (secondaryUnitDisplay == SecondaryUnitDisplayType.Multiply) { SymbolSize = MeasureDisplayStringWidth(e.Graphics, "·", this.Font); }
+                    else if (secondaryUnitDisplay == SecondaryUnitDisplayType.Divide) { SymbolSize = MeasureDisplayStringWidth(e.Graphics, "/", this.Font); }
+                    UnitSizeBasis += SymbolSize;
+
+                    if (isSecondaryMetric) {
+                        PrefixSize2 = MeasureDisplayStringWidth(e.Graphics, PrefixStr2, this.Font);
+                        UnitSizeBasis += PrefixSize2;
+                    }
+                }
+            }
+            return UnitSizeBasis;
+        }
         private string GetSuperScriptText(int Exponent) {
             string ExponentString = Exponent.ToString();
             string Temp = "";
@@ -648,48 +732,33 @@ namespace ODModules {
             }
             return Temp;
         }
-        private void RenderValueText(PaintEventArgs e, Color Backcoloring) {
-            e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+        private int GetValueSize(PaintEventArgs e) {
             if (UserEntered == false) {
                 string ValueFormat = DecimalTrim(ValueStringFormatting(ValueString));
                 if (Exponent != 0) {
                     ValueFormat += " · 10" + GetSuperScriptText(Exponent);
-                    //using (Font ExponentFont = new Font(this.Font.FontFamily, this.Font.Size / 2)) {
-                    //   
-                    //    int YPosition = (Height / 2) - (int)e.Graphics.MeasureString("100", ExponentFont).Height;
-                    //    int XPosition = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 1.05f);
-                    //    int XPad = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 0.8f);
-                    //    using (SolidBrush ExponentBrush = new SolidBrush(ForeColor)) {
-                    //        e.Graphics.DrawString(Exponent.ToString(), ExponentFont, ExponentBrush, new Point(EndPoint - XPosition, YPosition));
-                    //    }
-                    //    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint - XPad, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
-                    //}
-                    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
+                    return TextRenderer.MeasureText(e.Graphics, ValueFormat, this.Font).Width;
                 }
                 else {
-                    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
+                    return TextRenderer.MeasureText(e.Graphics, ValueFormat, this.Font).Width;
                 }
             }
             else {
                 string ValueFormat = ValueStringFormatting(ValueString);
                 if (Exponent != 0) {
                     ValueFormat += " · 10" + GetSuperScriptText(Exponent);
-                    //using (Font ExponentFont = new Font(this.Font.FontFamily, this.Font.Size / 2)) {
-                    //    int YPosition = (Height / 2) - (int)e.Graphics.MeasureString("100", ExponentFont).Height;
-                    //    int XPosition = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 1.05f);
-                    //    int XPad = (int)(e.Graphics.MeasureString(Exponent.ToString(), ExponentFont).Width * 0.8f);
-                    //    using (SolidBrush ExponentBrush = new SolidBrush(ForeColor)) {
-                    //        e.Graphics.DrawString(Exponent.ToString(), ExponentFont, ExponentBrush, new Point(EndPoint - XPosition, YPosition));
-                    //    }
-                    //    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint - XPad, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
-                    //}
-                    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
+                    return TextRenderer.MeasureText(e.Graphics, ValueFormat, this.Font).Width;
                 }
                 else {
-                    TextRenderer.DrawText(e.Graphics, ValueFormat, this.Font, new Rectangle(0, 0, EndPoint, Height), ForeColor, Backcoloring, TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
+                    return TextRenderer.MeasureText(e.Graphics, ValueFormat, this.Font).Width;
                 }
             }
         }
+
+
+
+        #endregion
+        #region ValueFormatting
         int Exponent = 0;
         string DecimalTrim(string Input) {
             bool HasDecimalPoint = Input.Contains('.');
@@ -890,6 +959,12 @@ namespace ODModules {
 
             TextRenderer.DrawText(e.Graphics, Text, this.Font, Bound, this.ForeColor, Format);
         }
+        #endregion
+
+
+
+
+
         private ButtonState GetBoundState(Rectangle Bound) {
             if (Bound.Contains(CursorLocation)) {
                 if (IsMouseDown == false) {
@@ -912,15 +987,12 @@ namespace ODModules {
             }
             return ForeColor;
         }
-        #endregion
+
         #region Event Handling
+
         Point CursorLocation = new Point(0, 0);
         bool IsMouseDown = false;
-        protected override void OnMouseDoubleClick(MouseEventArgs e) {
-            base.OnMouseDoubleClick(e);
-        }
-        protected override void OnMouseClick(MouseEventArgs e) {
-            base.OnMouseClick(e);
+        private void NumericTextbox_MouseClick(object? sender, MouseEventArgs e) {
             if (hasUnit == true) {
                 if (GetBoundState(UnitRectangle) == ButtonState.MouseDown) {
                     Point HitLocation = new Point(UnitRectangle.X, UnitRectangle.Y);
@@ -943,6 +1015,9 @@ namespace ODModules {
                     }
                 }
             }
+        }
+        protected override void OnMouseDoubleClick(MouseEventArgs e) {
+            base.OnMouseDoubleClick(e);
         }
         protected override void OnMouseDown(MouseEventArgs e) {
             IsMouseDown = true;
@@ -1004,13 +1079,12 @@ namespace ODModules {
             Invalidate();
             base.OnMouseMove(e);
         }
-        protected override void OnLostFocus(EventArgs e) {
+        private void NumericTextbox_LostFocus(object? sender, EventArgs e) {
             Invalidate();
-            base.OnLostFocus(e);
         }
-        protected override void OnGotFocus(EventArgs e) {
+        private void NumericTextbox_GotFocus(object? sender, EventArgs e) {
+            FocusEntered?.Invoke(this);
             Invalidate();
-            base.OnGotFocus(e);
         }
         private int ChangeStep = 0;
         private bool StepReversed = false;
@@ -1269,6 +1343,8 @@ namespace ODModules {
                 return base.ProcessCmdKey(ref msg, keyData);
             }
         }
+
+
         protected override void OnKeyPress(KeyPressEventArgs e) {
             base.OnKeyPress(e);
         }
@@ -1770,7 +1846,22 @@ namespace ODModules {
         public void Clear() {
             ValueString = "0"; UserEntered = true;
             DecimalTrim();
+            Invalidate();
             ValueChanged?.Invoke(this, new ValueChangedEventArgs(ValueString, Prefix));
+        }
+        public void BackSpaceCharacter() {
+            bool entryState = allowNumberEntry;
+            if (ValueString.Length > 0) {
+                allowNumberEntry = true;
+                UserEntered = true;
+                ValueString = ValueString.Remove(ValueString.Length - 1, 1);
+                if (ValueString.Length == 0) {
+                    ValueString = "0";
+                }
+                allowNumberEntry = entryState;
+                ValueChanged?.Invoke(this, new ValueChangedEventArgs(ValueString, Prefix));
+                Invalidate();
+            }
         }
         public void PushCharacter(char Input) {
             bool entryState = allowNumberEntry;
@@ -1807,7 +1898,7 @@ namespace ODModules {
                     e = new KeyEventArgs(Keys.D); break;
                 case 'E':
                     e = new KeyEventArgs(Keys.E); break;
-                case 'R':
+                case 'F':
                     e = new KeyEventArgs(Keys.F); break;
                 case '.':
                     e = new KeyEventArgs(Keys.OemPeriod); break;
@@ -2165,6 +2256,10 @@ namespace ODModules {
             NoSecondaryUnit = 0x00,
             Multiply = 0x01,
             Divide = 0x02
+        }
+        public enum TextAlign {
+            Left = 0x00,
+            Right = 0x01
         }
         public enum NumberBase {
             Base2 = 0x02,

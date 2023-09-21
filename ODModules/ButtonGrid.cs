@@ -1180,7 +1180,7 @@ namespace ODModules {
             }
             GridButton? Btn = null;
             if (ButtonIndex != -1) {
-                Btn = buttons[ButtonIndex];
+                Btn = CurrentButtons[ButtonIndex];
             }
             return new ClickedButtonResult(Btn, Output, ButtonIndex);
         }

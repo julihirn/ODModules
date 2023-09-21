@@ -16,7 +16,7 @@ namespace ODModules {
         [Category("Buttons")]
         public event ButtonClickedEventHandler? ButtonClicked;
 
-        public delegate void ButtonClickedEventHandler(object? Sender, KeypadButton Button, Point GridLocation);
+        public delegate void ButtonClickedEventHandler(object? Sender, KeypadButton Button, Point GridLocation, int Index);
         public Keypad() {
             DoubleBuffered = true;
             MouseClick += Keypad_MouseClick;
@@ -26,6 +26,7 @@ namespace ODModules {
             MouseLeave += Keypad_MouseLeave;
             KeyUp += ButtonGrid_KeyUp;
             KeyDown += ButtonGrid_KeyDown;
+            this.SetStyle(ControlStyles.Selectable, true);
         }
         int borderRadius = 5;
         [System.ComponentModel.Category("Appearance")]
@@ -205,6 +206,109 @@ namespace ODModules {
                 Invalidate();
             }
         }
+        Color borderColorDisabledNorth = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color BorderColorDisabledNorth {
+            get {
+                return borderColorDisabledNorth;
+            }
+            set {
+                borderColorDisabledNorth = value;
+                Invalidate();
+            }
+        }
+        Color borderColorDisabledSouth = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color BorderColorDisabledSouth {
+            get {
+                return borderColorDisabledSouth;
+            }
+            set {
+                borderColorDisabledSouth = value;
+                Invalidate();
+            }
+        }
+
+        Color backColorDisabledNorth = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color BackColorDisabledNorth {
+            get {
+                return backColorDisabledNorth;
+            }
+            set {
+                backColorDisabledNorth = value;
+                Invalidate();
+            }
+        }
+        Color backColorDisabledSouth = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color BackColorDisabledSouth {
+            get {
+                return backColorDisabledSouth;
+            }
+            set {
+                backColorDisabledSouth = value;
+                Invalidate();
+            }
+        }
+
+        Color backColorMarkedNorth = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color BackColorMarkedNorth {
+            get {
+                return backColorMarkedNorth;
+            }
+            set {
+                backColorMarkedNorth = value;
+                Invalidate();
+            }
+        }
+        Color backColorMarkedSouth = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color BackColorMarkedSouth {
+            get {
+                return backColorMarkedSouth;
+            }
+            set {
+                backColorMarkedSouth = value;
+                Invalidate();
+            }
+        }
+
+        Color borderColorMarkedNorth = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color BorderColorMarkedNorth {
+            get {
+                return borderColorMarkedNorth;
+            }
+            set {
+                borderColorMarkedNorth = value;
+                Invalidate();
+            }
+        }
+        Color borderColorMarkedSouth = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color BorderColorMarkedSouth {
+            get {
+                return borderColorMarkedSouth;
+            }
+            set {
+                borderColorMarkedSouth = value;
+                Invalidate();
+            }
+        }
+        int markedIndex = -1;
+        [System.ComponentModel.Category("Appearance")]
+        public int MarkedIndex {
+            get {
+                return markedIndex;
+            }
+            set {
+                markedIndex = value;
+                Invalidate();
+            }
+        }
+
         Color borderColorHoverNorth = Color.Black;
         [System.ComponentModel.Category("Appearance")]
         public Color BorderColorHoverNorth {
@@ -433,8 +537,8 @@ namespace ODModules {
             Rectangle ButtonFill = ButtonBounds;
             Rectangle ButtonRound = ButtonBounds;
             MouseStates ButtonState = GetState(ButtonBounds, Index);
-            GetBackColors(ButtonState, Btn, out BackNorth, out BackSouth);
-            GetBorderColors(ButtonState, Btn, out BorderNorth, out BorderSouth);
+            GetBackColors(ButtonState, Index, Btn, out BackNorth, out BackSouth);
+            GetBorderColors(ButtonState, Index, Btn, out BorderNorth, out BorderSouth);
 
             switch (style) {
                 case ButtonStyle.Square:
@@ -504,7 +608,7 @@ namespace ODModules {
             SizeF SecondarySize = new Size(0, 0);
             float TotalSize = 0;
             float RunningHeight = InsetRect.Y;
-            using (StringFormat PriStrFrmt = new StringFormat()) {
+            using (StringFormat PriStrFrmt = new StringFormat(StringFormat.GenericTypographic)) {
                 PriStrFrmt.FormatFlags = StringFormatFlags.FitBlackBox;
                 PriStrFrmt.Trimming = StringTrimming.EllipsisCharacter;
                 if (GetButtonTextHorizontalAlignment(Btn) == ButtonTextHorizontal.Center) {
@@ -531,15 +635,22 @@ namespace ODModules {
                     else {
                         SecondarySize = e.Graphics.MeasureString(Btn.SecondaryText, Font, InsetRect.Width, PriStrFrmt);
                     }
-                    TotalSize += (int)SecondarySize.Height;
+                    if (InsetRect.Height > TotalSize + (int)SecondarySize.Height) {
+                        TotalSize += (int)SecondarySize.Height;
+                    }
+                    else { HasSecondary = false; }
                 }
+                bool NoIcon = false;
                 if (Btn.Icon != null) {
                     if (GetButtonInline(Btn) == false) {
-                        TotalSize += imageSize.Height;
+                        if (InsetRect.Height > TotalSize + imageSize.Height) {
+                            TotalSize += imageSize.Height;
+                        }
+                        else { NoIcon = true; }
                     }
                 }
                 if (Btn.Icon != null) {
-                    if (GetButtonInline(Btn) == false) {
+                    if ((GetButtonInline(Btn) == false) && (NoIcon == false)) {
                         if (GetButtonTextVerticalAlignment(Btn) == ButtonTextVertical.Top) {
                             RunningHeight += DrawImage(e, InsetRect, Btn, 0);
                         }
@@ -566,6 +677,10 @@ namespace ODModules {
                         RunningHeight += YCentre;
                     }
                     if (HasPrimary) {
+                        if (PrimarySize.Height > InsetRect.Height) {
+                            PrimarySize = new SizeF(PrimarySize.Width, InsetRect.Height);
+
+                        }
                         using (SolidBrush TxtBr = new SolidBrush(ForeColor)) {
                             e.Graphics.DrawString(Btn.Text, Font, TxtBr, new RectangleF(InsetRect.X, RunningHeight, InsetRect.Width, PrimarySize.Height), PriStrFrmt);
                         }
@@ -678,15 +793,19 @@ namespace ODModules {
             }
 
         }
-        private void GetBackColors(MouseStates MouseState, KeypadButton Btn, out Color NorthColor, out Color SouthColor) {
+        private void GetBackColors(MouseStates MouseState, int Index, KeypadButton Btn, out Color NorthColor, out Color SouthColor) {
             Color TempNorthBack = backColorNorth;
             Color TempSouthBack = backColorSouth;
             if (Btn.UseCustomColors) {
                 TempNorthBack = Btn.BackColorNorth;
                 TempSouthBack = Btn.BackColorSouth;
             }
+            if (Index == markedIndex) {
+                TempNorthBack = backColorMarkedNorth;
+                TempSouthBack = backColorMarkedSouth;
+            }
             NorthColor = TempNorthBack; SouthColor = TempSouthBack;
-            if (Enabled == true) {
+            if (Btn.Enabled == true) {
                 switch (MouseState) {
                     case MouseStates.Exited:
                         if (Btn.Type != ButtonType.Button) {
@@ -713,19 +832,23 @@ namespace ODModules {
                 }
             }
             else {
-                NorthColor = WhiteLightenColor(TempNorthBack, 64);
-                SouthColor = WhiteLightenColor(TempSouthBack, 64);
+                NorthColor = backColorDisabledNorth;//WhiteLightenColor(TempNorthBack, 64);
+                SouthColor = backColorDisabledSouth;// WhiteLightenColor(TempSouthBack, 64);
             }
         }
-        private void GetBorderColors(MouseStates MouseState, KeypadButton Btn, out Color NorthColor, out Color SouthColor) {
+        private void GetBorderColors(MouseStates MouseState, int Index, KeypadButton Btn, out Color NorthColor, out Color SouthColor) {
             Color TempNorthBorder = borderColorNorth;
             Color TempSouthBorder = borderColorSouth;
             if (Btn.UseCustomColors) {
                 TempNorthBorder = Btn.BorderColorNorth;
                 TempSouthBorder = Btn.BorderColorSouth;
             }
+            if (Index == markedIndex) {
+                TempNorthBorder = borderColorMarkedNorth;
+                TempSouthBorder = borderColorMarkedSouth;
+            }
             NorthColor = TempNorthBorder; SouthColor = TempSouthBorder;
-            if (Enabled == true) {
+            if (Btn.Enabled == true) {
                 switch (MouseState) {
                     case MouseStates.Exited:
                         break;
@@ -740,8 +863,8 @@ namespace ODModules {
                 }
             }
             else {
-                NorthColor = WhiteLightenColor(TempNorthBorder, 64);
-                SouthColor = WhiteLightenColor(TempSouthBorder, 64);
+                NorthColor = borderColorDisabledNorth;//WhiteLightenColor(TempNorthBorder, 64);
+                SouthColor = borderColorDisabledSouth;//(TempSouthBorder, 64);
             }
         }
         private Color WhiteLightenColor(Color Input, int Alpha) {
@@ -932,18 +1055,19 @@ namespace ODModules {
                 ClickedKeypadButtonResult Result = GetButtonPosition(e.Location);
                 if (Result.Button != null) {
                     // 
+                    if (Result.Button.Enabled == false) { return; }
                     if (e.Button == MouseButtons.Left) {
                         ResetAllothers(Result.Button);
                         CurrentPosition = e.Location;
                         IsMouseDown = true;
                         Invalidate();
-                        ButtonClicked?.Invoke(this, Result.Button, Result.Position);
+                        ButtonClicked?.Invoke(this, Result.Button, Result.Position, Result.Index);
                     }
                     else if (e.Button == MouseButtons.Right) {
                         CurrentPosition = e.Location;
                         IsMouseDown = true;
                         Invalidate();
-                        ButtonRightClicked?.Invoke(this, Result.Button, Result.Position);
+                        ButtonRightClicked?.Invoke(this, Result.Button, Result.Position, Result.Index);
                     }
                 }
             }
@@ -998,22 +1122,32 @@ namespace ODModules {
                 //}
             }
         }
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+            //Debug.WriteLine("Process: " + keyData.ToString());
+            // return base.ProcessCmdKey(ref msg, keyData);
+            KeyEventArgs kea = new KeyEventArgs(keyData);
+            ButtonGrid_KeyDown(this, kea);
+            return true;
+        }
         bool KeyDownState = false;
         int DownIndex = -1;
         private void ButtonGrid_KeyDown(object? sender, KeyEventArgs e) {
+
             int i = 0;
-            foreach (KeypadButton Btn in buttons) {
-                if (Btn.ShortCutKeys == e.KeyData) {
-                    ButtonClicked?.Invoke(this, Btn, new Point(0, 0));
-                    KeyDownState = true;
-                    DownIndex = i;
-                    break;
-                }
-                else if (Btn.SecondaryShortCutKeys == e.KeyData) {
-                    ButtonClicked?.Invoke(this, Btn, new Point(0, 0));
-                    KeyDownState = true;
-                    DownIndex = i;
-                    break;
+            foreach (KeypadButton Btn in CurrentButtons) {
+                if (Btn.Enabled) {
+                    if (Btn.ShortCutKeys == e.KeyData) {
+                        ButtonClicked?.Invoke(this, Btn, new Point(0, 0), i);
+                        KeyDownState = true;
+                        DownIndex = i;
+                        break;
+                    }
+                    else if (Btn.SecondaryShortCutKeys == e.KeyData) {
+                        ButtonClicked?.Invoke(this, Btn, new Point(0, 0), i);
+                        KeyDownState = true;
+                        DownIndex = i;
+                        break;
+                    }
                 }
                 i++;
             }
@@ -1110,5 +1244,8 @@ namespace ODModules {
         }
     }
     public class KeypadButton : ArrayButton {
+        public override string? ToString() {
+            return Text;
+        }
     }
 }
