@@ -3,7 +3,7 @@ ODModules is a collection of WinForms controls for the .Net Versions 7 and above
 
 ## Controls
 ### Analog Dial Meter
-Is a simple skeuomorphic analog display for showing decimmal numbers. It features an adjustable range display, animated transistions (if required) and three adjustable color bands. 
+Is a simple skeuomorphic analog display for showing decimal numbers. It features an adjustable range display, animated transistions (if required) and three adjustable color bands. 
 
 ![image](https://github.com/julihirn/ODModules/assets/94691568/b0173780-4344-41ee-9153-9c99e1411b2f)
 
