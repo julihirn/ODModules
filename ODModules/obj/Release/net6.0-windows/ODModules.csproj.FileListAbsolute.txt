@@ -30,9 +30,6 @@ C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODMo
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Release\net6.0-windows\ODModules.deps.json
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Release\net6.0-windows\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Release\net6.0-windows\ODModules.pdb
-C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Release\net6.0-windows\ODHandlers.dll
-C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Release\net6.0-windows\ODHandlers.pdb
-C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.csproj.CopyComplete
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\refint\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.pdb

@@ -5,13 +5,13 @@
       "NuGet.CommandLine/6.6.1": {
         "type": "package"
       },
-      "Handlers/1.0.0": {
-        "type": "project",
+      "ODHandlers/1.4.0": {
+        "type": "package",
         "compile": {
-          "bin/placeholder/Handlers.dll": {}
+          "lib/net48/ODHandlers.dll": {}
         },
         "runtime": {
-          "bin/placeholder/Handlers.dll": {}
+          "lib/net48/ODHandlers.dll": {}
         }
       }
     }
@@ -33,16 +33,25 @@
         "tools/NuGet.pdb"
       ]
     },
-    "Handlers/1.0.0": {
-      "type": "project",
-      "path": "../../Handlers/Handlers.csproj",
-      "msbuildProject": "../../Handlers/Handlers.csproj"
+    "ODHandlers/1.4.0": {
+      "sha512": "BxGWDBiubxiXLvon0OGCX9O7eZQphW+k21vq1YDHLYlq7+QXxTcTzjRLVuatod6EHF0bEHeZOi1FRw3m7PSx1g==",
+      "type": "package",
+      "path": "odhandlers/1.4.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "content/bin/Debug/ODHandlers.dll",
+        "content/bin/Debug/ODHandlers.pdb",
+        "lib/net48/ODHandlers.dll",
+        "odhandlers.1.4.0.nupkg.sha512",
+        "odhandlers.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     "net6.0-windows7.0": [
-      "Handlers >= 1.0.0",
-      "NuGet.CommandLine >= 6.6.1"
+      "NuGet.CommandLine >= 6.6.1",
+      "ODHandlers >= 1.4.0"
     ]
   },
   "packageFolders": {
@@ -51,7 +60,7 @@
     "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
-    "version": "2.0.1",
+    "version": "2.0.7",
     "restore": {
       "projectUniqueName": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\ODModules.csproj",
       "projectName": "ODModules",
@@ -80,11 +89,7 @@
       "frameworks": {
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
-          "projectReferences": {
-            "C:\\Users\\Chann\\OneDrive\\Apps\\Handlers\\Handlers.csproj": {
-              "projectPath": "C:\\Users\\Chann\\OneDrive\\Apps\\Handlers\\Handlers.csproj"
-            }
-          }
+          "projectReferences": {}
         }
       },
       "warningProperties": {
@@ -102,6 +107,10 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[6.6.1, )"
+          },
+          "ODHandlers": {
+            "target": "Package",
+            "version": "[1.4.0, )"
           }
         },
         "imports": [
@@ -126,5 +135,17 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'ODHandlers 1.4.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net6.0-windows7.0'. This package may not be fully compatible with your project.",
+      "libraryId": "ODHandlers",
+      "targetGraphs": [
+        "net6.0-windows7.0"
+      ]
+    }
+  ]
 }

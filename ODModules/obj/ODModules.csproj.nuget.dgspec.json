@@ -4,23 +4,8 @@
     "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\ODModules.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Chann\\OneDrive\\Apps\\Handlers\\Handlers.csproj": {
-      "restore": {
-        "projectUniqueName": "C:\\Users\\Chann\\OneDrive\\Apps\\Handlers\\Handlers.csproj",
-        "projectName": "Handlers",
-        "projectPath": "C:\\Users\\Chann\\OneDrive\\Apps\\Handlers\\Handlers.csproj",
-        "frameworks": {
-          "net48": {
-            "projectReferences": {}
-          }
-        }
-      },
-      "frameworks": {
-        "net48": {}
-      }
-    },
     "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\ODModules.csproj": {
-      "version": "2.0.1",
+      "version": "2.0.7",
       "restore": {
         "projectUniqueName": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\ODModules.csproj",
         "projectName": "ODModules",
@@ -49,11 +34,7 @@
         "frameworks": {
           "net6.0-windows7.0": {
             "targetAlias": "net6.0-windows",
-            "projectReferences": {
-              "C:\\Users\\Chann\\OneDrive\\Apps\\Handlers\\Handlers.csproj": {
-                "projectPath": "C:\\Users\\Chann\\OneDrive\\Apps\\Handlers\\Handlers.csproj"
-              }
-            }
+            "projectReferences": {}
           }
         },
         "warningProperties": {
@@ -71,6 +52,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[6.6.1, )"
+            },
+            "ODHandlers": {
+              "target": "Package",
+              "version": "[1.4.0, )"
             }
           },
           "imports": [

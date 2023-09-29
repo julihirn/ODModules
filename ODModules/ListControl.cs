@@ -25,12 +25,17 @@ namespace ODModules {
         //private bool ScrollEdit = false;
 
         public delegate void DropDownClickedHandler(object sender, DropDownClickedEventArgs e);
-        [Category("Items")]
+        public delegate void ItemCheckedChangedHandler(object sender, ItemCheckedChangeEventArgs e);
+        [Category("Item Actions")]
         public event DropDownClickedHandler? DropDownClicked;
+        [Category("Item Actions")]
+        public event ItemCheckedChangedHandler? ItemCheckedChanged;
 
         [Category("Items")]
         public event ItemClickedHandler? ItemClicked;
+        [Category("Items")]
         public event ItemClickedHandler? ItemRightClicked;
+        [Category("Items")]
         public event ItemClickedHandler? ItemMiddleClicked;
 
         public delegate void ItemClickedHandler(object sender, ListItem Item, int Index, Rectangle ItemBounds);
@@ -1216,7 +1221,8 @@ namespace ODModules {
             if (columns[Column].ItemAlignment != ItemTextAlignment.None) {
                 Color ItemForeColor = ForeColor;
                 Rectangle TextRectangle = Rectangle.Empty;
-                string TextString = Item.ToString();
+                int ItemOff = Item + columns[Column].CountOffset;
+                string TextString = ItemOff.ToString();
                 using (StringFormat FormatFlags = StringFormat.GenericTypographic) {
                     if (columns[Column].ItemAlignment == ItemTextAlignment.Left) { FormatFlags.Alignment = StringAlignment.Near; }
                     else if (columns[Column].ItemAlignment == ItemTextAlignment.Center) { FormatFlags.Alignment = StringAlignment.Center; }
@@ -1808,11 +1814,13 @@ namespace ODModules {
         private void CheckChange(int Line, int Column) {
             if (Column == 0) {
                 CurrentItems[Line].Checked = !CurrentItems[Line].Checked;
+                ItemCheckedChanged?.Invoke(this, new ItemCheckedChangeEventArgs(Column, Line, CurrentItems[Line], CurrentItems[Line].Checked));
             }
             else if (Column > 0) {
                 int CurrentSubItem = Column - 1;
                 if (CurrentSubItem < CurrentItems[Line].SubItems.Count) {
                     CurrentItems[Line].SubItems[CurrentSubItem].Checked = !CurrentItems[Line].SubItems[CurrentSubItem].Checked;
+                    ItemCheckedChanged?.Invoke(this, new ItemCheckedChangeEventArgs(Column, Line, CurrentItems[Line], CurrentItems[Line].SubItems[CurrentSubItem].Checked));
                 }
             }
         }
@@ -2294,6 +2302,9 @@ namespace ODModules {
         }
     }
     public class Column {
+        private int countOffset;
+        [System.ComponentModel.Category("Data")]
+        public int CountOffset { get => countOffset; set => countOffset = value; }
         private string text;
         [System.ComponentModel.Category("Appearance")]
         public string Text { get => text; set => text = value; }
@@ -2379,8 +2390,9 @@ namespace ODModules {
         [System.ComponentModel.Category("Appearance")]
         public bool Visible { get => visible; set => visible = value; }
 
-
-
+        public override string? ToString() {
+            return text;
+        }
     }
     public enum ColumnDisplayType {
         Text = 0x00,
@@ -2425,6 +2437,9 @@ namespace ODModules {
         private object? tag;
         [System.ComponentModel.Category("Data")]
         public object? Tag { get => tag; set => tag = value; }
+        private int numValue;
+        [System.ComponentModel.Category("Data")]
+        public int Value { get => numValue; set => numValue = value; }
         [System.ComponentModel.Category("Appearance")]
         public bool Checked {
             get { return ischecked; }
@@ -2441,6 +2456,10 @@ namespace ODModules {
         public void ResetChangedChanged() {
             ischeckedChanged = false;
         }
+        public override string? ToString() {
+            return text;
+        }
+
         private bool ischeckedChanged = false;
         private bool ischeckedPrevious = false;
         private bool ischecked = false;
@@ -2492,6 +2511,30 @@ namespace ODModules {
         }
         public ListSubItem(bool Checked) {
             this.Checked = Checked;
+        }
+    }
+    public class ItemCheckedChangeEventArgs : EventArgs {
+        ListItem? parentItem = null;
+        public ListItem? ParentItem {
+            get { return parentItem; }
+        }
+        int column = -1;
+        public int Column {
+            get { return column; }
+        }
+        int item = -1;
+        public int Item {
+            get { return item; }
+        }
+        bool checkedState;
+        public bool Checked {
+            get { return checkedState; }
+        }
+        public ItemCheckedChangeEventArgs(int Column, int Item, ListItem? ItemValue, bool Checked) {
+            this.column = Column;
+            this.item = Item;
+            this.parentItem = ItemValue;
+            this.checkedState = Checked;
         }
     }
     public class DropDownClickedEventArgs : EventArgs {

@@ -14,8 +14,12 @@ namespace ODModules {
             InitializeComponent();
         }
 
+        protected override void OnPaint(PaintEventArgs e) {
+            
+        }
+
         private void BitToggle_Load(object sender, EventArgs e) {
-            int a = 0;
+            
         }
     }
 }

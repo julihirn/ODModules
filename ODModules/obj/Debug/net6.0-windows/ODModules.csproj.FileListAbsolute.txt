@@ -40,8 +40,6 @@ C:\Users\Chann\OneDrive\Apps\Line Editor\ODModules\obj\Debug\net6.0-windows\ODMo
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Debug\net6.0-windows\ODModules.deps.json
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Debug\net6.0-windows\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Debug\net6.0-windows\ODModules.pdb
-C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Debug\net6.0-windows\ODHandlers.dll
-C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Debug\net6.0-windows\ODHandlers.pdb
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.AssemblyReference.cache
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.BitScale.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.Button.resources
@@ -71,7 +69,6 @@ C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModu
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.AssemblyInfoInputs.cache
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.AssemblyInfo.cs
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.CoreCompileInputs.cache
-C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.CopyComplete
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\refint\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.pdb
