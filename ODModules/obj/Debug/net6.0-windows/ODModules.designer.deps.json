@@ -7,11 +7,11 @@
   "targets": {
     ".NETCoreApp,Version=v6.0": {
       "NuGet.CommandLine/6.6.1": {},
-      "ODHandlers/1.3.0": {
+      "ODHandlers/1.5.0.1": {
         "runtime": {
           "lib/net48/ODHandlers.dll": {
-            "assemblyVersion": "1.3.0.0",
-            "fileVersion": "1.3.0.0"
+            "assemblyVersion": "1.5.0.1",
+            "fileVersion": "1.5.0.1"
           }
         }
       }
@@ -25,12 +25,12 @@
       "path": "nuget.commandline/6.6.1",
       "hashPath": "nuget.commandline.6.6.1.nupkg.sha512"
     },
-    "ODHandlers/1.3.0": {
+    "ODHandlers/1.5.0.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-cO64h2+PhR48dvAp7y2Gq71cR/hTdYaEXI8oGASEQEgHTzCmLp3D/aBpKnwmSMZNh23Yu7H1KNnvsvduNT4W9Q==",
-      "path": "odhandlers/1.3.0",
-      "hashPath": "odhandlers.1.3.0.nupkg.sha512"
+      "sha512": "sha512-7lpak7Q7j3CXVtQQpHYEoqS9hQbuwXOLP20soWsjX4udzrOQYY9IGUg/K6MxTI4fgKLhbYQS/zovGe5LSOVvrw==",
+      "path": "odhandlers/1.5.0.1",
+      "hashPath": "odhandlers.1.5.0.1.nupkg.sha512"
     }
   }
 }

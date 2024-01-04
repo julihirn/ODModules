@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Reflection.Metadata.Ecma335;
 using static Handlers.ConversionHandler;
 using System.Collections;
+using Handlers.ShadowX;
 
 namespace ODModules {
     public class ListControl : UserControl {
@@ -48,7 +49,7 @@ namespace ODModules {
         public event ValueChangedEventHandler? ValueChanged;
 
         public delegate void ValueChangedEventHandler();
-
+        bool PropertyChanged = true;
         public ListControl() {
             InitializeComponent();
             AllowMouseWheel = true;
@@ -85,11 +86,12 @@ namespace ODModules {
 
             //    Items.Add(li);
             //}
+            PropertyChanged = true;
         }
         #region Functions
         public void ScaleColumnWidths() {
-           float Scaler =  this.DeviceDpi / 96.0f;
-           
+            float Scaler = this.DeviceDpi / 96.0f;
+
             foreach (Column column in Columns) {
                 column.Width = (int)((float)column.Width * Scaler);
             }
@@ -197,7 +199,7 @@ namespace ODModules {
             NewItem.ForeColor = Item.ForeColor;
             NewItem.Tag = Item.Tag;
             NewItem.Name = Item.Name;
-            for(int i=0;i < Item.SubItems.Count; i++) {
+            for (int i = 0; i < Item.SubItems.Count; i++) {
                 NewItem.SubItems.Add(CloneSubItem(Item.SubItems[i]));
             }
             return NewItem;
@@ -337,6 +339,33 @@ namespace ODModules {
                 }
             }
         }
+        public void LineInsertAtSelected(ListItem? Item, bool InsertBefore, bool InsertAtEndIfNothingSelected = false) {
+            if (Item == null) { return; }
+            List<int> Indices = GetSelectedIndices();
+            int SelectionCount = Indices.Count;
+            if ((InsertAtEndIfNothingSelected == true) && (SelectionCount <= 0)) {
+                CurrentItems.Add(Item);
+                Invalidate();
+                return;
+            }
+            for (int i = Indices.Count - 1; i >= 0; i--) {
+                int Index = Indices[i];
+                if (CurrentItems[Index].Selected) {
+                    if (InsertBefore) {
+                        CurrentItems.Insert(Index, Item.CloneItem());
+                    }
+                    else {
+                        if (i == CurrentItems.Count - 1) {
+                            CurrentItems.Add(Item.CloneItem());
+                        }
+                        else {
+                            CurrentItems.Insert(Index + 1, Item.CloneItem());
+                        }
+                    }
+                }
+            }
+            Invalidate();
+        }
         #endregion 
         #region Support Functions and Methods
         private int LastSelectionCount = 0;
@@ -366,6 +395,15 @@ namespace ODModules {
                 _SelectionCount = 0;
                 return 0;
             }
+        }
+        private List<int> GetSelectedIndices() {
+            List<int> Indices = new List<int>();
+            for (int i = 0; i < CurrentItems.Count; i++) {
+                if (CurrentItems[i].Selected == true) {
+                    Indices.Add(i);
+                }
+            }
+            return Indices;
         }
         private byte[] SpanBytes(byte[] ByteArray) {
             byte[] Output = ByteArray;
@@ -498,6 +536,7 @@ namespace ODModules {
             }
             set {
                 _ShadowColor = value;
+                PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -508,7 +547,7 @@ namespace ODModules {
                 return markerBorderColor;
             }
             set {
-                markerBorderColor = value;
+                markerBorderColor = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -519,7 +558,7 @@ namespace ODModules {
                 return markerFillColor;
             }
             set {
-                markerFillColor = value;
+                markerFillColor = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -530,7 +569,7 @@ namespace ODModules {
                 return _ColumnColor;
             }
             set {
-                _ColumnColor = value;
+                _ColumnColor = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -541,7 +580,7 @@ namespace ODModules {
                 return _ColumnForeColor;
             }
             set {
-                _ColumnForeColor = value;
+                _ColumnForeColor = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -552,7 +591,7 @@ namespace ODModules {
                 return _ColumnLineColor;
             }
             set {
-                _ColumnLineColor = value;
+                _ColumnLineColor = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -563,7 +602,7 @@ namespace ODModules {
                 return dropDownMouseOver;
             }
             set {
-                dropDownMouseOver = value;
+                dropDownMouseOver = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -574,7 +613,7 @@ namespace ODModules {
                 return _SelectedColor;
             }
             set {
-                _SelectedColor = value;
+                _SelectedColor = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -585,7 +624,7 @@ namespace ODModules {
                 return _SelectionColor;
             }
             set {
-                _SelectionColor = value;
+                _SelectionColor = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -596,7 +635,7 @@ namespace ODModules {
                 return dropDownMouseDown;
             }
             set {
-                dropDownMouseDown = value;
+                dropDownMouseDown = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -607,7 +646,7 @@ namespace ODModules {
                 return _GridlineColor;
             }
             set {
-                _GridlineColor = value;
+                _GridlineColor = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -629,7 +668,7 @@ namespace ODModules {
                 return _ScrollBarNorth;
             }
             set {
-                _ScrollBarNorth = value;
+                _ScrollBarNorth = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -640,7 +679,7 @@ namespace ODModules {
                 return _ScrollBarSouth;
             }
             set {
-                _ScrollBarSouth = value;
+                _ScrollBarSouth = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -651,7 +690,7 @@ namespace ODModules {
                 return _ScrollBarMouseDown;
             }
             set {
-                _ScrollBarMouseDown = value;
+                _ScrollBarMouseDown = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -662,7 +701,7 @@ namespace ODModules {
                 return _AllowMouseWheel;
             }
             set {
-                _AllowMouseWheel = value;
+                _AllowMouseWheel = value; PropertyChanged = true;
             }
         }
         private bool _ShowGrid;
@@ -672,7 +711,7 @@ namespace ODModules {
                 return _ShowGrid;
             }
             set {
-                _ShowGrid = value;
+                _ShowGrid = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -683,7 +722,18 @@ namespace ODModules {
                 return _ShowRowColors;
             }
             set {
-                _ShowRowColors = value;
+                _ShowRowColors = value; PropertyChanged = true;
+                Invalidate();
+            }
+        }
+        private bool _ShowItemIndentation;
+        [System.ComponentModel.Category("Show/Hide")]
+        public bool ShowItemIndentation {
+            get {
+                return _ShowItemIndentation;
+            }
+            set {
+                _ShowItemIndentation = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -694,7 +744,7 @@ namespace ODModules {
                 return _AllowColumnSpanning;
             }
             set {
-                _AllowColumnSpanning = value;
+                _AllowColumnSpanning = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -705,7 +755,7 @@ namespace ODModules {
                 return _SpanColumn;
             }
             set {
-                _SpanColumn = value;
+                _SpanColumn = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -777,7 +827,7 @@ namespace ODModules {
                 return showMarker;
             }
             set {
-                showMarker = value;
+                showMarker = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -788,7 +838,7 @@ namespace ODModules {
                 return markerStyle;
             }
             set {
-                markerStyle = value;
+                markerStyle = value; PropertyChanged = true;
                 Invalidate();
             }
         }
@@ -838,6 +888,16 @@ namespace ODModules {
                 scrollItems = value;
             }
         }
+        [System.ComponentModel.Category("Scrolling")]
+        private int horizontalScrollStep = 3;
+        public int HorizontalScrollStep {
+            get {
+                return horizontalScrollStep;
+            }
+            set {
+                horizontalScrollStep = value;
+            }
+        }
         [System.ComponentModel.Category("Highlights")]
         int highlightalpha = 128;
         int highlightsidealpha = 78;
@@ -878,13 +938,16 @@ namespace ODModules {
         int TilesPerPage = 10;
         bool IsFirstTime = true;
         int ScrollXDifference = 0;
+        int GenericWidth = 10;
         private void RenderSetup(PaintEventArgs e) {
-            using (System.Drawing.Font GenericSize = new System.Drawing.Font(Font.FontFamily, 9.0f, Font.Style)) {
-                ScrollSize = (int)e.Graphics.MeasureString("W", GenericSize).Width;
+            if (PropertyChanged == true) {
+                using (System.Drawing.Font GenericSize = new System.Drawing.Font(Font.FontFamily, 9.0f, Font.Style)) {
+                    ScrollSize = (int)e.Graphics.MeasureString("W", GenericSize).Width;
+                }
+                int sz_genx = (int)e.Graphics.MeasureString("0", Font).Width - 2;
+                GenericLine_Height = (int)e.Graphics.MeasureString("0", Font).Height;
+                GenericWidth = (int)e.Graphics.MeasureString("W", Font).Width;
             }
-            int sz_genx = (int)e.Graphics.MeasureString("0", Font).Width - 2;
-            GenericLine_Height = (int)e.Graphics.MeasureString("0", Font).Height;
-
             int HorizontalScrollHeight = 0;
             if (ShowHorzScroll == true) { HorizontalScrollHeight = ScrollSize; }
             MaximumVerticalItems = (int)Math.Floor((this.Height - LineHeaderHeight - HorizontalScrollHeight) / (double)GenericLine_Height);
@@ -1062,31 +1125,63 @@ namespace ODModules {
         private void RenderLineBackItem(PaintEventArgs e, int Xpos, int LinePositionY, int Column, int Item) {
             if (Column == 0) {
                 Rectangle ItemRectangle = new Rectangle(Xpos, LinePositionY, columns[Column].Width, (int)GenericLine_Height);
-                if (columns[Column].UseItemBackColor == true) {
-                    Color ItemColor = CurrentItems[Item].BackColor;
-                    if (CurrentItems[Item].Selected == true) {
-                        ItemColor = SelectedColor;
-                    }
+                //if (columns[Column].UseItemBackColor == true) {
+                //Color ItemColor = CurrentItems[Item].BackColor;
+                //if (CurrentItems[Item].Selected == true) {
+                //    ItemColor = SelectedColor;
+                //}
+                Color ItemColor = GetLineColor(CurrentItems[Item], Column);
+                if (ItemColor.A != 0) {
                     using (SolidBrush TxtBrush = new SolidBrush(ItemColor)) {
                         e.Graphics.FillRectangle(TxtBrush, ItemRectangle);
                     }
                 }
+                //}
             }
             else {
                 if ((CurrentItems[Item].SubItems.Count > 0) && (Column - 1 < CurrentItems[Item].SubItems.Count)) {
                     Rectangle ItemRectangle = new Rectangle(Xpos, LinePositionY, columns[Column].Width, (int)GenericLine_Height);
                     Rectangle TextRectangle = new Rectangle(ItemRectangle.X + Offset, ItemRectangle.Y, ItemRectangle.Width - (2 * Offset), ItemRectangle.Height);
-                    if (columns[Column].UseItemBackColor == true) {
-                        Color ItemColor = CurrentItems[Item].SubItems[Column - 1].BackColor;
-                        if (CurrentItems[Item].Selected == true) {
-                            ItemColor = SelectedColor;
-                        }
+                    //if (columns[Column].UseItemBackColor == true) {
+                    //Color ItemColor = CurrentItems[Item].SubItems[Column - 1].BackColor;
+                    //if (CurrentItems[Item].Selected == true) {
+                    //    ItemColor = SelectedColor;
+                    //}
+                    Color ItemColor = GetLineColor(CurrentItems[Item], Column);
+                    if (ItemColor.A != 0) {
                         using (SolidBrush TxtBrush = new SolidBrush(ItemColor)) {
                             e.Graphics.FillRectangle(TxtBrush, ItemRectangle);
                         }
                     }
+                    //}
+
                 }
             }
+        }
+        private Color GetLineColor(ListItem Item, int Column) {
+            Color Output = Color.Transparent;
+            if (columns[Column].UseItemBackColor == true) {
+                Output = Item[Column].BackColor;
+                if (Item.Selected == true) {
+                    Output = SelectedColor;
+                }
+            }
+            return Output;
+        }
+        private Color GetLineTextColor(ListItem Item, int Column) {
+            Color Output = ForeColor;
+            if (columns[Column].UseItemForeColor == true) {
+                Output = Item[Column].ForeColor;
+            }
+            else {
+                if (Item.UseLineForeColor) {
+                    Output = Item.LineForeColor;
+                }
+                else {
+                    Output = ForeColor;
+                }
+            }
+            return Output;
         }
         int BoxTrim = 2;
         private void RenderLineItem(PaintEventArgs e, int Xpos, int LinePositionY, int Column, int Item) {
@@ -1103,7 +1198,20 @@ namespace ODModules {
                 RenderDropDown(e, Xpos, LinePositionY, TextOffset, Column, Item);
             }
         }
+        private int GetIndentation(int Item, int Column) {
+            if (ShowItemIndentation == false) { return 0; }
+            if (Column == 0) {
+                return (int)CurrentItems[Item].Indentation * GenericWidth;
+            }
+            else {
+                if ((CurrentItems[Item].SubItems.Count > 0) && (Column - 1 < CurrentItems[Item].SubItems.Count)) {
+                    return (int)CurrentItems[Item][Column].Indentation * GenericWidth;
+                }
+            }
+            return 0;
+        }
         private void RenderItemText(PaintEventArgs e, int Xpos, int LinePositionY, int TextOffset, int Column, int Item) {
+            int Indent = GetIndentation(Item, Column);
             Rectangle ItemRectangle = new Rectangle(Xpos, LinePositionY, columns[Column].Width, (int)GenericLine_Height);
             if (columns[Column].ItemAlignment != ItemTextAlignment.None) {
                 Color ItemForeColor = ForeColor;
@@ -1111,12 +1219,13 @@ namespace ODModules {
                 string TextString = "";
                 using (StringFormat FormatFlags = StringFormat.GenericTypographic) {
                     if (columns[Column].ItemAlignment == ItemTextAlignment.Left) { FormatFlags.Alignment = StringAlignment.Near; }
-                    else if (columns[Column].ItemAlignment == ItemTextAlignment.Center) { FormatFlags.Alignment = StringAlignment.Center; }
-                    else if (columns[Column].ItemAlignment == ItemTextAlignment.Right) { FormatFlags.Alignment = StringAlignment.Far; }
+                    else if (columns[Column].ItemAlignment == ItemTextAlignment.Center) { FormatFlags.Alignment = StringAlignment.Center; Indent = 0; }
+                    else if (columns[Column].ItemAlignment == ItemTextAlignment.Right) { FormatFlags.Alignment = StringAlignment.Far; Indent = 0; }
                     FormatFlags.Trimming = StringTrimming.EllipsisCharacter;
                     if (Column == 0) {
-                        TextRectangle = new Rectangle(ItemRectangle.X + TextOffset, ItemRectangle.Y, ItemRectangle.Width - TextOffset - Offset, ItemRectangle.Height);
-                        if (columns[Column].UseItemForeColor == true) { ItemForeColor = CurrentItems[Item].ForeColor; }
+                        TextRectangle = new Rectangle(ItemRectangle.X + TextOffset + Indent, ItemRectangle.Y, ItemRectangle.Width - TextOffset - Offset - Indent, ItemRectangle.Height);
+                        //if (columns[Column].UseItemForeColor == true) { ItemForeColor = CurrentItems[Item].ForeColor; }
+                        ItemForeColor = GetLineTextColor(CurrentItems[Item], 0);
                         TextString = CurrentItems[Item].Text;
                         using (SolidBrush TxtBrush = new SolidBrush(ItemForeColor)) {
                             e.Graphics.DrawString(TextString, Font, TxtBrush, TextRectangle, FormatFlags);
@@ -1124,8 +1233,9 @@ namespace ODModules {
                     }
                     else {
                         if ((CurrentItems[Item].SubItems.Count > 0) && (Column - 1 < CurrentItems[Item].SubItems.Count)) {
-                            TextRectangle = new Rectangle(ItemRectangle.X + TextOffset, ItemRectangle.Y, ItemRectangle.Width - TextOffset - Offset, ItemRectangle.Height);
-                            if (columns[Column].UseItemForeColor == true) { ItemForeColor = CurrentItems[Item].SubItems[Column - 1].ForeColor; }
+                            TextRectangle = new Rectangle(ItemRectangle.X + TextOffset + Indent, ItemRectangle.Y, ItemRectangle.Width - TextOffset - Offset - Indent, ItemRectangle.Height);
+                            //if (columns[Column].UseItemForeColor == true) { ItemForeColor = CurrentItems[Item].SubItems[Column - 1].ForeColor; }
+                            ItemForeColor = GetLineTextColor(CurrentItems[Item], Column);
                             TextString = CurrentItems[Item].SubItems[Column - 1].Text;
                         }
                     }
@@ -1136,6 +1246,7 @@ namespace ODModules {
             }
         }
         private void RenderDropDown(PaintEventArgs e, int Xpos, int LinePositionY, int TextOffset, int Column, int Item) {
+            int Indent = GetIndentation(Item, Column);
             Rectangle ItemRectangle = new Rectangle(Xpos, LinePositionY, columns[Column].Width, (int)GenericLine_Height);
             if (columns[Column].ItemAlignment != ItemTextAlignment.None) {
                 Color ItemForeColor = ForeColor;
@@ -1146,7 +1257,8 @@ namespace ODModules {
                     FormatFlags.Trimming = StringTrimming.EllipsisCharacter;
                     if (Column == 0) {
                         TextRectangle = new Rectangle(ItemRectangle.X + TextOffset, ItemRectangle.Y, ItemRectangle.Width - TextOffset - Offset, ItemRectangle.Height);
-                        if (columns[Column].UseItemForeColor == true) { ItemForeColor = CurrentItems[Item].ForeColor; }
+                        //if (columns[Column].UseItemForeColor == true) { ItemForeColor = CurrentItems[Item].ForeColor; }
+                        ItemForeColor = GetLineTextColor(CurrentItems[Item], 0);
                         TextString = CurrentItems[Item].Text;
                         using (SolidBrush TxtBrush = new SolidBrush(ItemForeColor)) {
                             e.Graphics.DrawString(TextString, Font, TxtBrush, TextRectangle, FormatFlags);
@@ -1155,7 +1267,8 @@ namespace ODModules {
                     else {
                         if ((CurrentItems[Item].SubItems.Count > 0) && (Column - 1 < CurrentItems[Item].SubItems.Count)) {
                             TextRectangle = new Rectangle(ItemRectangle.X + TextOffset, ItemRectangle.Y, ItemRectangle.Width - TextOffset - Offset, ItemRectangle.Height);
-                            if (columns[Column].UseItemForeColor == true) { ItemForeColor = CurrentItems[Item].SubItems[Column - 1].ForeColor; }
+                            //if (columns[Column].UseItemForeColor == true) { ItemForeColor = CurrentItems[Item].SubItems[Column - 1].ForeColor; }
+                            ItemForeColor = GetLineTextColor(CurrentItems[Item], Column);
                             TextString = CurrentItems[Item].SubItems[Column - 1].Text;
                         }
                     }
@@ -1170,24 +1283,26 @@ namespace ODModules {
                     int TextWidth = TextRectangle.Width - GenericLine_Height;
                     Rectangle ArrowRectangle = new Rectangle(TextRectangle.X + TextWidth, TextRectangle.Y, GenericLine_Height, TextRectangle.Width);
                     // if (columns[Column].ItemAlignment == ItemTextAlignment.Right) {
-                    if (columns[Column].DropDownVisible == true) {
-                        if (columns[Column].DropDownRight == true) {
-                            TextModifiedRectangle = new Rectangle(TextRectangle.X + GenericLine_Height, TextRectangle.Y, TextWidth, TextRectangle.Height);
-                            ArrowRectangle = new Rectangle(TextRectangle.X, TextRectangle.Y, GenericLine_Height, TextRectangle.Width);
-                        }
-                        else {
-                            TextModifiedRectangle = new Rectangle(TextRectangle.X, TextRectangle.Y, TextWidth, TextRectangle.Height);
-                        }
-                    }
                     if (columns[Column].ItemAlignment == ItemTextAlignment.Right) {
-                        FormatFlags.Alignment = StringAlignment.Far;
+                        FormatFlags.Alignment = StringAlignment.Far; Indent = 0;
                     }
                     else if (columns[Column].ItemAlignment == ItemTextAlignment.Center) {
-                        FormatFlags.Alignment = StringAlignment.Center;
+                        FormatFlags.Alignment = StringAlignment.Center; Indent = 0;
                     }
                     else if (columns[Column].ItemAlignment == ItemTextAlignment.Left) {
                         FormatFlags.Alignment = StringAlignment.Near;
                     }
+
+                    if (columns[Column].DropDownVisible == true) {
+                        if (columns[Column].DropDownRight == true) {
+                            TextModifiedRectangle = new Rectangle(TextRectangle.X + GenericLine_Height + Indent, TextRectangle.Y, TextWidth - Indent, TextRectangle.Height);
+                            ArrowRectangle = new Rectangle(TextRectangle.X, TextRectangle.Y, GenericLine_Height, TextRectangle.Width);
+                        }
+                        else {
+                            TextModifiedRectangle = new Rectangle(TextRectangle.X + Indent, TextRectangle.Y, TextWidth - Indent, TextRectangle.Height);
+                        }
+                    }
+
 
                     if ((TextRectangle.Contains(CurrentMousePosition)) && (Math.Abs(SelectionDelta.Y) < GenericLine_Height)) {
                         if (MouseIsDown == true) {
@@ -1230,7 +1345,8 @@ namespace ODModules {
                     FormatFlags.Trimming = StringTrimming.EllipsisCharacter;
                     if (Column == 0) {
                         TextRectangle = new Rectangle(ItemRectangle.X + TextOffset, ItemRectangle.Y, ItemRectangle.Width - TextOffset - Offset, ItemRectangle.Height);
-                        if (columns[Column].UseItemForeColor == true) { ItemForeColor = CurrentItems[Item].ForeColor; }
+                        //if (columns[Column].UseItemForeColor == true) { ItemForeColor = CurrentItems[Item].ForeColor; }
+                        ItemForeColor = GetLineTextColor(CurrentItems[Item], 0);
                         using (SolidBrush TxtBrush = new SolidBrush(ItemForeColor)) {
                             e.Graphics.DrawString(TextString, Font, TxtBrush, TextRectangle, FormatFlags);
                         }
@@ -1238,7 +1354,8 @@ namespace ODModules {
                     else {
                         if ((CurrentItems[Item].SubItems.Count > 0) && (Column - 1 < CurrentItems[Item].SubItems.Count)) {
                             TextRectangle = new Rectangle(ItemRectangle.X + TextOffset, ItemRectangle.Y, ItemRectangle.Width - TextOffset - Offset, ItemRectangle.Height);
-                            if (columns[Column].UseItemForeColor == true) { ItemForeColor = CurrentItems[Item].SubItems[Column - 1].ForeColor; }
+                            //if (columns[Column].UseItemForeColor == true) { ItemForeColor = CurrentItems[Item].SubItems[Column - 1].ForeColor; }
+                            ItemForeColor = GetLineTextColor(CurrentItems[Item], Column);
                         }
                     }
                     using (SolidBrush TxtBrush = new SolidBrush(ItemForeColor)) {
@@ -1253,6 +1370,12 @@ namespace ODModules {
                     using (SolidBrush AlternLineColor = new SolidBrush(RowColor)) {
                         e.Graphics.FillRectangle(AlternLineColor, BoundingRectangle);
                     }
+                }
+            }
+            if (CurrentItems[CurrentLine].UseLineBackColor == true) {
+                Color TempColor = CurrentItems[CurrentLine].LineBackColor;
+                using (SolidBrush SelectedLine = new SolidBrush(TempColor)) {
+                    e.Graphics.FillRectangle(SelectedLine, BoundingRectangle);
                 }
             }
             if (CurrentItems[CurrentLine].Selected == true) {
@@ -1476,7 +1599,7 @@ namespace ODModules {
                     if (ThumbHeight < ScrollBarButtonSize * 2) {
                         ThumbHeight = ScrollBarButtonSize * 2;
                     }
-                    float ScrollBounds = (VerticalScrollBounds.Height - ThumbHeight) * ((float)VerScroll / (float)(CurrentItems.Count-1)) + VerticalScrollBounds.Y;// + ScrollSize;
+                    float ScrollBounds = (VerticalScrollBounds.Height - ThumbHeight) * ((float)VerScroll / (float)(CurrentItems.Count - 1)) + VerticalScrollBounds.Y;// + ScrollSize;
                     VerticalScrollThumb = new RectangleF(VerticalScrollBounds.X, ScrollBounds, VerticalScrollBar.Width, ThumbHeight);
                     e.Graphics.FillRectangle(HeaderForeBrush, VerticalScrollThumb);
                 }
@@ -1568,7 +1691,7 @@ namespace ODModules {
         #endregion
         #region Position Handling
         private int GetVerticalScrollFromCursor(int MousePositionY, float ThumbPosition) {
-            return (int)((float)((MousePositionY - VerticalScrollBounds.Y - ThumbPosition) * (CurrentItems.Count-1)) / (VerticalScrollBounds.Height - VerticalScrollThumb.Height));
+            return (int)((float)((MousePositionY - VerticalScrollBounds.Y - ThumbPosition) * (CurrentItems.Count - 1)) / (VerticalScrollBounds.Height - VerticalScrollThumb.Height));
         }
         //HorScroll = (MouseX - hBarX - ThumbPos) * 
         private int GetHorizontalScrollFromCursor(int MousePositionX, float ThumbPosition) {
@@ -1789,7 +1912,7 @@ namespace ODModules {
                                         BoxLocation = PointToScreen(new Point(0, HitLocation.Y));
                                     }
                                     Size TempSize = CurrentItem.Size;
-                                    if (CurrentItem.X+ CurrentItem.Width >= Width) {
+                                    if (CurrentItem.X + CurrentItem.Width >= Width) {
                                         int Diff = Width - (CurrentItem.X + TempSize.Width);
                                         if (ShowVertScroll == true) {
                                             TempSize = new Size(CurrentItem.Width - Diff - VerticalScrollBar.Width, CurrentItem.Height);
@@ -1909,6 +2032,7 @@ namespace ODModules {
         int HitStart = 0;
         int SelectedColumn = -1;
         int OldWidth = 0;
+        int OldHScrollOffset = 0;
         bool IgnoreLines = false;
         Point ScrollOutofBoundsDelta = new Point(0, 0);
         private bool CursorOutofBounds = false;
@@ -1924,12 +2048,14 @@ namespace ODModules {
                                 if ((e.X > Xpos - 5) && (e.X < Xpos + 5)) {
                                     HitHeader = true;
                                     OldWidth = columns[i].Width;
+
                                     SelectedColumn = i;
                                     break;
                                 }
                             }
                         }
                     }
+                    OldHScrollOffset = LineTextOffset;
                     IgnoreLines = true;
                     HitStart = e.X;
                 }
@@ -2006,7 +2132,13 @@ namespace ODModules {
             }
             if (HitHeader == true) {
                 if ((SelectedColumn < columns.Count) && (columns.Count > 0)) {
-                    columns[SelectedColumn].Width = OldWidth + e.X - HitStart;
+                    int Scale = 0;
+                    if (OldHScrollOffset != 0) {
+                        Scale = 0;//;(Math.Abs(OldHScrollOffset) - Math.Abs(LineTextOffset));
+                        //Debug.Print(OldHScrollOffset.ToString() + " " + LineTextOffset.ToString());
+                    }
+                    columns[SelectedColumn].Width = OldWidth + (int)((e.X - HitStart) + Scale);
+
                     Invalidate();
                 }
             }
@@ -2070,6 +2202,7 @@ namespace ODModules {
             IgnoreLines = false;
             SelectedItems();
             Invalidate();
+            GC.Collect();
         }
         private void LineInterface_MouseClick(object? sender, System.Windows.Forms.MouseEventArgs e) {
             if (IgnoreLines == true) { return; }
@@ -2149,6 +2282,49 @@ namespace ODModules {
                 }
                 else if (VerScroll < VerScrollMax)
                     VerScroll += Math.Abs(DC);
+            }
+        }
+        private void LineInterface_MouseHWheel(MouseButtons buttons, int clicks, int x, int y, int delta) {
+            if (delta < 0) {
+                HorScroll -= horizontalScrollStep;
+            }
+            else if (delta > 0) {
+                HorScroll += horizontalScrollStep;
+            }
+            //if (delta )
+            //HorScroll -= 1;
+        }
+        public const int WM_MOUSEHWHEEL = 0x020E;
+        protected void FireMouseHWheel(IntPtr wParam, IntPtr lParam) {
+            Int32 tilt = HIWORD(wParam);
+            short Tilt = (short)tilt;
+            //Int32 keys = LOWORD(wParam);
+            Int32 x = LOWORD(lParam);
+            Int32 y = HIWORD(lParam);
+
+            LineInterface_MouseHWheel(MouseButtons.None, 0, x, y, Tilt);
+        }
+        static Int32 HIWORD(IntPtr ptr) {
+            long val32 = (long)ptr;
+            return (Int32)((val32 >> 16) & 0xFFFF);
+        }
+
+        static Int32 LOWORD(IntPtr ptr) {
+            long val32 = (long)ptr;
+            return (Int32)(val32 & 0xFFFF);
+        }
+        protected override void WndProc(ref Message m) {
+            base.WndProc(ref m);
+            if (m.HWnd != this.Handle) {
+                return;
+            }
+            switch (m.Msg) {
+                case WM_MOUSEHWHEEL:
+                    FireMouseHWheel(m.WParam, m.LParam);
+                    m.Result = (IntPtr)1;
+                    break;
+                default:
+                    break;
             }
         }
         #endregion
@@ -2425,6 +2601,9 @@ namespace ODModules {
         private string name = "";
         [System.ComponentModel.Category("Design")]
         public string Name { get => name; set => name = value; }
+        private uint indent = 0;
+        [System.ComponentModel.Category("Appearance")]
+        public uint Indentation { get => indent; set => indent = value; }
         private string text = "";
         [System.ComponentModel.Category("Appearance")]
         public string Text { get => text; set => text = value; }
@@ -2465,7 +2644,20 @@ namespace ODModules {
         private bool ischecked = false;
 
     }
-    public class ListItem : ListObject {
+    public class ListItem : ListObject, ICloneable {
+        private Color lineForeColor = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color LineForeColor { get => lineForeColor; set => lineForeColor = value; }
+        private Color lineBackColor = Color.Transparent;
+        [System.ComponentModel.Category("Appearance")]
+        public Color LineBackColor { get => lineBackColor; set => lineBackColor = value; }
+        private bool useLineBackColor = false;
+        [System.ComponentModel.Category("Appearance")]
+        public bool UseLineBackColor { get => useLineBackColor; set => useLineBackColor = value; }
+        private bool useLineForeColor = false;
+        [System.ComponentModel.Category("Appearance")]
+        public bool UseLineForeColor { get => useLineForeColor; set => useLineForeColor = value; }
+
         private bool selected = false;
         [System.ComponentModel.Category("Control")]
         public bool Selected { get => selected; set => selected = value; }
@@ -2481,8 +2673,8 @@ namespace ODModules {
                 return this;
             }
             else {
-                if ((Subindex-1) < subItems.Count) {
-                    return subItems[(int)Subindex-1];
+                if ((Subindex - 1) < subItems.Count) {
+                    return subItems[(int)Subindex - 1];
                 }
                 else {
                     return new ListSubItem("Out of Bounds");
@@ -2493,7 +2685,7 @@ namespace ODModules {
             get {
                 uint Temp = (uint)index;
                 if (index < 0) { Temp = 0; }
-                return GetItem(Temp); 
+                return GetItem(Temp);
             }
         }
         public ListItem() {
@@ -2502,8 +2694,32 @@ namespace ODModules {
         public ListItem(string Text) {
             this.Text = Text;
         }
+
+        public object Clone() {
+            ListItem LstItem = new ListItem();
+            LstItem.LineForeColor = this.LineForeColor;
+            LstItem.LineBackColor = this.LineBackColor;
+            LstItem.UseLineBackColor = this.UseLineBackColor;
+            LstItem.UseLineForeColor = this.UseLineBackColor;
+            LstItem.Selected = this.Selected;
+            LstItem.Text = this.Text;
+            LstItem.Name = this.Name;
+            LstItem.Indentation = this.Indentation;
+            LstItem.ForeColor = this.ForeColor;
+            LstItem.BackColor = this.BackColor;
+            LstItem.Tag = this.Tag;
+            LstItem.Value = this.Value;
+            LstItem.Checked = this.Checked;
+            foreach (ListSubItem LstSubItem in this.subItems) {
+                LstItem.SubItems.Add((ListSubItem)LstSubItem.Clone());
+            }
+            return LstItem;
+        }
+        public ListItem CloneItem() {
+            return (ListItem)this.Clone();
+        }
     }
-    public class ListSubItem : ListObject {
+    public class ListSubItem : ListObject, ICloneable {
         public ListSubItem() {
         }
         public ListSubItem(string Text) {
@@ -2511,6 +2727,18 @@ namespace ODModules {
         }
         public ListSubItem(bool Checked) {
             this.Checked = Checked;
+        }
+        public object Clone() {
+            return new ListSubItem {
+                Text = this.Text,
+                Name = this.Name,
+                Indentation = this.Indentation,
+                ForeColor = this.ForeColor,
+                BackColor = this.BackColor,
+                Tag = this.Tag,
+                Value = this.Value,
+                Checked = this.Checked
+            };
         }
     }
     public class ItemCheckedChangeEventArgs : EventArgs {

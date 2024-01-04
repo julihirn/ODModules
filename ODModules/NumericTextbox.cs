@@ -32,6 +32,13 @@ namespace ODModules {
         public delegate void FocusEnteredHandler(NumericTextbox sender);
         [Category("Focus")]
         public event FocusEnteredHandler? FocusEntered;
+
+        public delegate void EnterKeyPressHandler(NumericTextbox sender);
+        [Category("Input")]
+        public event EnterKeyPressHandler? EnterPressed;
+        public delegate void EscapeKeyPressHandler(NumericTextbox sender);
+        [Category("Input")]
+        public event EscapeKeyPressHandler? EscapePressed;
         public NumericTextbox() {
             InitializeComponent();
             this.borderColor = Color.DimGray;
@@ -51,6 +58,29 @@ namespace ODModules {
         }
 
         #region Properties
+        bool useFixedNumericPadding = true;
+        [Category("Layout")]
+        public bool UseFixedNumericPadding {
+            get { return useFixedNumericPadding; }
+            set {
+                useFixedNumericPadding = value;
+                Invalidate();
+            }
+        }
+        int fixedNumericPadding = 5;
+        [Category("Layout")]
+        public int FixedNumericPadding {
+            get { return fixedNumericPadding; }
+            set {
+                if (value >= 0) {
+                    fixedNumericPadding = value;
+                }
+                else {
+                    fixedNumericPadding = 0;
+                }
+                Invalidate();
+            }
+        }
         private object? secondaryTag = null;
         [Category("Control")]
         public object? SecondaryTag { get => secondaryTag; set => secondaryTag = value; }
@@ -515,7 +545,13 @@ namespace ODModules {
             string PrefixStr2 = PrefixToSymbol(secondaryPrefix);
             int PrefixSize = MeasureDisplayStringWidth(e.Graphics, PrefixStr, this.Font); //MinimumSizing(
             int UnitSize = MeasureDisplayStringWidth(e.Graphics, unit, this.Font);
-            int PaddingUnit = MeasureDisplayStringWidth(e.Graphics, "w", this.Font);
+            int PaddingUnit = 0;
+            if (useFixedNumericPadding) {
+                PaddingUnit = MeasureDisplayStringWidth(e.Graphics, "w", this.Font);
+            }
+            else {
+                PaddingUnit = fixedNumericPadding;
+            }
             if (unit.Trim(' ').Length == 0) { UnitSize = 0; }
             if (hasUnit == false) {
                 UnitSize = 0;
@@ -609,7 +645,13 @@ namespace ODModules {
             Rectangle TextRectangle = new Rectangle(0, 0, EndPoint, Height);
             if (TxtAlignment == TextAlign.Left) {
                 Alignment = TextFormatFlags.Left;
-                int PaddingUnit = MeasureDisplayStringWidth(e.Graphics, "w", this.Font) / 2;
+                int PaddingUnit = 0;
+                if (useFixedNumericPadding) {
+                    PaddingUnit = MeasureDisplayStringWidth(e.Graphics, "w", this.Font);
+                }
+                else {
+                    PaddingUnit = fixedNumericPadding;
+                }
                 TextRectangle = new Rectangle(PaddingUnit, 0, GetValueSize(e), Height);
             }
             if (UserEntered == false) {
@@ -1337,6 +1379,14 @@ namespace ODModules {
                 return true;
             }
             else if (keyData == Keys.Alt) {
+                return true;
+            }
+            else if (keyData == Keys.Enter) {
+                EnterPressed?.Invoke(this);
+                return true;
+            }
+            else if (keyData == Keys.Escape) {
+                EscapePressed?.Invoke(this);
                 return true;
             }
             else {

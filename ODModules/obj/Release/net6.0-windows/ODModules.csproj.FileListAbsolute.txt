@@ -1,5 +1,9 @@
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Release\net6.0-windows\ODModules.deps.json
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Release\net6.0-windows\ODModules.dll
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Release\net6.0-windows\ODModules.pdb
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.csproj.AssemblyReference.cache
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.BitScale.resources
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.BitToggle.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.Button.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.ButtonGrid.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.ConsoleInterface.resources
@@ -18,6 +22,9 @@ C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODMo
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.SplashControl.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.TabHeader.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\Physika.TabHeaderControl.resources
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.TemplateContextMenu.resources
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.TemplateContextMenuHost.resources
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.TextBox.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.TextCompare.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.TimePainter.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.ValueLabel.resources
@@ -27,11 +34,8 @@ C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODMo
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.AssemblyInfoInputs.cache
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.AssemblyInfo.cs
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.csproj.CoreCompileInputs.cache
-C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Release\net6.0-windows\ODModules.deps.json
-C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Release\net6.0-windows\ODModules.dll
-C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Release\net6.0-windows\ODModules.pdb
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.sourcelink.json
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\refint\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.pdb
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ref\ODModules.dll
-C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.BitToggle.resources

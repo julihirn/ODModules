@@ -1,0 +1,24 @@
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\bin\Release\net6.0-windows\Component Tests.exe
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\bin\Release\net6.0-windows\Component Tests.deps.json
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\bin\Release\net6.0-windows\Component Tests.runtimeconfig.json
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\bin\Release\net6.0-windows\Component Tests.dll
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\bin\Release\net6.0-windows\Component Tests.pdb
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\bin\Release\net6.0-windows\ODHandlers.dll
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\bin\Release\net6.0-windows\ODModules.dll
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\bin\Release\net6.0-windows\ODModules.pdb
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component Tests.csproj.AssemblyReference.cache
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component_Tests.Form1.resources
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component Tests.csproj.GenerateResource.cache
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component Tests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component Tests.AssemblyInfoInputs.cache
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component Tests.AssemblyInfo.cs
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component Tests.csproj.CoreCompileInputs.cache
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component Tests.csproj.CopyComplete
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component Tests.dll
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\refint\Component Tests.dll
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component Tests.pdb
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component Tests.genruntimeconfig.cache
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\ref\Component Tests.dll
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component Tests.sourcelink.json
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component_Tests.TestContextMenu.resources
+C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Release\net6.0-windows\Component_Tests.UserTest.resources

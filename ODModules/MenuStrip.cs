@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
+using ODModules.Support;
 
 namespace ODModules {
     public class MenuStrip : System.Windows.Forms.MenuStrip {

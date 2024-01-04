@@ -67,12 +67,60 @@ namespace ODModules {
                 Invalidate();
             }
         }
+        StatusCondition status1 = new StatusCondition();
+        [System.ComponentModel.Category("Statuses")]
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public StatusCondition Status1 {
+            get { return status1; }
+            set {
+                status1 = value;
+                Invalidate();
+            }
+        }
+        StatusCondition status2 = new StatusCondition();
+        [System.ComponentModel.Category("Statuses")]
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public StatusCondition Status2 {
+            get { return status2; }
+            set {
+                status2 = value;
+                Invalidate();
+            }
+        }
+        StatusCondition status3 = new StatusCondition();
+        [System.ComponentModel.Category("Statuses")]
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public StatusCondition Status3 {
+            get { return status3; }
+            set {
+                status3 = value;
+                Invalidate();
+            }
+        }
         string displayText = "Name";
         [System.ComponentModel.Category("Data")]
         public string DisplayText {
             get { return displayText; }
             set {
                 displayText = value;
+                Invalidate();
+            }
+        }
+        string status = "Status";
+        [System.ComponentModel.Category("Data")]
+        public string StatusData {
+            get { return status; }
+            set {
+                status = value;
+                Invalidate();
+            }
+        }
+        bool showStatuses = true;
+        [System.ComponentModel.Category("Data")]
+        public bool ShowStatuses {
+            get { return showStatuses; }
+            set {
+                showStatuses = value;
                 Invalidate();
             }
         }
@@ -137,6 +185,24 @@ namespace ODModules {
             get { return selectedColor; }
             set {
                 selectedColor = value;
+                Invalidate();
+            }
+        }
+        Color borderColor = Color.FromArgb(255, 0, 0, 0);
+        [System.ComponentModel.Category("Appearance")]
+        public Color BorderColor {
+            get { return borderColor; }
+            set {
+                borderColor = value;
+                Invalidate();
+            }
+        }
+        bool showBorder = true;
+        [System.ComponentModel.Category("Appearance")]
+        public bool ShowBorder {
+            get { return showBorder; }
+            set {
+                showBorder = value;
                 Invalidate();
             }
         }
@@ -271,6 +337,10 @@ namespace ODModules {
             else {
                 PadItem = (UnitSize / 4);
             }
+            int StatusPad = 0;
+            if (showStatuses) {
+                StatusPad = (int)(UnitSize * 1.5f);
+            }
             using (StringFormat TextFrmt = new StringFormat()) {
                 TextFrmt.LineAlignment = StringAlignment.Center;
                 for (int i = 0; i < MaxWindItems; i++) {
@@ -280,15 +350,45 @@ namespace ODModules {
                         string DisplayText = GetItemValue(CurrentItem);// linkedList[CurrentItem];
                         using (SolidBrush TextBr = new SolidBrush(ForeColor)) {
                             if (displayStyle == Style.Left) {
-                                RectangleF TextPos = new RectangleF(PadItem, ItemVertPos, Width - PadItem, ItemHeight);
+                                RectangleF TextPos = new RectangleF(PadItem + StatusPad, ItemVertPos, Width - PadItem - StatusPad, ItemHeight);
                                 e.Graphics.DrawString(DisplayText, Font, TextBr, TextPos, TextFrmt);
+                                DrawStatus(e, TextPos, PadItem, CurrentItem);
                             }
                             else {
-                                RectangleF TextPos = new RectangleF(PadItem, ItemVertPos, Width - PadItem, ItemHeight);
+                                RectangleF TextPos = new RectangleF(PadItem + StatusPad, ItemVertPos, Width - PadItem - StatusPad, ItemHeight);
                                 e.Graphics.DrawString(DisplayText, Font, TextBr, TextPos, TextFrmt);
+                                DrawStatus(e, TextPos, PadItem,CurrentItem);
                             }
                         }
                     }
+                }
+            }
+        }
+        private void DrawStatus(PaintEventArgs e, RectangleF TextBounds, int ItemPad, int Index) {
+            if (showStatuses == false) { return; }
+            int Centre = (int)((TextBounds.Height - UnitSize) / 2.0f);
+            Rectangle StatusRectangle = new Rectangle(ItemPad, (int)TextBounds.Y + Centre, UnitSize, UnitSize);
+            Color StatusFillColor = Color.Transparent;
+            Color StatusBorderColor = Color.Transparent;
+            string CurrentStatus = GetPropertyValue(Index, StatusData);
+            if (status1.ActivateOn == CurrentStatus) {
+                StatusBorderColor = status1.BorderColor;
+                StatusFillColor = status1.BackColor;
+            }
+            else if (status2.ActivateOn == CurrentStatus) {
+                StatusBorderColor = status2.BorderColor;
+                StatusFillColor = status2.BackColor;
+            }
+            else if (status3.ActivateOn == CurrentStatus) {
+                StatusBorderColor = status3.BorderColor;
+                StatusFillColor = status3.BackColor;
+            }
+            using (SolidBrush StatusBrush = new SolidBrush(StatusFillColor)) {
+                e.Graphics.FillRectangle(StatusBrush, StatusRectangle);
+            }
+            using (SolidBrush StatusBorderBrush = new SolidBrush(StatusBorderColor)) {
+                using (Pen StatusBorderPen = new Pen(StatusBorderBrush)) {
+                    e.Graphics.DrawRectangle(StatusBorderPen, StatusRectangle);
                 }
             }
         }
@@ -367,24 +467,22 @@ namespace ODModules {
             return 0;
         }
         private string GetItemValue(int Index) {
+            return GetPropertyValue(Index, displayText);
+        }
+        private string GetPropertyValue(int Index, string PropertyName) {
             if (linkedList == null) { return ""; }
             IEnumerable? list = linkedList as IEnumerable;
-            if (list != null) {
-                //if (linkedList != null) {
-                if (listType != null) {
-                    var Data = list.Cast<object>().ToList();
-                    if (Data[Index] != null) {
-                        object Item = Data[Index];
-                        if (Item.GetType() == listType) {
-                            PropertyInfo? Val = Item.GetType().GetProperty(displayText);
-                            if (Val != null) {
-                                object? SubVal = Val.GetValue(Item, null);
-                                if (SubVal != null) {
-                                    return SubVal.ToString() ?? "";
-                                }
-                            }
-
-                        }
+            if (list == null) { return ""; }
+            if (listType == null) { return ""; }
+            var Data = list.Cast<object>().ToList();
+            if (Data[Index] == null) { return ""; }
+            object Item = Data[Index];
+            if (Item.GetType() == listType) {
+                PropertyInfo? Val = Item.GetType().GetProperty(PropertyName);
+                if (Val != null) {
+                    object? SubVal = Val.GetValue(Item, null);
+                    if (SubVal != null) {
+                        return SubVal.ToString() ?? "";
                     }
                 }
             }
@@ -409,7 +507,19 @@ namespace ODModules {
         private void DrawSelectedTop(PaintEventArgs e, float Y) {
             int CurrentSelectedItem = GetCurrentSelectedItem();
             if ((CurrentSelectedItem >= StartItem) && (CurrentSelectedItem < EndItem)) { }
-            else { return; }
+            else {
+                using (SolidBrush BorderBrush = new SolidBrush(borderColor)) {
+                    using (Pen BorderPen = new Pen(BorderBrush)) {
+                        if (displayStyle == Style.Left) {
+                            e.Graphics.DrawLine(BorderPen, 0,0,0,Height);
+                        }
+                        else {
+                            e.Graphics.DrawLine(BorderPen, Width - 1,0 , Width - 1, Height);
+                        }
+                    }
+                }
+                return; 
+            }
             float ShadowWidthF = (float)ShadowWidth;
             RectangleF NSHAD = new RectangleF(0, Y, Width, ShadowWidthF);
             RectangleF SSHAD = new RectangleF(0, Y + ItemHeight - ShadowWidthF, Width, ShadowWidth + 2);
@@ -429,6 +539,9 @@ namespace ODModules {
                 using (SolidBrush Plotfill = new SolidBrush(midColor)) {
                     e.Graphics.FillPolygon(Plotfill, curvePoints);
                 }
+                if (showBorder) {
+                    DrawBorder(e, Y);
+                }
             }
             else {
                 PointF point1 = new PointF(-1f, Y);
@@ -437,6 +550,37 @@ namespace ODModules {
                 PointF[] curvePoints = new[] { point1, point2, point3 };
                 using (SolidBrush Plotfill = new SolidBrush(midColor)) {
                     e.Graphics.FillPolygon(Plotfill, curvePoints);
+                }
+                if (showBorder) {
+                    DrawBorder(e, Y);
+                }
+            }
+        }
+        private void DrawBorder(PaintEventArgs e, float Y) {
+            if (displayStyle == Style.Right) {
+                PointF point0 = new PointF(this.Width - 1, 0);
+                PointF point1 = new PointF(this.Width - 1, Y);
+                PointF point2 = new PointF(Width - (int)(ItemHeight / 2.0f) - 1, Convert.ToSingle(Y + ItemHeight / 2d));
+                PointF point3 = new PointF(this.Width - 1, Y + ItemHeight);
+                PointF point4 = new PointF(this.Width - 1, Height);
+                PointF[] curvePoints = new[] { point0, point1, point2, point3, point4 };
+                using (SolidBrush BorderBrush = new SolidBrush(borderColor)) {
+                    using (Pen BorderPen = new Pen(BorderBrush)) {
+                        e.Graphics.DrawLines(BorderPen, curvePoints);
+                    }
+                }
+            }
+            else {
+                PointF point0 = new PointF(0, 0);
+                PointF point1 = new PointF(0, Y);
+                PointF point2 = new PointF((int)(ItemHeight / 2.0f) + 1, Convert.ToSingle(Y + ItemHeight / 2d));
+                PointF point3 = new PointF(0, Y + ItemHeight);
+                PointF point4 = new PointF(0, Height);
+                PointF[] curvePoints = new[] { point0, point1, point2, point3, point4 };
+                using (SolidBrush BorderBrush = new SolidBrush(borderColor)) {
+                    using (Pen BorderPen = new Pen(BorderBrush)) {
+                        e.Graphics.DrawLines(BorderPen, curvePoints);
+                    }
                 }
             }
         }
@@ -617,6 +761,24 @@ namespace ODModules {
 
         private void Navigator_Load(object sender, EventArgs e) {
 
+        }
+    }
+    [Serializable]
+    public class StatusCondition {
+        Color borderColor = Color.DarkRed;
+        public Color BorderColor {
+            get { return borderColor; }
+            set { borderColor = value; }
+        }
+        Color backColor = Color.DarkRed;
+        public Color BackColor {
+            get { return backColor; }
+            set { backColor = value; }
+        }
+        string activateOn = "";
+        public string ActivateOn {
+            get { return activateOn; }
+            set { activateOn = value; }
         }
     }
 }

@@ -1,18 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "w5Yj3NOL3h8sHabuHmHngc/vCZnxYlZjobyeGei03wByLzmgMVKxMa9tf1jzczOClzhDfD953GlV5zjJzeHw5A==",
+  "dgSpecHash": "1YqiQUZo3nssHwL+a0zuDM1JubNe9lHTgrMLbO7j0zxha6fnjG90F9hMgFWHyzYkpkHFuAmGeJkwDj5C7xlgog==",
   "success": true,
   "projectFilePath": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\ODModules.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Chann\\.nuget\\packages\\nuget.commandline\\6.6.1\\nuget.commandline.6.6.1.nupkg.sha512",
-    "C:\\Users\\Chann\\.nuget\\packages\\odhandlers\\1.4.0\\odhandlers.1.4.0.nupkg.sha512"
+    "C:\\Users\\Chann\\.nuget\\packages\\odhandlers\\1.5.0.1\\odhandlers.1.5.0.1.nupkg.sha512"
   ],
   "logs": [
     {
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'ODHandlers 1.4.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net6.0-windows7.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'ODHandlers 1.5.0.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net6.0-windows7.0'. This package may not be fully compatible with your project.",
       "libraryId": "ODHandlers",
       "targetGraphs": [
         "net6.0-windows7.0"

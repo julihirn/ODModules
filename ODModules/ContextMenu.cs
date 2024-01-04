@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ODModules.Support;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -10,6 +11,8 @@ namespace ODModules {
             Renderer = new ContextRender();
             ForeColor = Color.White;
             DoubleBuffered = true;
+            DropShadowEnabled = false;
+          
         }
        
 

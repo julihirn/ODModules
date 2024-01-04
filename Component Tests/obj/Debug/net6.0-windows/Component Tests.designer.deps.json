@@ -1,0 +1,28 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "ODHandlers/1.5.0.1": {
+        "runtime": {
+          "lib/net48/ODHandlers.dll": {
+            "assemblyVersion": "1.5.0.1",
+            "fileVersion": "1.5.0.1"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ODHandlers/1.5.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7lpak7Q7j3CXVtQQpHYEoqS9hQbuwXOLP20soWsjX4udzrOQYY9IGUg/K6MxTI4fgKLhbYQS/zovGe5LSOVvrw==",
+      "path": "odhandlers/1.5.0.1",
+      "hashPath": "odhandlers.1.5.0.1.nupkg.sha512"
+    }
+  }
+}

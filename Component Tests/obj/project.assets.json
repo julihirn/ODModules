@@ -1,0 +1,144 @@
+{
+  "version": 3,
+  "targets": {
+    "net6.0-windows7.0": {
+      "ODHandlers/1.5.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/net48/ODHandlers.dll": {}
+        },
+        "runtime": {
+          "lib/net48/ODHandlers.dll": {}
+        }
+      },
+      "ODModules/2.0.16": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "ODHandlers": "1.5.0.1"
+        },
+        "compile": {
+          "bin/placeholder/ODModules.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ODModules.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.WindowsDesktop.App.WindowsForms"
+        ]
+      }
+    }
+  },
+  "libraries": {
+    "ODHandlers/1.5.0.1": {
+      "sha512": "7lpak7Q7j3CXVtQQpHYEoqS9hQbuwXOLP20soWsjX4udzrOQYY9IGUg/K6MxTI4fgKLhbYQS/zovGe5LSOVvrw==",
+      "type": "package",
+      "path": "odhandlers/1.5.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "content/bin/Debug/ODHandlers.dll",
+        "content/bin/Debug/ODHandlers.pdb",
+        "lib/net48/ODHandlers.dll",
+        "odhandlers.1.5.0.1.nupkg.sha512",
+        "odhandlers.nuspec"
+      ]
+    },
+    "ODModules/2.0.16": {
+      "type": "project",
+      "path": "../ODModules/ODModules.csproj",
+      "msbuildProject": "../ODModules/ODModules.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net6.0-windows7.0": [
+      "ODModules >= 2.0.16"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Chann\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
+    "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\Component Tests\\Component Tests.csproj",
+      "projectName": "Component Tests",
+      "projectPath": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\Component Tests\\Component Tests.csproj",
+      "packagesPath": "C:\\Users\\Chann\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\Component Tests\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+        "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\Chann\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net6.0-windows"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net6.0-windows7.0": {
+          "targetAlias": "net6.0-windows",
+          "projectReferences": {
+            "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\ODModules.csproj": {
+              "projectPath": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\ODModules.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net6.0-windows7.0": {
+        "targetAlias": "net6.0-windows",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          },
+          "Microsoft.WindowsDesktop.App.WindowsForms": {
+            "privateAssets": "none"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
+      }
+    }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'ODHandlers 1.5.0.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net6.0-windows7.0'. This package may not be fully compatible with your project.",
+      "libraryId": "ODHandlers",
+      "targetGraphs": [
+        "net6.0-windows7.0"
+      ]
+    }
+  ]
+}

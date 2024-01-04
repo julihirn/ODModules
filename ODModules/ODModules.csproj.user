@@ -88,6 +88,15 @@
     <Compile Update="TabHeaderControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="TemplateContextMenu.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="TemplateContextMenuHost.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="TextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="TextCompare.cs">
       <SubType>UserControl</SubType>
     </Compile>

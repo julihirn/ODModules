@@ -8,9 +8,13 @@ using System.Drawing.Drawing2D;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices.ObjectiveC;
+using System.Drawing.Text;
 
 namespace ODModules {
     public class TabHeader : UserControl {
+        [Category("Button Actions")]
+        public event TabheaderClickedHandler? HeaderClicked;
+        public delegate void TabheaderClickedHandler(object sender, TabHeaderClickedArgs e);
         [Category("Button Actions")]
         public event AddButtonClickedHandler? AddButtonClicked;
         public delegate void AddButtonClickedHandler(object sender);
@@ -161,6 +165,28 @@ namespace ODModules {
                 Invalidate();
             }
         }
+        bool showHeader = false;
+        [System.ComponentModel.Category("Show/Hide")]
+        public bool ShowHeader {
+            get {
+                return showHeader;
+            }
+            set {
+                showHeader = value;
+                Invalidate();
+            }
+        }
+        bool showTabs = true;
+        [System.ComponentModel.Category("Show/Hide")]
+        public bool ShowTabs {
+            get {
+                return showTabs;
+            }
+            set {
+                showTabs = value;
+                Invalidate();
+            }
+        }
         Color tabDividerColor = Color.Gray;
         [System.ComponentModel.Category("Appearance")]
         public Color TabDividerColor {
@@ -261,6 +287,50 @@ namespace ODModules {
             }
         }
         Color tabClickedBackColor = Color.DarkGray;
+        private Color headerForeColor = Color.Black;
+        [System.ComponentModel.Category("Appearance")]
+        public Color HeaderForeColor {
+            get {
+                return headerForeColor;
+            }
+            set {
+                headerForeColor = value;
+                Invalidate();
+            }
+        }
+        private Color headerDownForeColor = Color.Gray;
+        [System.ComponentModel.Category("Appearance")]
+        public Color HeaderDownForeColor {
+            get {
+                return headerDownForeColor;
+            }
+            set {
+                headerDownForeColor = value;
+                Invalidate();
+            }
+        }
+        private Color headerHoverForeColor = Color.Blue;
+        [System.ComponentModel.Category("Appearance")]
+        public Color HeaderHoverForeColor {
+            get {
+                return headerHoverForeColor;
+            }
+            set {
+                headerHoverForeColor = value;
+                Invalidate();
+            }
+        }
+        //private Color header2ForeColor = Color.Black;
+        //[System.ComponentModel.Category("Appearance")]
+        //public Color Header2ForeColor {
+        //    get {
+        //        return header2ForeColor;
+        //    }
+        //    set {
+        //        header2ForeColor = value;
+        //        Invalidate();
+        //    }
+        //}
         private Color arrowColor = Color.Black;
         [System.ComponentModel.Category("Appearance")]
         public Color ArrowColor {
@@ -336,7 +406,25 @@ namespace ODModules {
                 tabClickedBackColor = value;
             }
         }
-
+        [System.ComponentModel.Category("Appearance")]
+        [System.ComponentModel.Browsable(true)]
+        public override string Text {
+            get { return base.Text; }
+            set {
+                base.Text = value;
+                Invalidate();
+            }
+        }
+        string subHeaderText = "";
+        [System.ComponentModel.Category("Appearance")]
+        private string SubHeaderText {
+            get {
+                return subHeaderText;
+            }
+            set {
+                subHeaderText = value;
+            }
+        }
         #endregion
         public void ClearTabs() {
             for (int i = tabs.Count - 1; i >= 0; i--) {
@@ -377,6 +465,7 @@ namespace ODModules {
         bool OverflowButtonsVisible = false;
         int MaximumOverflow = 0;
         int TabPadding = 10;
+        int HeadingOffset = 0;
         private void RenderSetup(PaintEventArgs e) {
             using (Font UnitFont = new Font(this.Font.FontFamily, 6.0f)) {
                 UnitSize = e.Graphics.MeasureString("W", UnitFont);
@@ -389,6 +478,18 @@ namespace ODModules {
             GenericTextHeight = (int)e.Graphics.MeasureString("W", Font).Height;
             StandardButtonSize = new Size(GenericTextHeight * 8, (int)(GenericTextHeight * 1.25f));
             SmallButtonSize = new Size(GenericTextHeight * 4, StandardButtonSize.Height);
+            if (showHeader) {
+                if (Text.Trim(' ').Length > 0) {
+                    HeadingOffset = (int)e.Graphics.MeasureString(Text, Font).Width + TextPadding;
+                }
+                else { HeadingOffset = 0; }
+                if (SubHeaderText.Trim(' ').Length > 0) {
+                    HeadingOffset += (int)e.Graphics.MeasureString(SubHeaderText, Font).Width + TextPadding;
+                }
+            }
+            else {
+                HeadingOffset = 0;
+            }
             if (allowTabResize == false) {
                 CurrentButtonSize = StandardButtonSize;
             }
@@ -446,25 +547,30 @@ namespace ODModules {
             int AddButtonOffset = (int)(UnitSize.Height * 1.8);
             if (showAddButton == true) {
                 if (IncludeOverflowButtons == false) {
-                    return Width - Padding.Left - Padding.Right - AddButtonOffset;
+                    return Width - Padding.Left - Padding.Right - AddButtonOffset - HeadingOffset;
                 }
                 else {
-                    return Width - Padding.Left - Padding.Right - (int)(UnitSize.Height * 5.8f);
+                    return Width - Padding.Left - Padding.Right - (int)(UnitSize.Height * 5.8f) - HeadingOffset;
                 }
             }
             else {
-                return Width - Padding.Left - Padding.Right;
+                return Width - Padding.Left - Padding.Right - HeadingOffset;
             }
         }
         #endregion
         #region Drawing
         protected override void OnPaint(PaintEventArgs e) {
             RenderSetup(e);
-            DrawUnderTabs(e);
-            if (showTabDividers == true) {
-                DrawTabDividers(e);
+            if (showTabs) {
+                DrawUnderTabs(e);
+                if (showTabDividers == true) {
+                    DrawTabDividers(e);
+                }
+              
+                DrawOverflow(e);
+                DrawOverTabs(e);
             }
-            DrawOverTabs(e);
+            DrawHeader(e);
             if (tabStyle == TabStyles.Normal) {
                 using (SolidBrush Br = new SolidBrush(tabRuleColor)) {
                     using (Pen Pn = new Pen(Br)) {
@@ -472,10 +578,9 @@ namespace ODModules {
                     }
                 }
             }
-            DrawOverflow(e);
         }
         private void DrawUnderTabs(PaintEventArgs e) {
-            int RunningSize = Padding.Left;
+            int RunningSize = Padding.Left + HeadingOffset;
             if (useBindingTabControl == true) {
                 if (bindedTabControl != null) {
                     for (int i = TabStart; i < TabStart + MaximumTabs; i++) {
@@ -516,7 +621,7 @@ namespace ODModules {
             }
         }
         private void DrawTabDividers(PaintEventArgs e) {
-            int RunningSize = Padding.Left;
+            int RunningSize = Padding.Left + HeadingOffset;
             Action PreviousAction = Action.Selected;
             int DivideShrink = 3;
             int DivideMultiply = DivideShrink * 2;
@@ -541,7 +646,7 @@ namespace ODModules {
             }
         }
         private void DrawOverTabs(PaintEventArgs e) {
-            int RunningSize = Padding.Left;
+            int RunningSize = Padding.Left + HeadingOffset;
             if (useBindingTabControl == true) {
                 if (bindedTabControl != null) {
                     for (int i = TabStart; i < TabStart + MaximumTabs; i++) {
@@ -584,6 +689,7 @@ namespace ODModules {
         Rectangle LeftOffsetRectangle;
         Rectangle RightOffsetRectangle;
         Rectangle AddButtonOffsetRectangle;
+        Rectangle HeaderRectangle;
         private void DrawOverflow(PaintEventArgs e) {
             Size ButtonSize = new Size((int)UnitSize.Height, (int)UnitSize.Height);
             int TabPadding = Height - CurrentButtonSize.Height + ((CurrentButtonSize.Height - ButtonSize.Height) / 2);
@@ -649,6 +755,37 @@ namespace ODModules {
                 }
             }
 
+        }
+        private void DrawHeader(PaintEventArgs e) {
+            int HalfPadding = TabPadding / 2;
+            if (showHeader == true) {
+                if (HeadingOffset <= 0) {
+                    return;
+                }
+                HeaderRectangle = new Rectangle(Padding.Left + HalfPadding, TabPadding, HeadingOffset, CurrentButtonSize.Height);
+                Rectangle SolidRectangle = new Rectangle(0, 0, HeaderRectangle.Width - HalfPadding, Height);
+                Rectangle FadeRectangle = new Rectangle(SolidRectangle.Width, 0, HalfPadding, Height);
+                Rectangle FadeClippedRectangle = new Rectangle(FadeRectangle.X, FadeRectangle.Y, FadeRectangle.Width - 1, FadeRectangle.Height);
+                using (SolidBrush BoxBr = new SolidBrush(BackColor)) {
+                    e.Graphics.FillRectangle(BoxBr, SolidRectangle);
+                }
+                using (LinearGradientBrush FadeBr = new LinearGradientBrush(FadeRectangle, BackColor, Color.Transparent, 0.0f)) {
+                    e.Graphics.FillRectangle(FadeBr, FadeClippedRectangle);
+                }
+                Color HeaderColor = ForeColor;
+                if (Header1State == Action.MouseDown) {
+                    HeaderColor = headerDownForeColor;
+                }
+                else if (Header1State == Action.MouseOver) {
+                    HeaderColor = headerHoverForeColor;
+                }
+                using (StringFormat TxtFrmt = new StringFormat()) {
+                    TxtFrmt.LineAlignment = StringAlignment.Center;
+                    using (SolidBrush TxtBr = new SolidBrush(HeaderColor)) {
+                        e.Graphics.DrawString(Text, Font, TxtBr, HeaderRectangle, TxtFrmt);
+                    }
+                }
+            }
         }
         private int DrawTab(PaintEventArgs e, string TabText, Action DisplayAction, Rectangle TabRectangle, bool HasCloseButton) {
             int CloseButtonPadding = 0;
@@ -831,7 +968,9 @@ namespace ODModules {
         bool InDrag = false;
         Point MouseDownLocation = Point.Empty;
         Point MouseDownLocationAbsolute = Point.Empty;
+        Action Header1State = Action.Normal;
         private void TabHeader_MouseUp(object? sender, MouseEventArgs e) {
+            Header1State = Action.Normal;
             MouseDwm = false;
             InDrag = false;
         }
@@ -840,6 +979,11 @@ namespace ODModules {
             MouseDownLocation = e.Location;
             MouseDownLocationAbsolute = e.Location;
             if (e.Button == MouseButtons.Left) {
+                if ((HeaderRectangle.Contains(e.Location)) && (!InDrag)) {
+                    Header1State = Action.MouseDown;
+                    Invalidate();
+                    return;
+                }
                 int X = GetButton(e.Location);
                 if (X == -1) { }
                 else {
@@ -860,6 +1004,7 @@ namespace ODModules {
         }
         private void TabHeader_LostFocus(object? sender, EventArgs e) {
             MousePos = new Point(-1, -1);
+            Header1State = Action.Normal;
             HoverButton = -1;
             LatchDelta = false;
             InDrag = false;
@@ -868,6 +1013,7 @@ namespace ODModules {
         }
         private void TabHeader_MouseLeave(object? sender, EventArgs e) {
             MousePos = new Point(-1, -1);
+            Header1State = Action.Normal;
             LatchDelta = false;
             HoverButton = -1;
             Invalidate();
@@ -876,17 +1022,31 @@ namespace ODModules {
         private void TabHeader_MouseMove(object? sender, MouseEventArgs e) {
             this.Cursor = Cursors.Default;
             if ((e.Button == MouseButtons.Left) || (e.Button == MouseButtons.None)) {
-                if (MouseMoved(e.Location, 5, false) == false) {
-                    MousePos = e.Location;
-                    int X = GetButton(e.Location);
-                    HoverButton = X;
+                if (showTabs) {
+                    if (MouseMoved(e.Location, 5, false) == false) {
+                        MousePos = e.Location;
+                        int X = GetButton(e.Location);
+                        HoverButton = X;
+                    }
+                    else {
+                        if (AllowDragReordering) {
+                            HoverButton = -1;
+                            MousePos = e.Location;
+                            InDrag = true;
+                            MoveTab();
+                        }
+                    }
+                }
+            }
+            if ((showHeader) && (!InDrag)) {
+                if (HeaderRectangle.Contains(e.Location)) {
+                    if (Header1State == Action.Normal) {
+                        Header1State = Action.MouseOver;
+                    }
                 }
                 else {
-                    if (AllowDragReordering) {
-                        HoverButton = -1;
-                        MousePos = e.Location;
-                        InDrag = true;
-                        MoveTab();
+                    if (Header1State == Action.MouseOver) {
+                        Header1State = Action.Normal;
                     }
                 }
             }
@@ -895,50 +1055,61 @@ namespace ODModules {
         private void TabHeader_MouseClick(object? sender, MouseEventArgs e) {
             int X = GetButton(MouseDownLocation);
             if (e.Button == MouseButtons.Left) {
-                if (X == -1) {
-                    if (OverflowButtonsVisible == true) {
-                        if (LeftOffsetRectangle.Contains(e.Location)) {
-                            if (0 < TabStart) {
-                                TabStart--;
+                if (showTabs) {
+                    if (X <= -1) {
+                        if (OverflowButtonsVisible == true) {
+                            if (LeftOffsetRectangle.Contains(e.Location)) {
+                                if (0 < TabStart) {
+                                    TabStart--;
+                                }
+                            }
+                            if (RightOffsetRectangle.Contains(e.Location)) {
+                                if (TabCount - 1 > TabStart + MaximumTabs - 1) {
+                                    TabStart++;
+                                }
                             }
                         }
-                        if (RightOffsetRectangle.Contains(e.Location)) {
-                            if (TabCount - 1 > TabStart + MaximumTabs - 1) {
-                                TabStart++;
+                        if (showAddButton == true) {
+                            if (AddButtonOffsetRectangle.Contains(e.Location)) {
+                                AddButtonClicked?.Invoke(this);
                             }
-                        }
-                    }
-                    if (showAddButton == true) {
-                        if (AddButtonOffsetRectangle.Contains(e.Location)) {
-                            AddButtonClicked?.Invoke(this);
-                        }
-                    }
-                }
-                else {
-                    if (IsOnCloseButton(X, e.Location) == true) {
-                        if (InDrag == false) {
-                            CloseButtonClicked?.Invoke(this, X);
                         }
                     }
                     else {
-                        SelectTab(X);
-                        SelectedIndex = X;
-                        object? Data = GetTabData(X);
-                        if (Data != null) {
-                            Point HitLocation = new Point(0, 0);
-                            TabClickedEventArgs TabEventArgs = new TabClickedEventArgs(Data, X, HitLocation, Cursor.Position, GetButtonRectangle(e.Location), (TextPadding / 2));
-                            TabClicked?.Invoke(this, TabEventArgs);
+                        if (IsOnCloseButton(X, e.Location) == true) {
+                            if (InDrag == false) {
+                                CloseButtonClicked?.Invoke(this, X);
+                            }
                         }
+                        else {
+                            SelectTab(X);
+                            SelectedIndex = X;
+                            object? Data = GetTabData(X);
+                            if (Data != null) {
+                                Point HitLocation = new Point(0, 0);
+                                TabClickedEventArgs TabEventArgs = new TabClickedEventArgs(Data, X, HitLocation, Cursor.Position, GetButtonRectangle(e.Location), (TextPadding / 2));
+                                TabClicked?.Invoke(this, TabEventArgs);
+                            }
+                        }
+                    }
+                }
+                if (showHeader) {
+                    if (HeaderRectangle.Contains(e.Location)) {
+                        Point HitLocation = new Point(0, 0);
+                        TabHeaderClickedArgs TabEventArgs = new TabHeaderClickedArgs(HitLocation, Cursor.Position);
+                        HeaderClicked?.Invoke(this, TabEventArgs);
                     }
                 }
             }
             else if (e.Button == MouseButtons.Right) {
-                if (X >= 0) {
-                    object? Data = GetTabData(X);
-                    if (Data != null) {
-                        Point HitLocation = new Point(0, 0);
-                        TabClickedEventArgs TabEventArgs = new TabClickedEventArgs(Data, X, HitLocation, Cursor.Position, GetButtonRectangle(e.Location), (TextPadding / 2));
-                        TabRightClicked?.Invoke(this, TabEventArgs);
+                if (showTabs) {
+                    if (X >= 0) {
+                        object? Data = GetTabData(X);
+                        if (Data != null) {
+                            Point HitLocation = new Point(0, 0);
+                            TabClickedEventArgs TabEventArgs = new TabClickedEventArgs(Data, X, HitLocation, Cursor.Position, GetButtonRectangle(e.Location), (TextPadding / 2));
+                            TabRightClicked?.Invoke(this, TabEventArgs);
+                        }
                     }
                 }
             }
@@ -947,25 +1118,27 @@ namespace ODModules {
         private void TabHeader_MouseWheel(object? sender, MouseEventArgs e) {
             HoverButton = -1;
             if (InDrag == true) { return; }
-            if (e.Delta > 0) {
-                SelectedIndex--;
-                SelectTab(SelectedIndex);
-                if (OverflowButtonsVisible == true) {
-                    if (SelectedIndex < TabStart) {
-                        TabStart--;
+            if (showTabs) {
+                if (e.Delta > 0) {
+                    SelectedIndex--;
+                    SelectTab(SelectedIndex);
+                    if (OverflowButtonsVisible == true) {
+                        if (SelectedIndex < TabStart) {
+                            TabStart--;
+                        }
                     }
                 }
-            }
-            else {
-                SelectedIndex++;
-                SelectTab(SelectedIndex);
-                if (OverflowButtonsVisible == true) {
-                    if (SelectedIndex > TabStart + MaximumTabs - 1) {
-                        TabStart++;
+                else {
+                    SelectedIndex++;
+                    SelectTab(SelectedIndex);
+                    if (OverflowButtonsVisible == true) {
+                        if (SelectedIndex > TabStart + MaximumTabs - 1) {
+                            TabStart++;
+                        }
                     }
                 }
+                Invalidate();
             }
-            Invalidate();
         }
         private bool MouseMoved(Point MousePos, int Magnitude, bool IgnoreMouseState = false) {
             if (IgnoreMouseState == false) { if (MouseDwm == false) { return false; } }
@@ -975,15 +1148,28 @@ namespace ODModules {
             return false;
         }
         #endregion
+        public TabClickedEventArgs? GetCurrentTabEventArgs() {
+            int X = SelectedIndex;
+            object? Data = GetTabData(X);
+            if (Data == null) { return null; }
+            Point HitLocation = new Point(0, 0);
+            Rectangle ButtonLocation = GetButtonRectangle(X);
+            if (ButtonLocation == Rectangle.Empty) { return null; }
+            TabClickedEventArgs TabEventArgs = new TabClickedEventArgs(Data, X, HitLocation, Cursor.Position, ButtonLocation, (TextPadding / 2));
+            return TabEventArgs;
+        }
         private Rectangle GetButtonRectangle(Point Pnt) {
             int Index = GetButton(Pnt) - TabStart;
-            int XPosition = Padding.Left + (CurrentButtonSize.Width * Index);
+            int XPosition = Padding.Left + HeadingOffset + (CurrentButtonSize.Width * Index);
             if (Index < 0) { return Rectangle.Empty; }
             return new Rectangle(XPosition, TabPadding, CurrentButtonSize.Width, CurrentButtonSize.Height);
         }
         private int GetButton(Point Pnt) {
             if (Pnt.Y >= Height - CurrentButtonSize.Height) {
-                int Temp = (Pnt.X - Padding.Left) / CurrentButtonSize.Width;
+                if (Pnt.X < Padding.Left + HeadingOffset) {
+                    return -1;
+                }
+                int Temp = (Pnt.X - Padding.Left - HeadingOffset) / CurrentButtonSize.Width;
                 int CurrentButton = Temp + TabStart;
                 if (OverflowButtonsVisible == true) {
                     if ((CurrentButton >= TabStart) && (CurrentButton < TabCount) && (CurrentButton < TabStart + MaximumTabs)) {
@@ -1004,7 +1190,7 @@ namespace ODModules {
         Rectangle GetButtonRectangle(int Button) {
             if (Button < 0) { return Rectangle.Empty; }
             if (Button >= TabCount) { return Rectangle.Empty; }
-            int x = (CurrentButtonSize.Width * Button) - (TabStart * CurrentButtonSize.Width) + Padding.Left;
+            int x = (CurrentButtonSize.Width * Button) - (TabStart * CurrentButtonSize.Width) + Padding.Left + HeadingOffset;
             if (OverflowButtonsVisible == true) {
                 if ((Button >= TabStart) && (Button < TabCount) && (Button < TabStart + MaximumTabs)) {
                     return new Rectangle(x, TabPadding, CurrentButtonSize.Width, CurrentButtonSize.Height);
@@ -1108,13 +1294,13 @@ namespace ODModules {
             return null;
         }
         private bool IsOnCloseButton(int TabIndex, Point MPosition) {
-            int RunningSize = Padding.Left;
+            int RunningSize = Padding.Left + HeadingOffset;
             int ZeroedIndex = TabIndex - TabStart;
             RunningSize += CurrentButtonSize.Width * ZeroedIndex;
             Rectangle TabRectangle = new Rectangle(new Point(RunningSize, TabPadding), CurrentButtonSize);
-            int CrossSize = GenericTextHeight;/// 2;
+            int CrossSize = GenericTextHeight;/// 2;nhkj
             int CentreCross = (TabRectangle.Height - CrossSize) / 2;
-            Rectangle CloseMarker = new Rectangle(TabRectangle.X + TabRectangle.Width - TextPadding, TabRectangle.Y + CentreCross, CrossSize + 1, CrossSize + 1);
+            Rectangle CloseMarker = new Rectangle(TabRectangle.X + TabRectangle.Width - (TextPadding), TabRectangle.Y + CentreCross, CrossSize + 1, CrossSize + 1);
             return CloseMarker.Contains(MPosition);
         }
         private void SelectTab(int TabIndex) {
@@ -1179,6 +1365,20 @@ namespace ODModules {
         public bool Selected {
             get { return selected; }
             set { selected = value; }
+        }
+    }
+    public class TabHeaderClickedArgs : EventArgs {
+        private Point location;
+        private Point screenLocation;
+        public Point Location {
+            get { return location; }
+        }
+        public Point ScreenLocation {
+            get { return screenLocation; }
+        }
+        public TabHeaderClickedArgs(Point HitPoint, Point AbsolutePosition) {
+            location = HitPoint;
+            screenLocation = AbsolutePosition;
         }
     }
     public class TabClickedEventArgs : EventArgs {
