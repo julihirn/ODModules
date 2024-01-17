@@ -8,7 +8,7 @@
     ".NETCoreApp,Version=v6.0": {
       "Component Tests/1.0.0": {
         "dependencies": {
-          "ODModules": "2.0.16"
+          "ODModules": "2.0.17"
         },
         "runtime": {
           "Component Tests.dll": {}
@@ -22,7 +22,7 @@
           }
         }
       },
-      "ODModules/2.0.16": {
+      "ODModules/2.0.17": {
         "dependencies": {
           "ODHandlers": "1.5.0.1"
         },
@@ -45,7 +45,7 @@
       "path": "odhandlers/1.5.0.1",
       "hashPath": "odhandlers.1.5.0.1.nupkg.sha512"
     },
-    "ODModules/2.0.16": {
+    "ODModules/2.0.17": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

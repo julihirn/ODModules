@@ -22,6 +22,12 @@
     <Compile Update="ButtonGrid.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="ColorSlider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="ColorWheel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="ConsoleInterface.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -40,6 +46,9 @@
     <Compile Update="HiddenTabControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="HueColorSlider.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Keypad.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -51,6 +60,9 @@
     </Compile>
     <Compile Update="LED.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="LightnessColorSlider.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Update="LineEditingInterface.cs">
       <SubType>UserControl</SubType>
@@ -75,6 +87,9 @@
     </Compile>
     <Compile Update="PrefixScale.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SaturationColorSlider.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Update="SplashControl.cs">
       <SubType>UserControl</SubType>

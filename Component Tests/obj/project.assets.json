@@ -11,7 +11,7 @@
           "lib/net48/ODHandlers.dll": {}
         }
       },
-      "ODModules/2.0.16": {
+      "ODModules/2.0.17.1": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
@@ -44,7 +44,7 @@
         "odhandlers.nuspec"
       ]
     },
-    "ODModules/2.0.16": {
+    "ODModules/2.0.17.1": {
       "type": "project",
       "path": "../ODModules/ODModules.csproj",
       "msbuildProject": "../ODModules/ODModules.csproj"
@@ -52,12 +52,12 @@
   },
   "projectFileDependencyGroups": {
     "net6.0-windows7.0": [
-      "ODModules >= 2.0.16"
+      "ODModules >= 2.0.17.1"
     ]
   },
   "packageFolders": {
     "C:\\Users\\Chann\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
+    "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
     "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
@@ -70,7 +70,7 @@
       "outputPath": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\Component Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+        "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
         "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
@@ -125,7 +125,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
       }
     }
   },

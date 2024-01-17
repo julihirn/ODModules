@@ -36,7 +36,7 @@ namespace ODModules {
 
 
 
-        const int MaxBits = 64;
+        int MaxBits = 64;
         string byteValue = "0";
         [Category("Data")]
         public string Value {
@@ -88,6 +88,30 @@ namespace ODModules {
         public Color MouseDownForeColor {
             get { return mouseDownForeColor; }
             set { mouseDownForeColor = value; Invalidate(); }
+        }
+        WordSize togglerSize = WordSize.QWord;
+        [Category("Appearance")]
+        public WordSize TogglerSize {
+            get { return togglerSize; }
+            set { togglerSize = value;
+                switch (value) {
+                    case WordSize.Byte: Rows = 1; Columns = 9; MaxBits = 8;  break;
+                    case WordSize.Word: Rows = 1; Columns = 19; MaxBits = 16;  break;
+                    case WordSize.SWord: Rows = 2; Columns = 19; MaxBits = 24; break;
+                    case WordSize.DWord: Rows = 2; Columns = 19; MaxBits = 32; break;
+                    case WordSize.TWord: Rows = 3; Columns = 19; MaxBits = 48; break;
+                    case WordSize.QWord: Rows = 4; Columns = 19;  MaxBits = 64; break;
+                }
+                Invalidate(); 
+            }
+        }
+        public enum WordSize {
+            Byte = 0x00,
+            Word = 0x01,
+            SWord = 0x02,
+            DWord = 0x03,
+            TWord = 0x04,
+            QWord = 0x05
         }
         private void TrimBits(string Input) {
             if (Input.Length > bits) {
@@ -151,9 +175,10 @@ namespace ODModules {
                 TotalHeight = ToggleHeight + BitCountHeight; ;
             }
 
+            e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+            e.Graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 
-
-            DrawTogglers(e);
+          DrawTogglers(e);
         }
         private void DrawTogglers(PaintEventArgs e) {
             for (int i = MaxBits - 1; i >= 0; i--) {

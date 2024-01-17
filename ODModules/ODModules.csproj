@@ -7,11 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <Company>Julian Hirniak</Company>
-    <Copyright>Copyright © 2014 - 2023 Julian Hirniak</Copyright>
+    <Copyright>Copyright © 2014 - 2024 Julian Hirniak</Copyright>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>ODModules</Title>
-    <Version>2.0.16.0</Version>
+    <Version>2.0.17.1</Version>
     <Authors>Julian Hirniak</Authors>
     <PackageTags>WinForms; Controls</PackageTags>
     <RepositoryUrl>https://github.com/julihirn/ODModules.git</RepositoryUrl>
@@ -58,10 +58,22 @@
     <Compile Update="Navigator.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

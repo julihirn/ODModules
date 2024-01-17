@@ -181,8 +181,8 @@ namespace ODModules {
             base.OnPaint(e);
             Graphics graph = e.Graphics;
             Color TempBackColor = isFocused == true ? backFocusColor : BackColor;
-            using (SolidBrush BackBr =  new SolidBrush(TempBackColor)) {
-                e.Graphics.FillRectangle(BackBr, new Rectangle(0,0, Width, Height));
+            using (SolidBrush BackBr = new SolidBrush(TempBackColor)) {
+                e.Graphics.FillRectangle(BackBr, new Rectangle(0, 0, Width, Height));
             }
             //Draw border
             using (Pen penBorder = new Pen(borderColor, borderSize)) {
@@ -243,11 +243,17 @@ namespace ODModules {
 
         private void textBox1_Enter(object sender, EventArgs e) {
             IsFocused = true;
-           
+
         }
 
         private void textBox1_Leave(object sender, EventArgs e) {
             IsFocused = false;
+        }
+
+        protected override void OnSizeChanged(EventArgs e) {
+            base.OnSizeChanged(e);
+            if (this.DesignMode)
+                UpdateControlHeight();
         }
 
         ///::::+

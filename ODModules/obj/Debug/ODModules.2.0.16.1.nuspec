@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>ODModules</id>
+    <version>2.0.16.1</version>
+    <title>ODModules</title>
+    <authors>Julian Hirniak</authors>
+    <projectUrl>https://github.com/julihirn/ODModules</projectUrl>
+    <description>Package Description</description>
+    <copyright>Copyright © 2014 - 2024 Julian Hirniak</copyright>
+    <tags>WinForms Controls</tags>
+    <repository url="https://github.com/julihirn/ODModules.git" />
+    <dependencies>
+      <group targetFramework="net6.0-windows7.0">
+        <dependency id="ODHandlers" version="1.5.0.1" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework="net6.0-windows7.0">
+        <frameworkReference name="Microsoft.WindowsDesktop.App.WindowsForms" />
+      </group>
+    </frameworkReferences>
+  </metadata>
+  <files>
+    <file src="C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\bin\Debug\net6.0-windows\ODModules.dll" target="lib\net6.0-windows7.0\ODModules.dll" />
+  </files>
+</package>

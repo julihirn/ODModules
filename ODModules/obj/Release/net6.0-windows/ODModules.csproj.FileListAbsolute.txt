@@ -19,6 +19,7 @@ C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODMo
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.NumericTextbox.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.PainterEventEditor.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.PrefixScale.resources
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.Properties.Resources.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.SplashControl.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.TabHeader.resources
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\Physika.TabHeaderControl.resources
@@ -34,7 +35,6 @@ C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODMo
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.AssemblyInfoInputs.cache
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.AssemblyInfo.cs
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.csproj.CoreCompileInputs.cache
-C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.sourcelink.json
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\refint\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.pdb

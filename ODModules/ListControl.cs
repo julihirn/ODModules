@@ -71,6 +71,7 @@ namespace ODModules {
             this.KeyUp += LineInterface_KeyUp;
             this.KeyDown += LineEditingInterface_KeyDown;
             this.Resize += LineEditingInterface_Resize;
+            this.LostFocus += ListControl_LostFocus;
             ScrollOutofBounds.Elapsed += ScrollOutofBounds_Elapsed;
             //Columns.Add(new Column("Test 1", 100));
             //Columns[0].UseItemBackColor = true;
@@ -88,6 +89,8 @@ namespace ODModules {
             //}
             PropertyChanged = true;
         }
+
+
         #region Functions
         public void ScaleColumnWidths() {
             float Scaler = this.DeviceDpi / 96.0f;
@@ -1029,15 +1032,9 @@ namespace ODModules {
                             CurrentLine++;
                         }
                     }
-                    if (_ShowGrid) {
-                        // if (Line != CurrentStartingLine) {
-                        using (SolidBrush LineBrush = new SolidBrush(_GridlineColor)) {
-                            using (Pen LinePed = new Pen(LineBrush)) {
-                                e.Graphics.DrawLine(LinePed, new Point(0, ListLinePoint(Line + 1)), new Point(WindowSize, ListLinePoint(Line + 1)));
-                            }
-                        }
-                        //}
-                    }
+                }
+                if (_ShowGrid) {
+                    RenderGrid(e, CurrentStartingLine, WindowSize);
                 }
                 //}
                 if (InSelection == true && ShiftKey == false && CtrlKey == false) {
@@ -1051,6 +1048,15 @@ namespace ODModules {
         #endregion
 
         #region Element Rendering
+        private void RenderGrid(PaintEventArgs e, int CurrentStartingLine, int WindowSize) {
+            for (int Line = CurrentStartingLine; Line < MaximumVerticalItems + 1; Line++) {
+                using (SolidBrush LineBrush = new SolidBrush(_GridlineColor)) {
+                    using (Pen LinePed = new Pen(LineBrush)) {
+                        e.Graphics.DrawLine(LinePed, new Point(0, ListLinePoint(Line + 1)), new Point(WindowSize, ListLinePoint(Line + 1)));
+                    }
+                }
+            }
+        }
         private void RenderMarker(PaintEventArgs e, Rectangle BoundingRectangle, int CurrentLine) {
             if (showMarker == false) { return; }
             if (CurrentLine == lineMarkerIndex) {
@@ -1503,30 +1509,30 @@ namespace ODModules {
                 using (StringFormat FormatFlags = StringFormat.GenericTypographic) {
                     FormatFlags.Trimming = StringTrimming.EllipsisCharacter;
                     for (int i = 0; i < columns.Count; i++) {
-                        if (columns[i].Visible) {
-                            if (columns[i].ColumnAlignment != ColumnTextAlignment.None) {
-                                if (columns[i].ColumnAlignment == ColumnTextAlignment.Left) { FormatFlags.Alignment = StringAlignment.Near; }
-                                else if (columns[i].ColumnAlignment == ColumnTextAlignment.Center) { FormatFlags.Alignment = StringAlignment.Center; }
-                                else if (columns[i].ColumnAlignment == ColumnTextAlignment.Right) { FormatFlags.Alignment = StringAlignment.Far; }
-                                e.Graphics.DrawString(columns[i].Text, Font, HeaderTextBrush, new Rectangle(Xpos + Offset, 2, columns[i].Width - (2 * Offset), (int)GenericLine_Height), FormatFlags);
-                            }
-                            if (Inc != 0) {
-                                using (SolidBrush LineBrush = new SolidBrush(_ColumnLineColor)) {
-                                    using (Pen LinePed = new Pen(LineBrush)) {
-                                        e.Graphics.DrawLine(LinePed, new Point(Xpos, 0), new Point(Xpos, HeaderHeight));
-                                    }
-                                }
-                                if (_ShowGrid) {
-                                    using (SolidBrush LineBrush = new SolidBrush(_GridlineColor)) {
-                                        using (Pen LinePed = new Pen(LineBrush)) {
-                                            e.Graphics.DrawLine(LinePed, new Point(Xpos, HeaderHeight), new Point(Xpos, Height));
-                                        }
-                                    }
-                                }
-                            }
-                            Xpos += columns[i].Width;
-                            Inc++;
+                        if (!columns[i].Visible) { continue; }
+                        if (columns[i].ColumnAlignment != ColumnTextAlignment.None) {
+                            if (columns[i].ColumnAlignment == ColumnTextAlignment.Left) { FormatFlags.Alignment = StringAlignment.Near; }
+                            else if (columns[i].ColumnAlignment == ColumnTextAlignment.Center) { FormatFlags.Alignment = StringAlignment.Center; }
+                            else if (columns[i].ColumnAlignment == ColumnTextAlignment.Right) { FormatFlags.Alignment = StringAlignment.Far; }
+                            e.Graphics.DrawString(columns[i].Text, Font, HeaderTextBrush, new Rectangle(Xpos + Offset, 2, columns[i].Width - (2 * Offset), (int)GenericLine_Height), FormatFlags);
                         }
+                        if (Inc != 0) {
+                            using (SolidBrush LineBrush = new SolidBrush(_ColumnLineColor)) {
+                                using (Pen LinePed = new Pen(LineBrush)) {
+                                    e.Graphics.DrawLine(LinePed, new Point(Xpos, 0), new Point(Xpos, HeaderHeight));
+                                }
+                            }
+                            if (_ShowGrid) {
+                                using (SolidBrush LineBrush = new SolidBrush(_GridlineColor)) {
+                                    using (Pen LinePed = new Pen(LineBrush)) {
+                                        e.Graphics.DrawLine(LinePed, new Point(Xpos, HeaderHeight), new Point(Xpos, Height));
+                                    }
+                                }
+                            }
+                        }
+                        Xpos += columns[i].Width;
+                        Inc++;
+
                     }
                 }
             }
@@ -1921,6 +1927,9 @@ namespace ODModules {
                                             TempSize = new Size(CurrentItem.Width - Diff, CurrentItem.Height);
                                         }
                                     }
+                                    FirstSelection = SelectedLine;
+                                    _IndexCount = SelectedLine;
+                                    _CurrentString = CurrentItems[SelectedLine].Text;
                                     //new Point(CurrentItem.X + PointToScreen(this.Location).X, CurrentItem.Y + PointToScreen(this.Location).Y - GenericLine_Height);
                                     DropDownClicked?.Invoke(this, new DropDownClickedEventArgs(HitLocation, BoxLocation, TempSize, SelectedColumn, SelectedLine, CurrentItems[SelectedLine]));
                                 }
@@ -2442,6 +2451,10 @@ namespace ODModules {
         private void LineEditingInterface_KeyDown(object? sender, KeyEventArgs e) {
             ShiftKey = e.Shift;
             CtrlKey = e.Control;
+        }
+        private void ListControl_LostFocus(object? sender, EventArgs e) {
+            ShiftKey = false;
+            CtrlKey = false;
         }
         #endregion
         #region Control Events

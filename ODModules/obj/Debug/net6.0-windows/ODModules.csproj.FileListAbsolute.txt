@@ -73,8 +73,8 @@ C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModu
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.AssemblyInfoInputs.cache
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.AssemblyInfo.cs
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.csproj.CoreCompileInputs.cache
-C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.sourcelink.json
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\refint\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.pdb
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ref\ODModules.dll
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.Properties.Resources.resources

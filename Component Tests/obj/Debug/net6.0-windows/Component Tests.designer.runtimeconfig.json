@@ -14,7 +14,7 @@
     "additionalProbingPaths": [
       "C:\\Users\\Chann\\.dotnet\\store\\|arch|\\|tfm|",
       "C:\\Users\\Chann\\.nuget\\packages",
-      "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+      "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
       "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet"
     ],
     "configProperties": {

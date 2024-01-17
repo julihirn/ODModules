@@ -14,7 +14,7 @@
         "outputPath": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\Component Tests\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
           "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
@@ -69,12 +69,12 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     },
     "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\ODModules.csproj": {
-      "version": "2.0.16",
+      "version": "2.0.17.1",
       "restore": {
         "projectUniqueName": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\ODModules.csproj",
         "projectName": "ODModules",
@@ -83,7 +83,7 @@
         "outputPath": "C:\\Users\\Chann\\OneDrive\\Apps\\ODModules\\ODModules\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
           "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
@@ -146,7 +146,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     }

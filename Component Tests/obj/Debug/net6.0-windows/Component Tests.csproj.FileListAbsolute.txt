@@ -13,7 +13,6 @@ C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Debug\net6.0-windows\
 C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Debug\net6.0-windows\Component Tests.AssemblyInfoInputs.cache
 C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Debug\net6.0-windows\Component Tests.AssemblyInfo.cs
 C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Debug\net6.0-windows\Component Tests.csproj.CoreCompileInputs.cache
-C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Debug\net6.0-windows\Component Tests.sourcelink.json
 C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Debug\net6.0-windows\Component Tests.csproj.CopyComplete
 C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Debug\net6.0-windows\Component Tests.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\Component Tests\obj\Debug\net6.0-windows\refint\Component Tests.dll
