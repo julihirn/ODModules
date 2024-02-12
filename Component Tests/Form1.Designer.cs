@@ -23,6 +23,7 @@
         ///  the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             ODModules.Column column1 = new ODModules.Column();
             ODModules.Column column2 = new ODModules.Column();
             ODModules.ListItem listItem1 = new ODModules.ListItem();
@@ -36,6 +37,8 @@
             ODModules.ListItem listItem5 = new ODModules.ListItem();
             ODModules.ListSubItem listSubItem5 = new ODModules.ListSubItem();
             ODModules.ListItem listItem6 = new ODModules.ListItem();
+            Handlers.NumericalString numericalString1 = new Handlers.NumericalString();
+            Handlers.NumericalString numericalString2 = new Handlers.NumericalString();
             contextMenu1 = new ODModules.ContextMenu();
             itemAToolStripMenuItem = new ToolStripMenuItem();
             itemBToolStripMenuItem = new ToolStripMenuItem();
@@ -50,10 +53,45 @@
             aaToolStripMenuItem = new ToolStripMenuItem();
             bbToolStripMenuItem = new ToolStripMenuItem();
             ccToolStripMenuItem = new ToolStripMenuItem();
+            selectFORWARDToolStripMenuItem = new ToolStripMenuItem();
+            fileToolStripMenuItem = new ToolStripMenuItem();
+            newToolStripMenuItem = new ToolStripMenuItem();
+            openToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator = new ToolStripSeparator();
+            saveToolStripMenuItem = new ToolStripMenuItem();
+            saveAsToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
+            printToolStripMenuItem = new ToolStripMenuItem();
+            printPreviewToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator2 = new ToolStripSeparator();
+            exitToolStripMenuItem = new ToolStripMenuItem();
+            editToolStripMenuItem = new ToolStripMenuItem();
+            undoToolStripMenuItem = new ToolStripMenuItem();
+            redoToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator3 = new ToolStripSeparator();
+            cutToolStripMenuItem = new ToolStripMenuItem();
+            copyToolStripMenuItem = new ToolStripMenuItem();
+            pasteToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator4 = new ToolStripSeparator();
+            selectAllToolStripMenuItem = new ToolStripMenuItem();
+            efwToolStripMenuItem = new ToolStripMenuItem();
+            sdfToolStripMenuItem = new ToolStripMenuItem();
+            toolsToolStripMenuItem = new ToolStripMenuItem();
+            customizeToolStripMenuItem = new ToolStripMenuItem();
+            optionsToolStripMenuItem = new ToolStripMenuItem();
+            helpToolStripMenuItem = new ToolStripMenuItem();
+            contentsToolStripMenuItem = new ToolStripMenuItem();
+            indexToolStripMenuItem = new ToolStripMenuItem();
+            searchToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator5 = new ToolStripSeparator();
+            aboutToolStripMenuItem = new ToolStripMenuItem();
             textBox2 = new ODModules.TextBox();
             listControl1 = new ODModules.ListControl();
+            numericTextbox1 = new ODModules.NumericTextbox();
+            panel1 = new Panel();
             contextMenu1.SuspendLayout();
             menuStrip1.SuspendLayout();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // contextMenu1
@@ -117,13 +155,18 @@
             // bitToggle1
             // 
             bitToggle1.ActiveToggleForeColor = Color.Black;
+            bitToggle1.AllowKeyboardControl = true;
+            bitToggle1.AllowKeyboardInvertControl = true;
             bitToggle1.Bits = 32;
+            bitToggle1.Dock = DockStyle.Fill;
             bitToggle1.InactiveToggleForeColor = Color.Silver;
-            bitToggle1.Location = new Point(386, 149);
+            bitToggle1.Location = new Point(0, 96);
+            bitToggle1.Margin = new Padding(6);
             bitToggle1.MouseDownForeColor = Color.WhiteSmoke;
             bitToggle1.MouseOverForeColor = Color.Blue;
             bitToggle1.Name = "bitToggle1";
-            bitToggle1.Size = new Size(252, 157);
+            bitToggle1.SelectedForeColor = Color.Blue;
+            bitToggle1.Size = new Size(447, 195);
             bitToggle1.TabIndex = 7;
             bitToggle1.TogglerSize = ODModules.BitToggle.WordSize.QWord;
             bitToggle1.Value = "0";
@@ -131,21 +174,21 @@
             // textBox1
             // 
             textBox1.Dock = DockStyle.Top;
-            textBox1.Location = new Point(0, 24);
+            textBox1.Location = new Point(0, 73);
             textBox1.Margin = new Padding(2, 1, 2, 1);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(386, 23);
+            textBox1.Size = new Size(447, 23);
             textBox1.TabIndex = 8;
             textBox1.TextChanged += textBox1_TextChanged;
             // 
             // propertyGrid1
             // 
             propertyGrid1.Dock = DockStyle.Right;
-            propertyGrid1.Location = new Point(386, 24);
+            propertyGrid1.Location = new Point(447, 73);
             propertyGrid1.Margin = new Padding(2, 1, 2, 1);
             propertyGrid1.Name = "propertyGrid1";
             propertyGrid1.SelectedObject = bitToggle1;
-            propertyGrid1.Size = new Size(218, 294);
+            propertyGrid1.Size = new Size(218, 327);
             propertyGrid1.TabIndex = 9;
             propertyGrid1.Click += propertyGrid1_Click;
             // 
@@ -156,11 +199,11 @@
             menuStrip1.BackColorSouth = Color.DodgerBlue;
             menuStrip1.ImageScalingSize = new Size(32, 32);
             menuStrip1.ItemForeColor = Color.Black;
-            menuStrip1.Items.AddRange(new ToolStripItem[] { testToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { testToolStripMenuItem, selectFORWARDToolStripMenuItem, fileToolStripMenuItem, editToolStripMenuItem, toolsToolStripMenuItem, helpToolStripMenuItem });
             menuStrip1.ItemSelectedBackColorNorth = Color.White;
             menuStrip1.ItemSelectedBackColorSouth = Color.White;
             menuStrip1.ItemSelectedForeColor = Color.Black;
-            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Location = new Point(0, 49);
             menuStrip1.MenuBackColorNorth = Color.DodgerBlue;
             menuStrip1.MenuBackColorSouth = Color.DodgerBlue;
             menuStrip1.MenuBorderColor = Color.WhiteSmoke;
@@ -168,7 +211,7 @@
             menuStrip1.MenuSymbolColor = Color.WhiteSmoke;
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(3, 1, 0, 1);
-            menuStrip1.Size = new Size(604, 24);
+            menuStrip1.Size = new Size(665, 24);
             menuStrip1.StripItemSelectedBackColorNorth = Color.White;
             menuStrip1.StripItemSelectedBackColorSouth = Color.White;
             menuStrip1.TabIndex = 10;
@@ -204,6 +247,238 @@
             ccToolStripMenuItem.Size = new Size(88, 22);
             ccToolStripMenuItem.Text = "cc";
             // 
+            // selectFORWARDToolStripMenuItem
+            // 
+            selectFORWARDToolStripMenuItem.ForeColor = Color.Black;
+            selectFORWARDToolStripMenuItem.Name = "selectFORWARDToolStripMenuItem";
+            selectFORWARDToolStripMenuItem.Size = new Size(107, 22);
+            selectFORWARDToolStripMenuItem.Text = "Select fORWARD";
+            selectFORWARDToolStripMenuItem.Click += selectFORWARDToolStripMenuItem_Click;
+            // 
+            // fileToolStripMenuItem
+            // 
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newToolStripMenuItem, openToolStripMenuItem, toolStripSeparator, saveToolStripMenuItem, saveAsToolStripMenuItem, toolStripSeparator1, printToolStripMenuItem, printPreviewToolStripMenuItem, toolStripSeparator2, exitToolStripMenuItem });
+            fileToolStripMenuItem.ForeColor = Color.Black;
+            fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            fileToolStripMenuItem.Size = new Size(37, 22);
+            fileToolStripMenuItem.Text = "&File";
+            // 
+            // newToolStripMenuItem
+            // 
+            newToolStripMenuItem.Image = (Image)resources.GetObject("newToolStripMenuItem.Image");
+            newToolStripMenuItem.ImageTransparentColor = Color.Magenta;
+            newToolStripMenuItem.Name = "newToolStripMenuItem";
+            newToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.N;
+            newToolStripMenuItem.Size = new Size(146, 22);
+            newToolStripMenuItem.Text = "&New";
+            // 
+            // openToolStripMenuItem
+            // 
+            openToolStripMenuItem.Image = (Image)resources.GetObject("openToolStripMenuItem.Image");
+            openToolStripMenuItem.ImageTransparentColor = Color.Magenta;
+            openToolStripMenuItem.Name = "openToolStripMenuItem";
+            openToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
+            openToolStripMenuItem.Size = new Size(146, 22);
+            openToolStripMenuItem.Text = "&Open";
+            // 
+            // toolStripSeparator
+            // 
+            toolStripSeparator.Name = "toolStripSeparator";
+            toolStripSeparator.Size = new Size(143, 6);
+            // 
+            // saveToolStripMenuItem
+            // 
+            saveToolStripMenuItem.Image = (Image)resources.GetObject("saveToolStripMenuItem.Image");
+            saveToolStripMenuItem.ImageTransparentColor = Color.Magenta;
+            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
+            saveToolStripMenuItem.Size = new Size(146, 22);
+            saveToolStripMenuItem.Text = "&Save";
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            saveAsToolStripMenuItem.Size = new Size(146, 22);
+            saveAsToolStripMenuItem.Text = "Save &As";
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(143, 6);
+            // 
+            // printToolStripMenuItem
+            // 
+            printToolStripMenuItem.Image = (Image)resources.GetObject("printToolStripMenuItem.Image");
+            printToolStripMenuItem.ImageTransparentColor = Color.Magenta;
+            printToolStripMenuItem.Name = "printToolStripMenuItem";
+            printToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.P;
+            printToolStripMenuItem.Size = new Size(146, 22);
+            printToolStripMenuItem.Text = "&Print";
+            // 
+            // printPreviewToolStripMenuItem
+            // 
+            printPreviewToolStripMenuItem.Image = (Image)resources.GetObject("printPreviewToolStripMenuItem.Image");
+            printPreviewToolStripMenuItem.ImageTransparentColor = Color.Magenta;
+            printPreviewToolStripMenuItem.Name = "printPreviewToolStripMenuItem";
+            printPreviewToolStripMenuItem.Size = new Size(146, 22);
+            printPreviewToolStripMenuItem.Text = "Print Pre&view";
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(143, 6);
+            // 
+            // exitToolStripMenuItem
+            // 
+            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            exitToolStripMenuItem.Size = new Size(146, 22);
+            exitToolStripMenuItem.Text = "E&xit";
+            // 
+            // editToolStripMenuItem
+            // 
+            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { undoToolStripMenuItem, redoToolStripMenuItem, toolStripSeparator3, cutToolStripMenuItem, copyToolStripMenuItem, pasteToolStripMenuItem, toolStripSeparator4, selectAllToolStripMenuItem });
+            editToolStripMenuItem.ForeColor = Color.Black;
+            editToolStripMenuItem.Name = "editToolStripMenuItem";
+            editToolStripMenuItem.Size = new Size(39, 22);
+            editToolStripMenuItem.Text = "&Edit";
+            // 
+            // undoToolStripMenuItem
+            // 
+            undoToolStripMenuItem.ForeColor = Color.Black;
+            undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            undoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Z;
+            undoToolStripMenuItem.Size = new Size(144, 22);
+            undoToolStripMenuItem.Text = "&Undo";
+            // 
+            // redoToolStripMenuItem
+            // 
+            redoToolStripMenuItem.ForeColor = Color.Black;
+            redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+            redoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Y;
+            redoToolStripMenuItem.Size = new Size(144, 22);
+            redoToolStripMenuItem.Text = "&Redo";
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(141, 6);
+            // 
+            // cutToolStripMenuItem
+            // 
+            cutToolStripMenuItem.ForeColor = Color.Black;
+            cutToolStripMenuItem.Image = (Image)resources.GetObject("cutToolStripMenuItem.Image");
+            cutToolStripMenuItem.ImageTransparentColor = Color.Magenta;
+            cutToolStripMenuItem.Name = "cutToolStripMenuItem";
+            cutToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.X;
+            cutToolStripMenuItem.Size = new Size(144, 22);
+            cutToolStripMenuItem.Text = "Cu&t";
+            // 
+            // copyToolStripMenuItem
+            // 
+            copyToolStripMenuItem.ForeColor = Color.Black;
+            copyToolStripMenuItem.Image = (Image)resources.GetObject("copyToolStripMenuItem.Image");
+            copyToolStripMenuItem.ImageTransparentColor = Color.Magenta;
+            copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            copyToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.C;
+            copyToolStripMenuItem.Size = new Size(144, 22);
+            copyToolStripMenuItem.Text = "&Copy";
+            // 
+            // pasteToolStripMenuItem
+            // 
+            pasteToolStripMenuItem.ForeColor = Color.Black;
+            pasteToolStripMenuItem.Image = (Image)resources.GetObject("pasteToolStripMenuItem.Image");
+            pasteToolStripMenuItem.ImageTransparentColor = Color.Magenta;
+            pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
+            pasteToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.V;
+            pasteToolStripMenuItem.Size = new Size(144, 22);
+            pasteToolStripMenuItem.Text = "&Paste";
+            // 
+            // toolStripSeparator4
+            // 
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new Size(141, 6);
+            // 
+            // selectAllToolStripMenuItem
+            // 
+            selectAllToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { efwToolStripMenuItem, sdfToolStripMenuItem });
+            selectAllToolStripMenuItem.ForeColor = Color.Black;
+            selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
+            selectAllToolStripMenuItem.Size = new Size(144, 22);
+            selectAllToolStripMenuItem.Text = "Select &All";
+            // 
+            // efwToolStripMenuItem
+            // 
+            efwToolStripMenuItem.ForeColor = Color.Black;
+            efwToolStripMenuItem.Name = "efwToolStripMenuItem";
+            efwToolStripMenuItem.Size = new Size(93, 22);
+            efwToolStripMenuItem.Text = "efw";
+            // 
+            // sdfToolStripMenuItem
+            // 
+            sdfToolStripMenuItem.ForeColor = Color.Black;
+            sdfToolStripMenuItem.Name = "sdfToolStripMenuItem";
+            sdfToolStripMenuItem.Size = new Size(93, 22);
+            sdfToolStripMenuItem.Text = "sdf";
+            // 
+            // toolsToolStripMenuItem
+            // 
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { customizeToolStripMenuItem, optionsToolStripMenuItem });
+            toolsToolStripMenuItem.ForeColor = Color.Black;
+            toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            toolsToolStripMenuItem.Size = new Size(46, 22);
+            toolsToolStripMenuItem.Text = "&Tools";
+            // 
+            // customizeToolStripMenuItem
+            // 
+            customizeToolStripMenuItem.ForeColor = Color.Black;
+            customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
+            customizeToolStripMenuItem.Size = new Size(130, 22);
+            customizeToolStripMenuItem.Text = "&Customize";
+            // 
+            // optionsToolStripMenuItem
+            // 
+            optionsToolStripMenuItem.ForeColor = Color.Black;
+            optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            optionsToolStripMenuItem.Size = new Size(130, 22);
+            optionsToolStripMenuItem.Text = "&Options";
+            // 
+            // helpToolStripMenuItem
+            // 
+            helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { contentsToolStripMenuItem, indexToolStripMenuItem, searchToolStripMenuItem, toolStripSeparator5, aboutToolStripMenuItem });
+            helpToolStripMenuItem.ForeColor = Color.Black;
+            helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            helpToolStripMenuItem.Size = new Size(44, 22);
+            helpToolStripMenuItem.Text = "&Help";
+            // 
+            // contentsToolStripMenuItem
+            // 
+            contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
+            contentsToolStripMenuItem.Size = new Size(122, 22);
+            contentsToolStripMenuItem.Text = "&Contents";
+            // 
+            // indexToolStripMenuItem
+            // 
+            indexToolStripMenuItem.Name = "indexToolStripMenuItem";
+            indexToolStripMenuItem.Size = new Size(122, 22);
+            indexToolStripMenuItem.Text = "&Index";
+            // 
+            // searchToolStripMenuItem
+            // 
+            searchToolStripMenuItem.Name = "searchToolStripMenuItem";
+            searchToolStripMenuItem.Size = new Size(122, 22);
+            searchToolStripMenuItem.Text = "&Search";
+            // 
+            // toolStripSeparator5
+            // 
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new Size(119, 6);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            aboutToolStripMenuItem.Size = new Size(122, 22);
+            aboutToolStripMenuItem.Text = "&About...";
+            // 
             // textBox2
             // 
             textBox2.AutoCompleteMode = AutoCompleteMode.None;
@@ -211,11 +486,11 @@
             textBox2.BackColor = SystemColors.Window;
             textBox2.BorderColor = Color.MediumSlateBlue;
             textBox2.BorderSize = 2;
-            textBox2.Dock = DockStyle.Bottom;
+            textBox2.Dock = DockStyle.Fill;
             textBox2.Font = new Font("Microsoft Sans Serif", 9.5F, FontStyle.Regular, GraphicsUnit.Point);
             textBox2.ForeColor = Color.DimGray;
             textBox2.Lines = new string[] { "textBox2" };
-            textBox2.Location = new Point(0, 287);
+            textBox2.Location = new Point(0, 0);
             textBox2.Margin = new Padding(4);
             textBox2.MaxLength = 32767;
             textBox2.Multiline = false;
@@ -227,7 +502,7 @@
             textBox2.SelectedBackColor = Color.LightGray;
             textBox2.SelectedBorderColor = Color.HotPink;
             textBox2.ShortcutsEnabled = true;
-            textBox2.Size = new Size(386, 31);
+            textBox2.Size = new Size(665, 31);
             textBox2.TabIndex = 12;
             textBox2.TextAlign = HorizontalAlignment.Left;
             textBox2.UnderlinedStyle = false;
@@ -267,7 +542,7 @@
             column2.Width = 120;
             listControl1.Columns.Add(column1);
             listControl1.Columns.Add(column2);
-            listControl1.Dock = DockStyle.Fill;
+            listControl1.Dock = DockStyle.Bottom;
             listControl1.DropDownMouseDown = Color.DimGray;
             listControl1.DropDownMouseOver = Color.LightGray;
             listControl1.ExternalItems = null;
@@ -275,7 +550,7 @@
             listControl1.FilterColumn = 0;
             listControl1.GridlineColor = Color.LightGray;
             listControl1.HighlightStrength = 128;
-            listControl1.HorizontalScrollStep = 3;
+            listControl1.HorizontalScrollStep = 10;
             listControl1.HorScroll = new decimal(new int[] { 0, 0, 0, 0 });
             listItem1.BackColor = Color.Transparent;
             listItem1.Checked = false;
@@ -406,8 +681,8 @@
             listControl1.Items.Add(listItem4);
             listControl1.Items.Add(listItem5);
             listControl1.Items.Add(listItem6);
-            listControl1.LineMarkerIndex = 0;
-            listControl1.Location = new Point(0, 47);
+            listControl1.LineMarkerIndex = 2;
+            listControl1.Location = new Point(0, 291);
             listControl1.MarkerBorderColor = Color.LimeGreen;
             listControl1.MarkerFillColor = Color.FromArgb(100, 50, 205, 50);
             listControl1.MarkerStyle = ODModules.MarkerStyleType.Highlight;
@@ -415,7 +690,7 @@
             listControl1.RowColor = Color.LightGray;
             listControl1.ScrollBarMouseDown = Color.FromArgb(64, 0, 0, 0);
             listControl1.ScrollBarNorth = Color.DarkTurquoise;
-            listControl1.ScrollBarSouth = Color.DeepSkyBlue;
+            listControl1.ScrollBarSouth = Color.PaleTurquoise;
             listControl1.ScrollItems = 3;
             listControl1.SelectedColor = Color.SkyBlue;
             listControl1.SelectionColor = Color.Gray;
@@ -424,27 +699,91 @@
             listControl1.ShowItemIndentation = false;
             listControl1.ShowMarker = false;
             listControl1.ShowRowColors = false;
-            listControl1.Size = new Size(386, 240);
+            listControl1.Size = new Size(447, 109);
             listControl1.SpanColumn = 0;
             listControl1.TabIndex = 13;
             listControl1.UseLocalList = true;
             listControl1.VerScroll = 0;
+            listControl1.DropDownClicked += listControl1_DropDownClicked;
+            // 
+            // numericTextbox1
+            // 
+            numericTextbox1.AllowClipboard = true;
+            numericTextbox1.AllowDragValueChange = true;
+            numericTextbox1.AllowFractionals = true;
+            numericTextbox1.AllowMouseWheel = true;
+            numericTextbox1.AllowNegatives = true;
+            numericTextbox1.AllowNumberEntry = true;
+            numericTextbox1.AllowTyping = true;
+            numericTextbox1.ArrowKeysControlNumber = false;
+            numericTextbox1.AutoSizeToText = false;
+            numericTextbox1.Base = ODModules.NumericTextbox.NumberBase.Base10;
+            numericTextbox1.BorderColor = Color.DimGray;
+            numericTextbox1.ButtonDownColor = Color.Gray;
+            numericTextbox1.ButtonHoverColor = Color.LightGray;
+            numericTextbox1.FixedNumericPadding = 5;
+            numericTextbox1.FormatOutput = true;
+            numericTextbox1.HasUnit = true;
+            numericTextbox1.IsMetric = true;
+            numericTextbox1.IsSecondaryMetric = false;
+            numericTextbox1.LabelFont = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            numericTextbox1.LabelForeColor = Color.Gray;
+            numericTextbox1.LabelText = "";
+            numericTextbox1.Location = new Point(392, 260);
+            numericTextbox1.Margin = new Padding(2, 1, 2, 1);
+            numericTextbox1.Marked = false;
+            numericTextbox1.MarkedBackColor = Color.Empty;
+            numericTextbox1.MarkedBorderColor = Color.Beige;
+            numericalString1.DisplayValue = "100";
+            numericalString1.Value = "100";
+            numericTextbox1.Maximum = numericalString1;
+            numericalString2.DisplayValue = "0";
+            numericalString2.Value = "0";
+            numericTextbox1.Minimum = numericalString2;
+            numericTextbox1.Name = "numericTextbox1";
+            numericTextbox1.NumberTextAlign = ODModules.NumericTextbox.TextAlign.Right;
+            numericTextbox1.NumericalFormat = ODModules.NumericTextbox.NumberFormat.Decimal;
+            numericTextbox1.NumericalLeftRadixDigitsMaximum = 7;
+            numericTextbox1.Prefix = ODModules.NumericTextbox.MetricPrefix.None;
+            numericTextbox1.RangeLimited = false;
+            numericTextbox1.SecondaryPrefix = ODModules.NumericTextbox.MetricPrefix.None;
+            numericTextbox1.SecondaryTag = null;
+            numericTextbox1.SecondaryUnit = "";
+            numericTextbox1.SecondaryUnitDisplay = ODModules.NumericTextbox.SecondaryUnitDisplayType.NoSecondaryUnit;
+            numericTextbox1.SelectedBackColor = Color.Empty;
+            numericTextbox1.SelectedBorderColor = Color.Beige;
+            numericTextbox1.ShowLabel = true;
+            numericTextbox1.Size = new Size(162, 27);
+            numericTextbox1.TabIndex = 14;
+            numericTextbox1.Unit = "";
+            numericTextbox1.UseFixedNumericPadding = true;
+            numericTextbox1.Value = "0";
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(textBox2);
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(665, 49);
+            panel1.TabIndex = 15;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(604, 318);
+            ClientSize = new Size(665, 400);
             ContextMenuStrip = contextMenu1;
-            Controls.Add(listControl1);
-            Controls.Add(textBox2);
             Controls.Add(bitToggle1);
+            Controls.Add(numericTextbox1);
+            Controls.Add(listControl1);
             Controls.Add(textBox1);
             Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(propertyGrid1);
             Controls.Add(menuStrip1);
+            Controls.Add(panel1);
             DoubleBuffered = true;
             MainMenuStrip = menuStrip1;
             Name = "Form1";
@@ -453,6 +792,7 @@
             contextMenu1.ResumeLayout(false);
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -474,5 +814,39 @@
         private ToolStripMenuItem ccToolStripMenuItem;
         private ODModules.TextBox textBox2;
         private ODModules.ListControl listControl1;
+        private ToolStripMenuItem selectFORWARDToolStripMenuItem;
+        private ODModules.NumericTextbox numericTextbox1;
+        private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem newToolStripMenuItem;
+        private ToolStripMenuItem openToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator;
+        private ToolStripMenuItem saveToolStripMenuItem;
+        private ToolStripMenuItem saveAsToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem printToolStripMenuItem;
+        private ToolStripMenuItem printPreviewToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripMenuItem exitToolStripMenuItem;
+        private ToolStripMenuItem editToolStripMenuItem;
+        private ToolStripMenuItem undoToolStripMenuItem;
+        private ToolStripMenuItem redoToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripMenuItem cutToolStripMenuItem;
+        private ToolStripMenuItem copyToolStripMenuItem;
+        private ToolStripMenuItem pasteToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator4;
+        private ToolStripMenuItem selectAllToolStripMenuItem;
+        private ToolStripMenuItem efwToolStripMenuItem;
+        private ToolStripMenuItem sdfToolStripMenuItem;
+        private ToolStripMenuItem toolsToolStripMenuItem;
+        private ToolStripMenuItem customizeToolStripMenuItem;
+        private ToolStripMenuItem optionsToolStripMenuItem;
+        private ToolStripMenuItem helpToolStripMenuItem;
+        private ToolStripMenuItem contentsToolStripMenuItem;
+        private ToolStripMenuItem indexToolStripMenuItem;
+        private ToolStripMenuItem searchToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator5;
+        private ToolStripMenuItem aboutToolStripMenuItem;
+        private Panel panel1;
     }
 }

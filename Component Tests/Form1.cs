@@ -62,6 +62,15 @@ namespace Component_Tests {
         private void propertyGrid1_Click(object sender, EventArgs e) {
 
         }
+
+        private void selectFORWARDToolStripMenuItem_Click(object sender, EventArgs e) {
+            listControl1.SelectNextDropDown();
+        }
+
+        private void listControl1_DropDownClicked(object sender, DropDownClickedEventArgs e) {
+            if (e.ParentItem == null) { return; }
+            e.ParentItem[e.Column].Text = "aaaa";
+        }
     }
     public class StatusBlock {
         string text = "";

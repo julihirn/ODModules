@@ -11,7 +11,7 @@
           "lib/net48/ODHandlers.dll": {}
         }
       },
-      "ODModules/2.0.17.1": {
+      "ODModules/2.0.17.6": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
@@ -44,7 +44,7 @@
         "odhandlers.nuspec"
       ]
     },
-    "ODModules/2.0.17.1": {
+    "ODModules/2.0.17.6": {
       "type": "project",
       "path": "../ODModules/ODModules.csproj",
       "msbuildProject": "../ODModules/ODModules.csproj"
@@ -52,7 +52,7 @@
   },
   "projectFileDependencyGroups": {
     "net6.0-windows7.0": [
-      "ODModules >= 2.0.17.1"
+      "ODModules >= 2.0.17.6"
     ]
   },
   "packageFolders": {
@@ -101,6 +101,9 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "default"
       }
     },
     "frameworks": {
@@ -117,6 +120,24 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[6.0.26, 6.0.26]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[6.0.26, 6.0.26]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[6.0.26, 6.0.26]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[6.0.26, 6.0.26]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
@@ -125,7 +146,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   },

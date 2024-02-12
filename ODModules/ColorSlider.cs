@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ODModules {
     [DefaultValue("Value")]
     [DefaultEvent("ValueChanged")]
-    [ToolboxItem(false)]
+    [ToolboxItem(true)]
     public class ColorSlider : Control {
         #region Private Fields
 

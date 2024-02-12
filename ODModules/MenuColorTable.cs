@@ -157,7 +157,7 @@ namespace ODModules {
         private bool showInsetShadow = true;
 
         public MenuStripColorTable() {
-
+           
         }
 
         [System.ComponentModel.Category("Appearance")]
@@ -305,11 +305,10 @@ namespace ODModules {
                     }
                    
                     using (SolidBrush BorderBrush = new SolidBrush(menuBorderColor)) {
-                        using (Pen BorderPen = new Pen(BorderBrush)) {
+                        using (Pen BorderPen = new Pen(BorderBrush, 1)) {
                             int Offset = (int)BorderPen.Width;
                             int ParentOffset = 0;
                             Rectangle ParentRectangle = new Rectangle(0, 0, 0, 0);
-                            ;
                             if (((ToolStripDropDownMenu)e.ToolStrip).OwnerItem.OwnerItem == null) {
                                 ParentOffset = ((ToolStripDropDownMenu)e.ToolStrip).OwnerItem.Width;
                                 ParentRectangle = ((ToolStripDropDownMenu)e.ToolStrip).OwnerItem.Bounds;

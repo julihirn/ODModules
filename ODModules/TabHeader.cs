@@ -25,6 +25,8 @@ namespace ODModules {
         public event TabClickedHandler? TabClicked;
         public delegate void TabClickedHandler(object sender, TabClickedEventArgs Tab);
         [Category("Tab Actions")]
+        public event TabClickedHandler? TabDoubleClicked;
+        [Category("Tab Actions")]
         public event TabClickedHandler? TabRightClicked;
 
         public event SelectedIndexChangedHandler? SelectedIndexChanged;
@@ -35,6 +37,7 @@ namespace ODModules {
             MouseWheel += TabHeader_MouseWheel;
             Resize += TabHeader_Resize;
             MouseClick += TabHeader_MouseClick;
+            MouseDoubleClick += TabHeader_MouseDoubleClick;
             MouseMove += TabHeader_MouseMove;
             MouseLeave += TabHeader_MouseLeave;
             LostFocus += TabHeader_LostFocus;
@@ -566,7 +569,7 @@ namespace ODModules {
                 if (showTabDividers == true) {
                     DrawTabDividers(e);
                 }
-              
+
                 DrawOverflow(e);
                 DrawOverTabs(e);
             }
@@ -1114,6 +1117,31 @@ namespace ODModules {
                 }
             }
             Invalidate();
+        }
+        private void TabHeader_MouseDoubleClick(object? sender, MouseEventArgs e) {
+            int X = GetButton(MouseDownLocation);
+            if (e.Button == MouseButtons.Left) {
+                if (showTabs) {
+                    if (X <= -1) {
+                    }
+                    else {
+                        if (IsOnCloseButton(X, e.Location) == true) {
+                            if (InDrag == false) {
+                            }
+                        }
+                        else {
+                            SelectTab(X);
+                            SelectedIndex = X;
+                            object? Data = GetTabData(X);
+                            if (Data != null) {
+                                Point HitLocation = new Point(0, 0);
+                                TabClickedEventArgs TabEventArgs = new TabClickedEventArgs(Data, X, HitLocation, Cursor.Position, GetButtonRectangle(e.Location), (TextPadding / 2));
+                                TabDoubleClicked?.Invoke(this, TabEventArgs);
+                            }
+                        }
+                    }
+                }
+            }
         }
         private void TabHeader_MouseWheel(object? sender, MouseEventArgs e) {
             HoverButton = -1;

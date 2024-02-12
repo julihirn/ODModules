@@ -1021,6 +1021,8 @@ namespace ODModules {
                     CurrentLine = 0;
                 }
                 int WindowSize = Width - ScrollSize;
+                Rectangle MarkerBounds = Rectangle.Empty;
+                int MarkerLine = -1;
                 //if (CurrentStartingLine < CurrentItems.Count) {
                 for (int Line = CurrentStartingLine; Line < MaximumVerticalItems + 1; Line++) {
                     if (CurrentStartingLine < CurrentItems.Count) {
@@ -1028,7 +1030,10 @@ namespace ODModules {
                             Rectangle LineBounds = new Rectangle(0, ListLinePoint(Line), Width, GenericLine_Height);
 
                             RenderLine(e, CurrentLine, LineBounds);
-                            RenderMarker(e, LineBounds, CurrentLine);
+                            if (CurrentLine == lineMarkerIndex) {
+                                MarkerBounds = LineBounds;
+                                MarkerLine = CurrentLine;
+                            }
                             CurrentLine++;
                         }
                     }
@@ -1036,6 +1041,7 @@ namespace ODModules {
                 if (_ShowGrid) {
                     RenderGrid(e, CurrentStartingLine, WindowSize);
                 }
+                RenderMarker(e, MarkerBounds, MarkerLine);
                 //}
                 if (InSelection == true && ShiftKey == false && CtrlKey == false) {
                     RenderSelectionRectangle(e, new Point(SelectionStart.X, ListLinePoint(SelectedItemstart)), SelectionEnd);
@@ -1059,19 +1065,42 @@ namespace ODModules {
         }
         private void RenderMarker(PaintEventArgs e, Rectangle BoundingRectangle, int CurrentLine) {
             if (showMarker == false) { return; }
-            if (CurrentLine == lineMarkerIndex) {
-                if (markerStyle == MarkerStyleType.Highlight) {
-                    using (SolidBrush FillBrsh = new SolidBrush(markerFillColor)) {
-                        e.Graphics.FillRectangle(FillBrsh, BoundingRectangle);
-                    }
-                    Rectangle MarkerBorder = new Rectangle(BoundingRectangle.X, BoundingRectangle.Y, BoundingRectangle.Width, BoundingRectangle.Height - 1);
-                    using (SolidBrush BrdBrsh = new SolidBrush(markerBorderColor)) {
-                        using (Pen BrdPen = new Pen(BrdBrsh)) {
-                            e.Graphics.DrawRectangle(BrdPen, MarkerBorder);
-                        }
+            if (CurrentLine != lineMarkerIndex) { return; }
+            if (markerStyle == MarkerStyleType.Highlight) {
+                using (SolidBrush FillBrsh = new SolidBrush(markerFillColor)) {
+                    e.Graphics.FillRectangle(FillBrsh, BoundingRectangle);
+                }
+                Rectangle MarkerBorder = new Rectangle(BoundingRectangle.X, BoundingRectangle.Y, BoundingRectangle.Width, BoundingRectangle.Height - 1);
+                using (SolidBrush BrdBrsh = new SolidBrush(markerBorderColor)) {
+                    using (Pen BrdPen = new Pen(BrdBrsh)) {
+                        e.Graphics.DrawRectangle(BrdPen, MarkerBorder);
                     }
                 }
-                else if (markerStyle == MarkerStyleType.Underline) {
+            }
+            else if (markerStyle == MarkerStyleType.Underline) {
+                using (SolidBrush BrdBrsh = new SolidBrush(markerBorderColor)) {
+                    using (Pen BrdPen = new Pen(BrdBrsh)) {
+                        int LineVert = BoundingRectangle.Y + BoundingRectangle.Height - 1;
+                        e.Graphics.DrawLine(BrdPen, new Point(BoundingRectangle.X, LineVert), new Point(BoundingRectangle.X + BoundingRectangle.Width, LineVert));
+                    }
+                }
+            }
+            else if ((markerStyle == MarkerStyleType.Pointer) || (markerStyle == MarkerStyleType.PointerWithUnderline) || (markerStyle == MarkerStyleType.PointerWithBox)) {
+                int ArrowSize = BoundingRectangle.Height / 2;
+                Point[] TrianglePoints = {
+                        new Point(BoundingRectangle.X,BoundingRectangle.Y),
+                        new Point(BoundingRectangle.X + ArrowSize,BoundingRectangle.Y + ArrowSize),
+                        new Point(BoundingRectangle.X,BoundingRectangle.Y + BoundingRectangle.Height)
+                    };
+                using (SolidBrush FillBrsh = new SolidBrush(markerFillColor)) {
+                    e.Graphics.FillPolygon(FillBrsh, TrianglePoints);
+                }
+                using (SolidBrush BrdBrsh = new SolidBrush(markerBorderColor)) {
+                    using (Pen BrdPen = new Pen(BrdBrsh)) {
+                        e.Graphics.DrawPolygon(BrdPen, TrianglePoints);
+                    }
+                }
+                if (markerStyle == MarkerStyleType.PointerWithUnderline) {
                     using (SolidBrush BrdBrsh = new SolidBrush(markerBorderColor)) {
                         using (Pen BrdPen = new Pen(BrdBrsh)) {
                             int LineVert = BoundingRectangle.Y + BoundingRectangle.Height - 1;
@@ -1079,35 +1108,11 @@ namespace ODModules {
                         }
                     }
                 }
-                else if ((markerStyle == MarkerStyleType.Pointer) || (markerStyle == MarkerStyleType.PointerWithUnderline) || (markerStyle == MarkerStyleType.PointerWithBox)) {
-                    int ArrowSize = BoundingRectangle.Height / 2;
-                    Point[] TrianglePoints = {
-                        new Point(BoundingRectangle.X,BoundingRectangle.Y),
-                        new Point(BoundingRectangle.X + ArrowSize,BoundingRectangle.Y + ArrowSize),
-                        new Point(BoundingRectangle.X,BoundingRectangle.Y + BoundingRectangle.Height)
-                    };
-                    using (SolidBrush FillBrsh = new SolidBrush(markerFillColor)) {
-                        e.Graphics.FillPolygon(FillBrsh, TrianglePoints);
-                    }
+                else if (markerStyle == MarkerStyleType.PointerWithBox) {
                     using (SolidBrush BrdBrsh = new SolidBrush(markerBorderColor)) {
+                        Rectangle MarkerBorder = new Rectangle(BoundingRectangle.X, BoundingRectangle.Y, BoundingRectangle.Width, BoundingRectangle.Height - 1);
                         using (Pen BrdPen = new Pen(BrdBrsh)) {
-                            e.Graphics.DrawPolygon(BrdPen, TrianglePoints);
-                        }
-                    }
-                    if (markerStyle == MarkerStyleType.PointerWithUnderline) {
-                        using (SolidBrush BrdBrsh = new SolidBrush(markerBorderColor)) {
-                            using (Pen BrdPen = new Pen(BrdBrsh)) {
-                                int LineVert = BoundingRectangle.Y + BoundingRectangle.Height - 1;
-                                e.Graphics.DrawLine(BrdPen, new Point(BoundingRectangle.X, LineVert), new Point(BoundingRectangle.X + BoundingRectangle.Width, LineVert));
-                            }
-                        }
-                    }
-                    else if (markerStyle == MarkerStyleType.PointerWithBox) {
-                        using (SolidBrush BrdBrsh = new SolidBrush(markerBorderColor)) {
-                            Rectangle MarkerBorder = new Rectangle(BoundingRectangle.X, BoundingRectangle.Y, BoundingRectangle.Width, BoundingRectangle.Height - 1);
-                            using (Pen BrdPen = new Pen(BrdBrsh)) {
-                                e.Graphics.DrawRectangle(BrdPen, MarkerBorder);
-                            }
+                            e.Graphics.DrawRectangle(BrdPen, MarkerBorder);
                         }
                     }
                 }
@@ -1900,6 +1905,7 @@ namespace ODModules {
             }
             return false;
         }
+        Point CurrentCell = new Point(-1, -1);
         private bool HitDropDown(Point MouseLocation) {
             int SelectedLine = -1;
             SelectedLine = ListLinePoint(MouseLocation.Y, PointLineCalcuation.PositionToLine);
@@ -1930,6 +1936,7 @@ namespace ODModules {
                                     FirstSelection = SelectedLine;
                                     _IndexCount = SelectedLine;
                                     _CurrentString = CurrentItems[SelectedLine].Text;
+                                    CurrentCell = new Point(SelectedColumn, SelectedLine);
                                     //new Point(CurrentItem.X + PointToScreen(this.Location).X, CurrentItem.Y + PointToScreen(this.Location).Y - GenericLine_Height);
                                     DropDownClicked?.Invoke(this, new DropDownClickedEventArgs(HitLocation, BoxLocation, TempSize, SelectedColumn, SelectedLine, CurrentItems[SelectedLine]));
                                 }
@@ -1942,6 +1949,52 @@ namespace ODModules {
                 }
             }
             return false;
+        }
+        private bool CellExists(Point Cell) {
+            if (CurrentItems.Count == 0) { return false; }
+            if (Cell.Y < 0) { return false; }
+            if (Cell.Y >= CurrentItems.Count) { return false; }
+            if (Cell.X < 0) { return false; }
+            if (Cell.X > CurrentItems[Cell.Y].SubItems.Count) { return false; }
+            return true;
+        }
+        public bool SelectPreviousDropDown() {
+            return SelectDropForward(-1);
+        }
+        public bool SelectNextDropDown() {
+            return SelectDropForward(1);
+        }
+        public bool SelectDropForward(int Increment) {
+            Point NextCell = new Point(CurrentCell.X, CurrentCell.Y + Increment);
+            int CurrentItemIndex = NextCell.Y;
+            if (CellExists(NextCell) == false) { return false; }
+            try {
+                FirstSelection = CurrentItemIndex;
+                _IndexCount = CurrentItemIndex;
+                _CurrentString = CurrentItems[CurrentItemIndex].Text;
+                CurrentCell = new Point(NextCell.X, CurrentItemIndex);
+                Rectangle CurrentItem = GetItemRectangle(NextCell.Y, NextCell.X);
+                Point HitLocation = new Point(CurrentItem.X, CurrentItem.Y);
+
+                Point BoxLocation = PointToScreen(HitLocation);
+                if (HitLocation.X < 0) {
+                    BoxLocation = PointToScreen(new Point(0, HitLocation.Y));
+                }
+                Size TempSize = CurrentItem.Size;
+                if (CurrentItem.X + CurrentItem.Width >= Width) {
+                    int Diff = Width - (CurrentItem.X + TempSize.Width);
+                    if (ShowVertScroll == true) {
+                        TempSize = new Size(CurrentItem.Width - Diff - VerticalScrollBar.Width, CurrentItem.Height);
+                    }
+                    else {
+                        TempSize = new Size(CurrentItem.Width - Diff, CurrentItem.Height);
+                    }
+                }
+                //new Point(CurrentItem.X + PointToScreen(this.Location).X, CurrentItem.Y + PointToScreen(this.Location).Y - GenericLine_Height);
+                DropDownClicked?.Invoke(this, new DropDownClickedEventArgs(HitLocation, BoxLocation, TempSize, NextCell.X, NextCell.Y, CurrentItems[NextCell.Y]));
+            }
+            catch { return false; }
+            return true;
         }
         private void CheckChange(int Line, int Column) {
             if (Column == 0) {

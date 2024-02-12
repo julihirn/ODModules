@@ -36,7 +36,15 @@ namespace ODModules.Support {
         }
 
         #endregion
-
+        public enum DWM_WINDOW_CORNER_PREFERENCE {
+            DWMWCP_DEFAULT = 0,
+            DWMWCP_DONOTROUND = 1,
+            DWMWCP_ROUND = 2,
+            DWMWCP_ROUNDSMALL = 3
+        }
+        public enum DWMWINDOWATTRIBUTE {
+            DWMWA_WINDOW_CORNER_PREFERENCE = 33
+        }
         #region Methods
 
         #region Public
@@ -48,6 +56,12 @@ namespace ODModules.Support {
         [DllImport("dwmapi.dll")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+
+        [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+        internal static extern void DwmSetWindowAttribute(IntPtr hwnd,
+                                                         DWMWINDOWATTRIBUTE attribute,
+                                                         ref DWM_WINDOW_CORNER_PREFERENCE pvAttribute,
+                                                         uint cbAttribute);
 
         [DllImport("dwmapi.dll")]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -113,7 +127,9 @@ namespace ODModules.Support {
             var v = 2;
 
             DwmSetWindowAttribute(form.Handle, 2, ref v, 4);
-
+            var attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
+            var preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_ROUNDSMALL; // DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_ROUND
+            DwmSetWindowAttribute(form.Handle, attribute, ref preference, sizeof(uint));
             MARGINS margins = new MARGINS() {
                 bottomHeight = 1,
                 leftWidth = 0,

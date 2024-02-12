@@ -116,15 +116,15 @@ namespace ODModules {
                 if (ischecked == true) {
                     try {
                         if (this.Parent != null) {
-                            List< ODModules.Button > Btns= new List< ODModules.Button >();
+                            List<ODModules.Button> Btns = new List<ODModules.Button>();
                             int CheckedCount = 0;
                             foreach (ODModules.Button Btn in this.Parent.Controls) {
                                 if (Btn != this) {
                                     if (Btn.Type == ButtonType.CheckBoxLimited) {
-                                        if (Btn.RadioButtonGroup == this.RadioButtonGroup) { 
+                                        if (Btn.RadioButtonGroup == this.RadioButtonGroup) {
                                             if (Btn.Checked == true) {
                                                 Btns.Add(Btn);
-                                                CheckedCount++; 
+                                                CheckedCount++;
                                             }
                                         }
                                     }
@@ -133,7 +133,7 @@ namespace ODModules {
                             Btns.Sort((x, y) => x.LastChecked.Ticks.CompareTo(y.LastChecked.Ticks));
                             if (CheckedCount >= groupMaximumChecked) {
                                 int Diff = CheckedCount + 1 - groupMaximumChecked;
-                                for (int i=0;i< Diff; i++) {
+                                for (int i = 0; i < Diff; i++) {
                                     Btns[i].Checked = false;
                                 }
                             }
@@ -371,9 +371,9 @@ namespace ODModules {
                 Invalidate();
             }
         }
-        Font ?secondaryFont = null;
+        Font? secondaryFont = null;
         [System.ComponentModel.Category("Appearance")]
-        public Font ?SecondaryFont {
+        public Font? SecondaryFont {
             get {
                 return secondaryFont;
             }
@@ -512,13 +512,13 @@ namespace ODModules {
                         TextFormat.LineAlignment = StringAlignment.Center;
                         switch (textVerticalAlignment) {
                             case ButtonTextVertical.Top:
-                                
+
                                 break;
                             case ButtonTextVertical.Middle:
-                                TextFormat.LineAlignment = StringAlignment.Center; 
+                                TextFormat.LineAlignment = StringAlignment.Center;
                                 break;
                             case ButtonTextVertical.Bottom:
-                                TextFormat.LineAlignment = StringAlignment.Far; 
+                                TextFormat.LineAlignment = StringAlignment.Far;
                                 break;
                         }
                     }
@@ -777,7 +777,7 @@ namespace ODModules {
             secondaryFont = this.Font;
         }
 
-        private void Button_OnMouseDoubleClick(object ?sender, MouseEventArgs e) {
+        private void Button_OnMouseDoubleClick(object? sender, MouseEventArgs e) {
 
             //MouseState = MouseStates.Down; Invalidate();
         }
@@ -841,18 +841,18 @@ namespace ODModules {
         }
 
         private void InitializeComponent() {
-            this.SuspendLayout();
+            SuspendLayout();
             // 
             // Button
             // 
-            this.Name = "Button";
-            this.Size = new System.Drawing.Size(160, 61);
-            this.Load += new System.EventHandler(this.Button_Load);
-            this.ResumeLayout(false);
-
+            AccessibleRole = AccessibleRole.PushButton;
+            Name = "Button";
+            Size = new Size(160, 61);
+            Load += Button_Load;
+            ResumeLayout(false);
         }
 
-        private void Button_Load(object ?sender, EventArgs e) {
+        private void Button_Load(object? sender, EventArgs e) {
 
         }
     }

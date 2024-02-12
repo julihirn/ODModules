@@ -23,6 +23,8 @@ namespace ODModules {
 
         [Category("Tab Actions")]
         public event TabClickedHandler? TabClicked;
+        [Category("Tab Actions")]
+        public event TabClickedHandler? TabDoubleClicked;
         public delegate void TabClickedHandler(object sender, TabClickedEventArgs Tab);
         [Category("Tab Actions")]
         public event TabClickedHandler? TabRightClicked;
@@ -658,6 +660,25 @@ namespace ODModules {
             }
             base.OnMouseClick(e);
         }
+        protected override void OnMouseDoubleClick(MouseEventArgs e) {
+            if (e.Location.Y < ItemsStart) {
+            }
+            else if (e.Location.Y >= ItemsEnd) {
+            }
+            else {
+                int TempSelected = GetSelectedItem(e.Location);
+                if (e.Button == MouseButtons.Left) {
+                    Point HitLocation = new Point(0, 0);
+                    object? CurrentObject = GetItem(TempSelected);
+                    if (CurrentObject != null) {
+                        TabClickedEventArgs TbClickArgs = new TabClickedEventArgs(CurrentObject, TempSelected, HitLocation, Cursor.Position, GetButtonRectangle(e.Location), 0);
+                        TabDoubleClicked?.Invoke(this, TbClickArgs);
+                    }
+                    SelectedItem = TempSelected;
+                }
+            }
+            base.OnMouseDoubleClick(e);
+        }
         AnimationState AnimateDirection = AnimationState.None;
         private void Animator_Tick(object? sender, EventArgs e) {
             int CurrentItemChange = (int)Math.Round((float)selectedItemChnge, 2);
@@ -762,6 +783,8 @@ namespace ODModules {
         private void Navigator_Load(object sender, EventArgs e) {
 
         }
+
+       
     }
     [Serializable]
     public class StatusCondition {

@@ -39,3 +39,4 @@ C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODMo
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\refint\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.pdb
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ref\ODModules.dll
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Release\net6.0-windows\ODModules.sourcelink.json

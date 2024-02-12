@@ -78,3 +78,4 @@ C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\refint
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.pdb
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ref\ODModules.dll
 C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.Properties.Resources.resources
+C:\Users\Chann\OneDrive\Apps\ODModules\ODModules\obj\Debug\net6.0-windows\ODModules.sourcelink.json

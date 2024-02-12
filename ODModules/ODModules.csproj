@@ -11,7 +11,7 @@
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>ODModules</Title>
-    <Version>2.0.17.1</Version>
+    <Version>2.0.17.6</Version>
     <Authors>Julian Hirniak</Authors>
     <PackageTags>WinForms; Controls</PackageTags>
     <RepositoryUrl>https://github.com/julihirn/ODModules.git</RepositoryUrl>

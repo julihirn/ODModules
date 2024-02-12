@@ -21,6 +21,8 @@ namespace ODModules {
         public event ValueChangedHandler? ValueChanged;
         public delegate void ValueChangedHandler(object sender, string Value);
 
+        System.Windows.Forms.Timer Tmr = new System.Windows.Forms.Timer();
+
         public BitToggle() {
             InitializeComponent();
             DoubleBuffered = true;
@@ -32,6 +34,9 @@ namespace ODModules {
             Resize += BitToggle_Resize;
             SizeChanged += BitToggle_SizeChanged;
             OnResizing = true;
+            Tmr.Interval = 1000;
+            Tmr.Enabled = false;
+            Tmr.Tick += Tmr_Tick;
         }
 
 
@@ -77,6 +82,12 @@ namespace ODModules {
             get { return activeToggleForeColor; }
             set { activeToggleForeColor = value; Invalidate(); }
         }
+        Color selectedForeColor = Color.Blue;
+        [Category("Appearance")]
+        public Color SelectedForeColor {
+            get { return selectedForeColor; }
+            set { selectedForeColor = value; Invalidate(); }
+        }
         Color mouseOverForeColor = Color.Blue;
         [Category("Appearance")]
         public Color MouseOverForeColor {
@@ -93,17 +104,30 @@ namespace ODModules {
         [Category("Appearance")]
         public WordSize TogglerSize {
             get { return togglerSize; }
-            set { togglerSize = value;
+            set {
+                togglerSize = value;
                 switch (value) {
-                    case WordSize.Byte: Rows = 1; Columns = 9; MaxBits = 8;  break;
-                    case WordSize.Word: Rows = 1; Columns = 19; MaxBits = 16;  break;
+                    case WordSize.Byte: Rows = 1; Columns = 9; MaxBits = 8; break;
+                    case WordSize.Word: Rows = 1; Columns = 19; MaxBits = 16; break;
                     case WordSize.SWord: Rows = 2; Columns = 19; MaxBits = 24; break;
                     case WordSize.DWord: Rows = 2; Columns = 19; MaxBits = 32; break;
                     case WordSize.TWord: Rows = 3; Columns = 19; MaxBits = 48; break;
-                    case WordSize.QWord: Rows = 4; Columns = 19;  MaxBits = 64; break;
+                    case WordSize.QWord: Rows = 4; Columns = 19; MaxBits = 64; break;
                 }
-                Invalidate(); 
+                Invalidate();
             }
+        }
+        bool allowKeyboardControl = true;
+        [Category("Control")]
+        public bool AllowKeyboardControl {
+            get { return allowKeyboardControl; }
+            set { allowKeyboardControl = value; }
+        }
+        bool allowKeyboardInvertControl = true;
+        [Category("Control")]
+        public bool AllowKeyboardInvertControl {
+            get { return allowKeyboardInvertControl; }
+            set { allowKeyboardInvertControl = value; }
         }
         public enum WordSize {
             Byte = 0x00,
@@ -145,10 +169,12 @@ namespace ODModules {
             int Dual = (Pad * 2);
             return new Rectangle(Input.X + Pad, Input.Y + Pad, Input.Width - Dual, Input.Height - Dual);
         }
+        int HorizontalOffset = 0;
         protected override void OnPaint(PaintEventArgs e) {
             Rectangle PaddingRectangle = new Rectangle(Padding.Left, Padding.Top, Width - Padding.Left - Padding.Right, Height - Padding.Top - Padding.Bottom);
             InsetRectangle = PadRectangle(PaddingRectangle, (int)e.Graphics.MeasureString("W", Font).Width);
             CellSize = new Size(InsetRectangle.Width / Columns, InsetRectangle.Height / Rows);
+            HorizontalOffset = (int)((float)(InsetRectangle.Width - (CellSize.Width * (Columns))) / 2.0f);
             if (OnResizing == true) {
                 for (int i = BitTogglerMinimumSize; i < 20; i++) {
                     using (Font TempFnt = new Font(Font.FontFamily, i)) {
@@ -178,7 +204,7 @@ namespace ODModules {
             e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
             e.Graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 
-          DrawTogglers(e);
+            DrawTogglers(e);
         }
         private void DrawTogglers(PaintEventArgs e) {
             for (int i = MaxBits - 1; i >= 0; i--) {
@@ -228,7 +254,10 @@ namespace ODModules {
                         }
                     }
                     else {
-                        if (Bit == MouseBit) {
+                        if (Bit == KeyboardBit) {
+                            ToggleForeColor = selectedForeColor;
+                        }
+                        else if (Bit == MouseBit) {
                             ToggleForeColor = mouseOverForeColor;
                         }
                     }
@@ -277,17 +306,18 @@ namespace ODModules {
             //}
             int i = BitModul + HorizontalSpacing;
             int j = VerticalSpacing;
-            Point Pnt = new Point((i * CellSize.Width) + InsetRectangle.X, (j * CellSize.Height) + InsetRectangle.Y);
+            Point Pnt = new Point((i * CellSize.Width) + InsetRectangle.X + HorizontalOffset, (j * CellSize.Height) + InsetRectangle.Y);
             return new Rectangle(Pnt, CellSize);
         }
+
         private int GetBit(Point Input, bool RestrictSize) {
             if (CellSize.Width <= 0) { return -1; }
             if (CellSize.Height <= 0) { return -1; }
-            Point RelativePoint = new Point(Input.X - InsetRectangle.Location.X, Input.Y - InsetRectangle.Location.Y);
+            Point RelativePoint = new Point(Input.X - (InsetRectangle.X + HorizontalOffset), Input.Y - InsetRectangle.Location.Y);
             int Column = RelativePoint.X / CellSize.Width;
             int Row = RelativePoint.Y / CellSize.Height;
             int HorizontalSpacing = Column / 5;
-            Point Pnt = new Point((Column * CellSize.Width) + InsetRectangle.X, (Row * CellSize.Height) + InsetRectangle.Y);
+            Point Pnt = new Point((Column * CellSize.Width) + InsetRectangle.X + HorizontalOffset, (Row * CellSize.Height) + InsetRectangle.Y);
             // Size HalfSize = new Size(CellSize.Width, CellSize.Height / 2);
             Rectangle TogglerBounds = SpiltRectangle(new Rectangle(Pnt, CellSize), TextItem.Toggler);
             if (!TogglerBounds.Contains(Input)) { return -1; }
@@ -309,6 +339,8 @@ namespace ODModules {
         }
         bool IsMouseDown = false;
         int MouseBit = -1;
+        int KeyboardBit = -1;
+        int LastMouseBit = -1;
         private void BitToggle_MouseLeave(object? sender, EventArgs e) {
             MouseBit = -1;
         }
@@ -318,6 +350,7 @@ namespace ODModules {
             }
             else {
                 MouseBit = GetBit(e.Location, true);
+                LastMouseBit = MouseBit;
                 Invalidate();
             }
         }
@@ -339,6 +372,124 @@ namespace ODModules {
         private void BitToggle_Resize(object? sender, EventArgs e) {
             OnResizing = true;
             Invalidate();
+        }
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+            if (allowKeyboardControl == false) { return base.ProcessCmdKey(ref msg, keyData); }
+            if (keyData == Keys.Down) {
+                if (Rows > 1) {
+                    int Temp = KeyboardBit - 16;
+                    if (Temp >= 0) {
+                        KeyboardBit -= 16;
+                    }
+
+                    StartTimer();
+                    Invalidate();
+                }
+                return true;
+            }
+            else if (keyData == Keys.Up) {
+                if (Rows > 1) {
+                    int Temp = KeyboardBit + 16;
+                    if (Temp <= bits - 1) {
+                        if (MaxBits > Temp) {
+                            KeyboardBit += 16;
+                        }
+                    }
+
+                    StartTimer();
+                    Invalidate();
+                }
+                return true;
+            }
+            else if (keyData == Keys.Right) {
+                if (KeyboardBit < 0) {
+                    KeyboardBit = bits - 1;
+                }
+                else if (KeyboardBit == 0) {
+                    KeyboardBit = bits - 1;
+                }
+                else { KeyboardBit--; }
+                StartTimer();
+                Invalidate();
+                return true;
+            }
+            else if (keyData == Keys.Left) {
+                if (KeyboardBit < 0) {
+                    KeyboardBit = bits - 1;
+                }
+                else if (KeyboardBit == bits - 1) {
+                    KeyboardBit = 0;
+                }
+                else { KeyboardBit++; }
+                StartTimer();
+                Invalidate();
+                return true;
+            }
+            else if (keyData == Keys.Space) {
+                SetBit(KeyboardBit);
+                StartTimer();
+                Invalidate();
+                return true;
+            }
+            else if (keyData == (Keys.Space & Keys.Control)) {
+                if (allowKeyboardInvertControl) {
+                    SetInvertBit(KeyboardBit);
+                    StartTimer();
+                    Invalidate();
+                    return true;
+                }
+                else { return base.ProcessCmdKey(ref msg, keyData); }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+        int TimeOutTick = 0;
+        const int Timeout = 5;
+        private void StartTimer() {
+            TimeOutTick = 0;
+            Tmr.Enabled = true;
+        }
+        private void Tmr_Tick(object? sender, EventArgs e) {
+            if (TimeOutTick >= Timeout) {
+                Tmr.Enabled = false;
+                TimeOutTick = 0;
+                KeyboardBit = -1;
+                Invalidate();
+            }
+            else {
+                TimeOutTick++;
+            }
+        }
+        private void SetInvertBit(int Bit) {
+            if (Bit >= bits) { return; }
+            if (Bit < 0) { return; }
+            string Output = "";
+            string Temp = byteValue;
+            if (Bit >= Temp.Length) {
+                int SizeDifference = Bit - Temp.Length;
+                string BuildStr = "";
+                for (int i = SizeDifference; i >= 0; i--) {
+                    if (i == SizeDifference) {
+                        BuildStr += "1";
+                    }
+                    else {
+                        BuildStr += "0";
+                    }
+                    Output = BuildStr + Temp;
+                }
+            }
+            else {
+                int Index = Temp.Length - 1 - Bit;
+                for (int i = 0; i < Temp.Length; i++) {
+                    if (Index != i) {
+                        Output += Temp[i] == '0' ? "1" : "0";
+                    }
+                    else {
+                        Output += Temp[i];
+                    }
+                }
+            }
+            Value = Output;
+            BitToggled?.Invoke(this, Bit, Value);
         }
         private void SetBit(int Bit) {
             if (Bit >= bits) { return; }

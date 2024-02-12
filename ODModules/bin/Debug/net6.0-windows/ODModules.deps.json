@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "ODModules/2.0.17": {
+      "ODModules/2.0.17.6": {
         "dependencies": {
           "NuGet.CommandLine": "6.6.1",
           "ODHandlers": "1.5.0.1"
@@ -27,7 +27,7 @@
     }
   },
   "libraries": {
-    "ODModules/2.0.17": {
+    "ODModules/2.0.17.6": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

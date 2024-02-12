@@ -87,6 +87,9 @@ namespace ODModules {
         private bool allowClipboard = true;
         [Category("Control")]
         public bool AllowClipboard { get => allowClipboard; set => allowClipboard = value; }
+        private bool arrowKeysControlNumber = true;
+        [Category("Control")]
+        public bool ArrowKeysControlNumber { get => arrowKeysControlNumber; set => arrowKeysControlNumber = value; }
         private bool allowTyping = true;
         [Category("Control")]
         public bool AllowTyping { get => allowTyping; set => allowTyping = value; }
@@ -1363,14 +1366,20 @@ namespace ODModules {
                 return true;
             }
             else if (keyData == Keys.Up) {
-                TickForward();
-                Invalidate();
-                return true;
+                if (ArrowKeysControlNumber) {
+                    TickForward();
+                    Invalidate();
+                    return true;
+                }
+                return base.ProcessCmdKey(ref msg, keyData);
             }
             else if (keyData == Keys.Down) {
-                TickBackward();
-                Invalidate();
-                return true;
+                if (ArrowKeysControlNumber) {
+                    TickBackward();
+                    Invalidate();
+                    return true;
+                }
+                return base.ProcessCmdKey(ref msg, keyData);
             }
             else if (keyData == Keys.Control) {
                 return true;

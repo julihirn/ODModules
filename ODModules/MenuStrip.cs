@@ -10,7 +10,9 @@ using ODModules.Support;
 
 namespace ODModules {
     public class MenuStrip : System.Windows.Forms.MenuStrip {
+        private bool Fade = true;
         public MenuStrip() {
+
             Renderer = new MenuStripColorTable();
         }
         private Color ItemSelectedBackColor = Color.White;
@@ -208,6 +210,9 @@ namespace ODModules {
             foreach (object Tsmi in this.Items) {
                 if (Tsmi.GetType() == typeof(ToolStripMenuItem)) {
                     ((ToolStripMenuItem)Tsmi).DropDown.DropShadowEnabled = false;
+                    ((ToolStripMenuItem)Tsmi).DropDown.Opening += DropDown_Opening;
+                    ((ToolStripMenuItem)Tsmi).DropDown.Opened += DropDown_Opened;
+                    //(new DropShadow()).ApplyShadows(((ToolStripMenuItem)Tsmi).DropDown);
                 }
             }
             if (e.Item.GetType() == typeof(ToolStripMenuItem)) {
@@ -216,6 +221,60 @@ namespace ODModules {
             }
             base.OnItemAdded(e);
         }
+
+        private void DropDown_Opened(object? sender, EventArgs e) {
+            if (sender == null) { return; }
+            if (sender.GetType() == typeof(ToolStripDropDownMenu)) {
+                ToolStripDropDownMenu TsDdM = (ToolStripDropDownMenu)sender;
+                if (TsDdM.Opacity == 1) { return; }
+                for (int i = 1; i <= AnimataionStep; i++) {
+                    if (i > 1) {
+                        System.Threading.Thread.Sleep(AnimationDuration);
+                    }
+                    TsDdM.Opacity = (double)i / (double)AnimataionStep;
+                    TsDdM.Refresh();
+                }
+            }
+        }
+        protected override void OnItemRemoved(ToolStripItemEventArgs e) {
+            try {
+                if (e.Item.GetType() == typeof(ToolStripMenuItem)) {
+                    ((ToolStripMenuItem)e.Item).DropDown.Opening -= DropDown_Opening;
+                    ((ToolStripMenuItem)e.Item).DropDown.Opened -= DropDown_Opened;
+                }
+
+            }
+            catch { }
+            base.OnItemRemoved(e);
+        }
+        double opacity = 1;
+        private void DropDown_Opening(object? sender, System.ComponentModel.CancelEventArgs e) {
+            if (sender == null) { return; }
+            if (sender.GetType() == typeof(ToolStripDropDownMenu)) {
+                ToolStripDropDownMenu TsDdM = (ToolStripDropDownMenu)sender;
+                TsDdM.Opacity = 0;
+
+            }
+        }
+
+        private const int AnimataionStep = 5;
+        private const int TotalDuration = 100;
+        private const int AnimationDuration = TotalDuration / AnimataionStep;
+        protected override void SetVisibleCore(bool visible) {
+            //double opacity = Opacity;
+            //if (visible && Fade) Opacity = 0;
+            base.SetVisibleCore(visible);
+            //if (!visible || !Fade) return;
+            //for (int i = 1; i <= AnimataionStep; i++) {
+            //    if (i > 1) {
+            //        System.Threading.Thread.Sleep(AnimationDuration);
+            //    }
+            //    Opacity = opacity * (double)i / (double)AnimataionStep;
+            //}
+            //Opacity = opacity;
+        }
+
+
     }
-   
+
 }
